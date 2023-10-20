@@ -1,0 +1,319 @@
+{
+    "TestDatas": [
+        {
+            "RowIndex": 2,
+            "FolderPathTestData": "D:",
+            "IsFolderPath": false,
+            "FilePathTestData": "D:AAA.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 3,
+            "FolderPathTestData": "D:AAA",
+            "IsFolderPath": false,
+            "FilePathTestData": "D:\\AAA.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 4,
+            "FolderPathTestData": "D:AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": "D:\\AAA\\BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 5,
+            "FolderPathTestData": "D:\\",
+            "IsFolderPath": true,
+            "FilePathTestData": "AAA.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 6,
+            "FolderPathTestData": "D:\\AAA",
+            "IsFolderPath": true,
+            "FilePathTestData": "\\AAA.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 7,
+            "FolderPathTestData": "D:\\AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": "\\AAA\\BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 8,
+            "FolderPathTestData": "D:\\AAA\\BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "AAA\\BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 9,
+            "FolderPathTestData": "AAA",
+            "IsFolderPath": false,
+            "FilePathTestData": ".AAA.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 10,
+            "FolderPathTestData": "\\AAA",
+            "IsFolderPath": true,
+            "FilePathTestData": ".\\AAA.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 11,
+            "FolderPathTestData": "\\AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": ".\\AAA\\BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 12,
+            "FolderPathTestData": "\\AAA\\BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": ".AAA\\BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 13,
+            "FolderPathTestData": "AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": "..AAA.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 14,
+            "FolderPathTestData": "AAA\\BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "..\\AAA.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 15,
+            "FolderPathTestData": ".AAA",
+            "IsFolderPath": false,
+            "FilePathTestData": "..\\AAA\\BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 16,
+            "FolderPathTestData": ".\\AAA",
+            "IsFolderPath": true,
+            "FilePathTestData": "..AAA\\BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 17,
+            "FolderPathTestData": ".\\AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": "D:/AAA.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 18,
+            "FolderPathTestData": ".\\AAA\\BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "D:/AAA/BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 19,
+            "FolderPathTestData": ".AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": "/AAA.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 20,
+            "FolderPathTestData": ".AAA\\BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "/AAA/BBB.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 21,
+            "FolderPathTestData": "..AAA",
+            "IsFolderPath": false,
+            "FilePathTestData": "AAA/BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 22,
+            "FolderPathTestData": "..\\AAA",
+            "IsFolderPath": true,
+            "FilePathTestData": "./AAA.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 23,
+            "FolderPathTestData": "..\\AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": "./AAA/BBB.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 24,
+            "FolderPathTestData": "..\\AAA\\BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": ".AAA/BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 25,
+            "FolderPathTestData": "..AAA\\",
+            "IsFolderPath": false,
+            "FilePathTestData": "../AAA.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 26,
+            "FolderPathTestData": "..AAA\\BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "../AAA/BBB.txt",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 27,
+            "FolderPathTestData": "D:AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "..AAA/BBB.txt",
+            "IsFilePath": true
+        },
+        {
+            "RowIndex": 28,
+            "FolderPathTestData": "D:/",
+            "IsFolderPath": true,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 29,
+            "FolderPathTestData": "D:/AAA",
+            "IsFolderPath": true,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 30,
+            "FolderPathTestData": "D:/AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 31,
+            "FolderPathTestData": "D:/AAA/BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 32,
+            "FolderPathTestData": "/AAA",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 33,
+            "FolderPathTestData": "/AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 34,
+            "FolderPathTestData": "/AAA/BBB",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 35,
+            "FolderPathTestData": "AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 36,
+            "FolderPathTestData": "AAA/BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 37,
+            "FolderPathTestData": "./AAA",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 38,
+            "FolderPathTestData": "./AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 39,
+            "FolderPathTestData": "./AAA/BBB",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 40,
+            "FolderPathTestData": ".AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 41,
+            "FolderPathTestData": ".AAA/BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 42,
+            "FolderPathTestData": "../AAA",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 43,
+            "FolderPathTestData": "../AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 44,
+            "FolderPathTestData": "../AAA/BBB",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 45,
+            "FolderPathTestData": "..AAA/",
+            "IsFolderPath": false,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        },
+        {
+            "RowIndex": 46,
+            "FolderPathTestData": "..AAA/BBB",
+            "IsFolderPath": true,
+            "FilePathTestData": "",
+            "IsFilePath": false
+        }
+    ]
+}
