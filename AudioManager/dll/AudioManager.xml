@@ -1,0 +1,279 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AudioManager</name>
+    </assembly>
+    <members>
+        <member name="T:AudioManagerAPI.AudioInfo">
+            <summary>
+            音频信息
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mAudioName">
+            <summary>
+            音频名称
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mVolume">
+            <summary>
+            音频音量，默认为1(值属于[0,1])
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mPitch">
+            <summary>
+            音频播放速度，默认为1(值属于[-3,3])
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mStereoPan">
+            <summary>
+            立体声位置，默认为0(值属于[-1,1])，若为-1则完全为左声道，若为1则完全为右声道
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mPriority">
+            <summary>
+            音频优先级，默认为128(值属于[0,256])
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mPlayOnAwake">
+            <summary>
+            是否在场景启动时进行播放，默认为true
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mLoop">
+            <summary>
+            是否循环播放，默认为false
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mStereoTransition">
+            <summary>
+            是否启用立体声过渡，默认为false
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mStereoTransitionTimeSpan">
+            <summary>
+            立体声过渡的每帧时间间隔，默认为0.5(值属于[0.1,5])
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mStereoTransitionValues">
+            <summary>
+            立体声过渡值集合
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mAudioSource">
+            <summary>
+            AudioSource组件
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mStereoPanTransitionCoroutine">
+            <summary>
+            立体声过渡协程
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mIgnoreTotalVolume">
+            <summary>
+            是否忽略总音量影响,默认为false
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mIsPlaying">
+            <summary>
+            音频是否正在播放
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.Record(UnityEngine.AudioSource)">
+            <summary>
+            将指定的AudioSource组件信息记录在新的AudioInfo实例中并返回它
+            <para>p_audioSource：指定的AudioSource组件</para>
+            <para>返回值：新的AudioInfo实例</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.Play">
+            <summary>
+            播放音频
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.Pause">
+            <summary>
+            暂停音频播放
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.BindAudioManager(AudioManagerAPI.AudioManager)">
+            <summary>
+            绑定音频管理器
+            <para>p_audioManager：音频管理器</para>
+            <para>声明1：若有需要可通过该方法将当前的AudioInfo与指定的音频管理器进行绑定</para>
+            <para>声明2：绑定后将自动向指定的音频管理器添加当前的AudioInfo</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.InitToDefault">
+            <summary>
+            初始化为默认值
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.ShareTo(UnityEngine.AudioSource)">
+            <summary>
+            将当前AudioInfo实例中的信息配置给指定的AudioSource组件
+            <para>p_audioSource：指定的AudioSource组件</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.SelfRecord(UnityEngine.AudioSource)">
+            <summary>
+            将指定的AudioSource组件信息存储在当前AudioInfo实例中
+            <para>p_audioSource：指定的AudioSource组件</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.ValidateCheck">
+            <summary>
+            Inspector面板的数据更改检测
+            </summary>
+        </member>
+        <member name="T:AudioManagerAPI.AudioManager">
+            <summary>
+            音频管理器
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioManager.mTotalVolume">
+            <summary>
+            音频总音量，默认为1(值属于[0,1])
+            <para>声明：该值将影响所有音频的音量，例如该值为0则所有音频音量变为原有音量的0%，若为1则所有音频音量保持不变，即该值将基于所有音频的当前音量进行影响，而不是直接将所有音频的音量统一修改为该值</para>
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioManager.mIsOverWrite">
+            <summary>
+            是否启用音频信息覆盖，默认为true
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioManager.mCount">
+            <summary>
+            音频管理器中所存储的音频数量
+            </summary>
+        </member>
+        <member name="E:AudioManagerAPI.AudioManager.mTotalVolumeChangedEvents">
+            <summary>
+            总音量更改事件回调
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioManager.mAudioInfoNames">
+            <summary>
+            音频信息名称合集
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.Play(System.String)">
+            <summary>
+            播放指定名称的音频
+            <para>p_audioName：音频名称</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.PlayWithStereoTransition(System.String,System.Single[],System.Single)">
+            <summary>
+            播放指定名称的音频并开启立体声过渡
+            <para>p_audioName：音频名称</para>
+            <para>p_stereoTransitionValues：立体声过渡值集合</para>
+            <para>p_stereoTimeSpan：立体声过渡每帧时间间隔</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.Pause(System.String)">
+            <summary>
+            暂停播放指定名称的音频
+            <para>p_audioName：音频名称</para>
+            <para>声明：暂停不会释放音频所占用的资源，如果要释放占用资源请调用Dispose方法</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.Dispose(System.String)">
+            <summary>
+            释放指定名称的音频所占用的资源
+            <para>p_audioName：音频名称</para>
+            <para>声明：包括与其配备的AudioSource组件等</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.Register(AudioManagerAPI.AudioInfo)">
+            <summary>
+            注册音频信息
+            <para>p_audioInfo：音频信息</para>
+            <para>声明1：若启用了音频信息覆盖，当存在相同名称的音频时，新的音频信息将覆盖旧的音频信息</para>
+            <para>声明2：默认启用了音频信息覆盖，可通过mIsOverWrite属性设置禁用</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.UnRegister(System.String)">
+            <summary>
+            注销音频信息
+            <para>p_audioName：音频名称</para>
+            <para>返回值：若删除成功则返回true，否则返回false</para>
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioManager.mAudioInfoCount">
+            <summary>
+            在当前Inspector面板中的AudioInfos中的元素数量
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.Add">
+            <summary>
+            在当前Inspector面板中的AudioInfos中添加一个元素
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManager.Delete(System.Int32)">
+            <summary>
+            在当前Inspector面板中的AudioInfos中删除一个元素
+            </summary>
+        </member>
+        <member name="T:AudioManagerAPI.AudioManagerEditor">
+            <summary>
+            AudioManager编辑器扩展
+            </summary>
+        </member>
+        <member name="T:AudioManagerAPI.AudioSourcePool">
+            <summary>
+            AudioSource组件池
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioSourcePool.mFreeCount">
+            <summary>
+            空闲的AudioSource数量
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioSourcePool.GetInstance">
+            <summary>
+            获取实例（单例模式）
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioSourcePool.BindAudioManager(AudioManagerAPI.AudioManager)">
+            <summary>
+            绑定音频管理器
+            <para>p_audioManager：音频管理器</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioSourcePool.Get">
+            <summary>
+            获取AudioSource组件
+            <para>返回值：AudioSource组件</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioSourcePool.Get(AudioManagerAPI.AudioInfo)">
+            <summary>
+            获取AudioSource组件并按照指定的AudioInfo为之配置属性
+            <para>p_audioInfo：指定的AudioInfo</para>
+            <para>返回值：AudioSource组件</para>
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioSourcePool.Return(UnityEngine.AudioSource)">
+            <summary>
+            归还指定的AudioSource组件
+            <para>p_audioSource：指定的AudioSource组件</para>
+            </summary>
+        </member>
+        <member name="T:AudioManagerAPI.NumberRange">
+            <summary>
+            数值范围数组工具类
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.NumberRange.FloatRange(System.Single,System.Single,System.Single,System.Boolean)">
+            <summary>
+            获取指定范围内指定步长的Float数值数组，且确定是否包含终点值(p_end)
+            <para>p_start:起始值</para>
+            <para>p_end:终点值</para>
+            <para>p_step:步长值</para>
+            <para>[ContainsEnd]:是否包括终点值,默认为false</para>
+            <para>返回值:Float[]</para>
+            </summary>
+        </member>
+    </members>
+</doc>
