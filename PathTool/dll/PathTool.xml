@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PathTool</name>
+    </assembly>
+    <members>
+        <member name="M:PathToolAPI.FilePathTool.IsFilePath(System.String)">
+            <summary>
+            传递的字符串所指示路径是否为文件路径
+            <para>p_path：指示为路径的字符串</para>
+            </summary>
+        </member>
+        <member name="M:PathToolAPI.FolderPathTool.IsFolderPath(System.String)">
+            <summary>
+            传递的字符串所指示路径是否为文件夹路径
+            <para>p_path：指示为路径的字符串</para>
+            </summary>
+        </member>
+        <member name="T:PathToolAPI.PathTool">
+            <summary>
+            路径工具类
+            <para>声明1：该类仅适用于Windows平台</para>
+            <para>声明2：暂仅支持英文路径检测</para>
+            </summary>
+        </member>
+        <member name="M:PathToolAPI.PathTool.IsFolderPath(System.String)">
+            <summary>
+            传递的字符串所指示路径是否为文件夹路径
+            <para>p_path：指示为路径的字符串</para>
+            </summary>
+        </member>
+        <member name="M:PathToolAPI.PathTool.IsFilePath(System.String)">
+            <summary>
+            传递的字符串所指示路径是否为文件路径
+            <para>p_path：指示为路径的字符串</para>
+            </summary>
+        </member>
+        <member name="P:PathToolAPI.Shared.mSharedNameChars">
+            <summary>
+            共享字符集，包括大小写字母和数字
+            </summary>
+        </member>
+        <member name="P:PathToolAPI.Shared.mFileOrFolderSpecialNameChars">
+            <summary>
+            文件或文件夹名称的特殊字符集
+            </summary>
+        </member>
+        <member name="P:PathToolAPI.Shared.mDriveSpecialNameChars">
+            <summary>
+            驱动器名称的特殊字符集
+            </summary>
+        </member>
+        <member name="P:PathToolAPI.Shared.mFileExtensionSpecialNameChars">
+            <summary>
+            文件扩展名的特殊字符集
+            </summary>
+        </member>
+        <member name="P:PathToolAPI.Shared.mDriveNames">
+            <summary>
+            驱动器名称合集
+            </summary>
+        </member>
+    </members>
+</doc>
