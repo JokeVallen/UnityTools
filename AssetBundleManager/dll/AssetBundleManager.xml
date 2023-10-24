@@ -76,6 +76,13 @@
             Main AssetBundle资源包的名称
             </summary>
         </member>
+        <member name="P:ABManagerAPI.AssetBundleManager.mMainABPath">
+            <summary>
+            Main AssetBundle资源包的磁盘路径
+            <para>声明1：一旦该值发生有效更改，当前AssetBundle资源包管理器将进行重置</para>
+            <para>声明2：管理器重置将自动按照不卸载关联资源的方式卸载所有由其管理的AssetBundle资源包</para>
+            </summary>
+        </member>
         <member name="M:ABManagerAPI.AssetBundleManager.#ctor(System.String)">
             <summary>
             <para>p_mainABPath：Main AssetBundle的磁盘路径</para>
@@ -120,7 +127,7 @@
             同步加载指定名称的AssetBundle资源包中指定名称的资源
             <para>p_abName：AssetBundle资源包的名称</para>
             <para>p_assetName：待加载资源的名称</para>
-            <para>返回值：若加载资源成功则返回UnityEngine.Object类型的资源，否则返回null</para>
+            <para>返回值：若加载资源成功则返回Object类型的资源，否则返回null</para>
             <para>声明：若所指示的AssetBundle资源包未注册或未加载则认定为加载失败</para>
             </summary>
         </member>
@@ -130,7 +137,7 @@
             <para>p_abName：AssetBundle资源包的名称</para>
             <para>p_assetName：待加载资源的名称</para>
             <para>p_assetType：待加载资源的类型</para>
-            <para>返回值：若加载资源成功则返回UnityEngine.Object类型的资源，否则返回null</para>
+            <para>返回值：若加载资源成功则返回Object类型的资源，否则返回null</para>
             <para>声明：若所指示的AssetBundle资源包未注册或未加载则认定为加载失败</para>
             </summary>
         </member>
@@ -140,7 +147,7 @@
             <para>T：待加载资源的类型</para>
             <para>p_abName：AssetBundle资源包的名称</para>
             <para>p_assetName：待加载资源的名称</para>
-            <para>返回值：若加载资源成功则返回UnityEngine.Object类型的资源，否则返回null</para>
+            <para>返回值：若加载资源成功则返回Object类型的资源，否则返回null</para>
             <para>声明：若所指示的AssetBundle资源包未注册或未加载则认定为加载失败</para>
             </summary>
         </member>
@@ -180,6 +187,12 @@
         <member name="P:ABManagerAPI.AssetBundleUnit.mIsLoaded">
             <summary>
             所指示的AssetBundle资源包是否已加载
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleUnit.SharedTo(ABManagerAPI.AssetBundleUnit@)">
+            <summary>
+            将当前AssetBundle资源包单元分享给指定的AssetBundle资源包单元
+            <para>p_assetBundleUnit：指定的AssetBundle资源包单元</para>
             </summary>
         </member>
         <member name="M:ABManagerAPI.AssetBundleUnit.Reset">
