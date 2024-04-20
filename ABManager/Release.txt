@@ -1,0 +1,23 @@
+[version 1.01]
+1.Added an example;
+2.Fixed some bugs;
+
+[version 1.02]
+1.Added class "ABManagerTool";
+2.Added function "AutoInit" to class "AssetBundleManager";
+3.Fixed NullReference's exception of the field "mABManager" of class "ABManagerComponent";
+4.Added some properties to class "AssetBundleManager";
+5.Opened access permission of class "AssetBundleUnit","AssetBundleManager","ABManagerCenter";
+6.Added function "Init" to class "ABManagerComponent";
+7.Added field "InitOnAwake" to class "ABManagerComponent";
+
+[version 1.03]
+1.Fixed the bug that game cannot build.
+2.Closed access permission of class "AssetBundleUnit", "ABManagerTool" and "ABManagerCenter";
+
+[version 1.04]
+1.Added functions loading ABs and assets asynchronously.
+2.Added functions unloading all ABs and assets.
+3.Added functions checking whether the specified AB contains the specified resource.
+4.Added functions getting all assets' name in the specified AB.
+5.Modified the name of "AssetBundleManager" as "ABManager".

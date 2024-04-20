@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AssetBundleManager</name>
+    </assembly>
+    <members>
+        <member name="T:ABManagerAPI.ABManagerCenter">
+            <summary>
+            AssetBundle资源包管理器中心
+            <para>声明1：用于管理AssetBundle资源包管理器</para>
+            <para>声明2：单例获取</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.ABManagerCenter.mMainABNames">
+            <summary>
+            已在AssetBundle资源包管理器中心进行注册的AssetBundle资源包管理器所对应的Main AssetBundle名称合集
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerCenter.GetInstance">
+            <summary>
+            获取AssetBundle资源包管理器中心的单例
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerCenter.GetManager(System.String)">
+            <summary>
+            根据指定的Main AssetBundle名称获取AssetBundle资源包管理器
+            <para>p_mainABName：指定的Main AssetBundle名称</para>
+            <para>返回值：若对应的AssetBundle资源包管理器存在则返回，否则返回null</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerCenter.Register(ABManagerAPI.AssetBundleManager)">
+            <summary>
+            注册AssetBundle资源包管理器
+            <para>p_abManager：待注册的AssetBundle资源包管理器</para>
+            <para>返回值：注册成功则返回true，否则返回false</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerCenter.UnRegister(ABManagerAPI.AssetBundleManager)">
+            <summary>
+            注销AssetBundle资源包管理器
+            <para>p_abManager：待注销的AssetBundle资源包管理器</para>
+            <para>返回值：注销成功则返回true，否则返回false</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerCenter.UnRegister(System.String)">
+            <summary>
+            根据指定的Main AssetBundle名称注销AssetBundle资源包管理器
+            <para>p_mainABName：指定的Main AssetBundle名称</para>
+            <para>返回值：注销成功则返回true，否则返回false</para>
+            </summary>
+        </member>
+        <member name="T:ABManagerAPI.ABManagerComponent">
+            <summary>
+            AssetBundle资源包管理器组件
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.ABManagerComponent.mABManager">
+            <summary>
+            AssetBundle资源包管理器
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerComponent.Init">
+            <summary>
+            执行AssetBundle资源包管理器的初始化方法
+            </summary>
+        </member>
+        <member name="T:ABManagerAPI.ABManagerTool">
+            <summary>
+            AssetBundle资源包管理器工具
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerTool.GetABNames(System.String)">
+            <summary>
+            获取路径所指示目录下AssetBundle资源包的名称合集
+            <para>p_abDirPath：AssetBundle资源包所在目录路径，路径分隔符统一使用<c>'/'</c></para>
+            <para>返回值：AssetBundle资源包的名称合集</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerTool.GetABPaths(System.String)">
+            <summary>
+            获取路径所指示目录下AssetBundle资源包的路径合集
+            <para>p_abDirPath：AssetBundle资源包所在目录路径，路径分隔符统一使用<c>'/'</c></para>
+            <para>返回值：AssetBundle资源包的路径合集</para>
+            </summary>
+        </member>
+        <member name="T:ABManagerAPI.AssetBundleManager">
+            <summary>
+            AssetBundle资源包管理器
+            <para>声明：若未有效初始化AssetBundle资源包管理器则相关操作将无法进行，可通过mIsInit确认</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleManager.mIsInit">
+            <summary>
+            是否有效初始化AssetBundle资源包管理器
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleManager.mMainABName">
+            <summary>
+            Main AssetBundle资源包的名称
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleManager.mABCount">
+            <summary>
+            当前AssetBundle资源包管理器中AB包的数量
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleManager.mABNames">
+            <summary>
+            当前AssetBundle资源包管理器中AB包的名称合集(不包括Main AssetBundle资源包的名称)
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleManager.mMainABPath">
+            <summary>
+            Main AssetBundle资源包的磁盘路径
+            <para>声明1：一旦该值发生有效更改，当前AssetBundle资源包管理器将进行重置</para>
+            <para>声明2：管理器重置将自动按照不卸载关联资源的方式卸载所有由其管理的AssetBundle资源包</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.#ctor(System.String)">
+            <summary>
+            <para>p_mainABPath：Main AssetBundle的磁盘路径</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.AutoInit(System.String,System.String)">
+            <summary>
+            自动初始化，根据指示目录路径和Main AssetBundle资源包名称完成该AssetBundle资源包管理器的初始化
+            <para>p_abDirPath：AssetBundle资源包所在目录路径，路径分隔符统一使用<c>'/'</c></para>
+            <para>p_mainABName：Main AssetBundle资源包名称</para>
+            <para>返回值：初始化成功则返回true，否则返回false</para>
+            <para>声明：要求p_mainABName所指示的Main AssetBundle资源包在p_abDirPath所指示目录下</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.Register(System.String)">
+            <summary>
+            向AssetBundle资源包管理器注册AssetBundle资源包
+            <para>p_abPath：AssetBundle资源包的磁盘路径,路径分隔符统一使用'/'</para>
+            <para>返回值：注册成功则返回true，否则返回false</para>
+            <para>声明1：注册AssetBundle资源包后，后续可以直接通过AssetBundleManager进行调用</para>
+            <para>声明2：AssetBundle资源包管理器中不接受同名AssetBundle资源包，即便路径不同</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.UnRegister(System.String)">
+            <summary>
+            向AssetBundle资源包管理器注销AssetBundle资源包
+            <para>p_abName：待注销的AssetBundle资源包的名称</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.LoadAB(System.String)">
+            <summary>
+            同步加载指定名称的AssetBundle资源包
+            <para>p_abName：待加载的AssetBundle资源包的名称</para>
+            <para>返回值：加载成功则返回true，否则返回false</para>
+            <para>声明1：该加载会同时加载所指示的AssetBundle资源包及其直接和间接依赖的AssetBundle资源包</para>
+            <para>声明2：重复加载所指示的AssetBundle资源包将认定为加载失败</para>
+            <para>声明3：所指示AssetBundle资源包的依赖项须已在此AssetBundle资源包管理器中注册</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.UnloadAB(System.String,System.Boolean)">
+            <summary>
+            卸载指定名称的AssetBundle资源包
+            <para>p_abName：待卸载的AssetBundle资源包的名称</para>
+            <para>p_isUnloadAllLoadedObjects：是否卸载所指示的AssetBundle资源包所加载的资源</para>
+            <para>返回值：若资源卸载成功则返回true，否则返回false</para>
+            <para>声明：若所指示的AssetBundle资源包未注册或未加载则认定为卸载失败</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.LoadAsset(System.String,System.String)">
+            <summary>
+            同步加载指定名称的AssetBundle资源包中指定名称的资源
+            <para>p_abName：AssetBundle资源包的名称</para>
+            <para>p_assetName：待加载资源的名称</para>
+            <para>返回值：若加载资源成功则返回Object类型的资源，否则返回null</para>
+            <para>声明：若所指示的AssetBundle资源包未注册或未加载则认定为加载失败</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.LoadAsset(System.String,System.String,System.Type)">
+            <summary>
+            同步加载指定名称的AssetBundle资源包中指定名称和类型(如果有)的资源
+            <para>p_abName：AssetBundle资源包的名称</para>
+            <para>p_assetName：待加载资源的名称</para>
+            <para>p_assetType：待加载资源的类型</para>
+            <para>返回值：若加载资源成功则返回Object类型的资源，否则返回null</para>
+            <para>声明：若所指示的AssetBundle资源包未注册或未加载则认定为加载失败</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleManager.LoadAsset``1(System.String,System.String)">
+            <summary>
+            同步加载指定名称的AssetBundle资源包中指定名称和类型的资源
+            <para>T：待加载资源的类型</para>
+            <para>p_abName：AssetBundle资源包的名称</para>
+            <para>p_assetName：待加载资源的名称</para>
+            <para>返回值：若加载资源成功则返回Object类型的资源，否则返回null</para>
+            <para>声明：若所指示的AssetBundle资源包未注册或未加载则认定为加载失败</para>
+            </summary>
+        </member>
+        <member name="T:ABManagerAPI.AssetBundleUnit">
+            <summary>
+            AssetBundle资源包单元
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleUnit.mAssetBundle">
+            <summary>
+            AssetBundle资源包
+            </summary>
+        </member>
+        <member name="F:ABManagerAPI.AssetBundleUnit.mAssetBundleManifest">
+            <summary>
+            记录所指示的AssetBundle资源包的依赖项的AssetBundleManifest
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleUnit.mDependencies">
+            <summary>
+            所指示的AssetBundle资源包的依赖项
+            <para>声明：须先有效执行Load()方法该值才有效</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleUnit.mAssetBundleName">
+            <summary>
+            所指示的AssetBundle资源包的名称
+            <para>声明：须有效设置AssetBundle资源包的磁盘路径该值才有效</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleUnit.mAssetBundlePath">
+            <summary>
+            AssetBundle资源包的磁盘路径
+            <para>声明：路径分隔符统一为'/'，其它分隔符不受支持</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.AssetBundleUnit.mIsLoaded">
+            <summary>
+            所指示的AssetBundle资源包是否已加载
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleUnit.SharedTo(ABManagerAPI.AssetBundleUnit@)">
+            <summary>
+            将当前AssetBundle资源包单元分享给指定的AssetBundle资源包单元
+            <para>p_assetBundleUnit：指定的AssetBundle资源包单元</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleUnit.Reset">
+            <summary>
+            重置AssetBundle资源包单元
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleUnit.Load">
+            <summary>
+            加载当前磁盘路径所指示的AssetBundle资源包
+            <para>声明：该方式不会加载所指示的AssetBundle资源包所依赖的其它AssetBundle资源包</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.AssetBundleUnit.Unload(System.Boolean)">
+            <summary>
+            卸载所指示的AssetBundle资源包
+            <para>p_isUnloadAllLoadedObjects：是否卸载所指示的AssetBundle资源包所加载的资源</para>
+            </summary>
+        </member>
+    </members>
+</doc>
