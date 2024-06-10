@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ABManager</name>
+    </assembly>
+    <members>
+        <member name="P:ABManagerAPI.ABManagerComponent.mABManagerPool">
+            <summary>
+            AssetBundle资源包管理器池
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.ABManagerComponent.mInitOnAwake">
+            <summary>
+            是否在Awake方法中自动初始化
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.ABManagerComponent.mABDirectoryPath">
+            <summary>
+            AssetBundle资源包目录路径
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.ABManagerComponent.mMainABName">
+            <summary>
+            Main AssetBundle资源包的名称
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.ABManagerComponent.mManager">
+            <summary>
+            AssetBundle资源包管理器
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerComponent.Init">
+            <summary>
+            初始化AssetBundle资源包管理器
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerTool.GetABNames(System.String)">
+            <summary>
+            获取路径所指示目录下AssetBundle资源包的名称合集
+            </summary>
+            <param name="dirPath">AssetBundle资源包所在目录路径</param>
+            <returns>AssetBundle资源包的名称合集，若不存在则返回长度为0的字符串数组</returns>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerTool.GetABPaths(System.String)">
+            <summary>
+            获取路径所指示目录下AssetBundle资源包的路径合集
+            </summary>
+            <param name="dirPath">AssetBundle资源包所在目录路径</param>
+            <returns>AssetBundle资源包的路径合集，若不存在则返回长度为0的字符串数组</returns>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerTool.GetABName(System.String)">
+            <summary>
+            获取路径所指示AssetBundle资源包的名称
+            </summary>
+            <param name="path">AssetBundle资源包的路径</param>
+            <returns>AssetBundle资源包的名称</returns>
+        </member>
+        <member name="M:ABManagerAPI.ABManagerTool.GetABPath(System.String,System.String)">
+            <summary>
+            获取AssetBundle资源包的路径
+            </summary>
+            <param name="dirPath">AssetBundle资源包所在目录的路径</param>
+            <param name="name">AssetBundle资源包的名称</param>
+            <returns>AssetBundle资源包的路径</returns>
+        </member>
+        <member name="M:ABManagerAPI.ABUnit.Contains(System.String)">
+            <summary>
+            是否包含指定名称的资源
+            </summary>
+            <param name="assetName">资源名称</param>
+            <returns>包含则返回true，否则返回false</returns>
+        </member>
+        <member name="M:ABManagerAPI.ABUnit.SharedTo(ABManagerAPI.ABUnit@)">
+            <summary>
+            将当前AssetBundle资源包单元分享给指定的AssetBundle资源包单元
+            </summary>
+            <param name="assetBundleUnit">指定的AssetBundle资源包单元</param>
+        </member>
+        <member name="M:ABManagerAPI.ABUnit.Reset">
+            <summary>
+            重置
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABUnit.Load">
+            <summary>
+            加载当前AssetBundle资源包
+            <para>声明：该方式不会加载AssetBundle资源包所依赖的其它AssetBundle资源包</para>
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.ABUnit.Unload(System.Boolean)">
+            <summary>
+            卸载所指示的AssetBundle资源包
+            </summary>
+            <param name="isUnloadAllLoadedObjects">是否卸载所指示的AssetBundle资源包所加载的资源</param>
+        </member>
+        <member name="M:ABManagerAPI.ABUnit.LoadAsync(System.Action{System.String,ABManagerAPI.IABAsyncResult})">
+            <summary>
+            异步加载当前磁盘路径所指示的AssetBundle资源包
+            </summary>
+            <param name="listener">异步加载结果监听回调</param>
+        </member>
+        <member name="P:ABManagerAPI.IABAsyncResult.mIsDone">
+            <summary>
+            AssetBundle资源包是否已加载完成
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABAsyncResult.mProgress">
+            <summary>
+            AssetBundle资源包加载进度
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABAsyncResult.mPriority">
+            <summary>
+            加载优先级
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABAsyncResult.mAllowSceneActivation">
+            <summary>
+            是否允许在场景准备就绪后立即激活场景
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABManager.mIsInit">
+            <summary>
+            是否有效初始化AssetBundle资源包管理器
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABManager.mMainABName">
+            <summary>
+            Main AssetBundle资源包的名称
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABManager.mABCount">
+            <summary>
+            当前AssetBundle资源包管理器中AB包的数量
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABManager.mABNames">
+            <summary>
+            当前AssetBundle资源包管理器中AB包的名称合集(不包括Main AssetBundle资源包的名称)
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IABManager.mMainABPath">
+            <summary>
+            Main AssetBundle资源包的磁盘路径
+            </summary>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.Init(System.String,System.String)">
+            <summary>
+            初始化，根据指示目录路径和Main AssetBundle资源包名称完成该AssetBundle资源包管理器的初始化
+            <para>声明：要求mainABName所指示的Main AssetBundle资源包在dirPath所指示目录下</para>
+            </summary>
+            <param name="dirPath">AssetBundle资源包所在目录路径</param>
+            <param name="mainABName">Main AssetBundle资源包名称</param>
+            <returns>初始化成功则返回true，否则返回false</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.Contains(System.String,System.String)">
+            <summary>
+            指定的AssetBundle资源包中是否包含指定名称的资源
+            </summary>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <param name="assetName">资源的名称</param>
+            <returns>包含则返回true，否则返回false</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.GetAllAssetNames(System.String)">
+            <summary>
+            获取AssetBundle资源包中所有资源的名称
+            </summary>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <returns>资源名称合集</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.LoadABAsync(System.String,System.Action{System.String,ABManagerAPI.IABAsyncResult})">
+            <summary>
+            异步加载AssetBundle资源包
+            </summary>
+            <param name="abName">待加载的AssetBundle资源包的名称</param>
+            <param name="listener">异步加载结果监听回调</param>
+            <returns>协程对象</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.LoadAB(System.String)">
+            <summary>
+            同步加载AssetBundle资源包
+            <para>声明1：该加载会同时加载所指示的AssetBundle资源包及其直接和间接依赖的AssetBundle资源包</para>
+            </summary>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <returns>是否加载成功</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.UnloadAB(System.String,System.Boolean)">
+            <summary>
+            卸载AssetBundle资源包
+            </summary>
+            <param name="abName">待卸载的AssetBundle资源包的名称</param>
+            <param name="isUnloadAllLoadedObjects">是否卸载所指示的AssetBundle资源包已加载的资源</param>
+            <returns>若资源卸载成功则返回true，否则返回false</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.UnloadAllABs(System.Boolean)">
+            <summary>
+            卸载所有AssetBundle资源包
+            </summary>
+            <param name="isUnloadAllLoadedObjects">是否卸载AssetBundle资源包已加载的资源</param>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.LoadAssetAsync(System.String,System.String,System.Type,System.Action{System.String,System.String,ABManagerAPI.IAssetAsyncResult})">
+            <summary>
+            异步加载资源
+            </summary>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <param name="assetName">待加载资源的名称</param>
+            <param name="assetType">待加载资源的类型</param>
+            <param name="listener">异步加载结果监听回调</param>
+            <returns>协程对象</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.LoadAssetAsync``1(System.String,System.String,System.Action{System.String,System.String,ABManagerAPI.IAssetAsyncResult{``0}})">
+            <summary>
+            异步加载资源
+            </summary>
+            <typeparam name="T">待加载资源的类型</typeparam>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <param name="assetName">待加载资源的类型</param>
+            <param name="listener">异步加载结果监听回调</param>
+            <returns>协程对象</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.LoadAsset(System.String,System.String,System.Type)">
+            <summary>
+            同步加载资源
+            </summary>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <param name="assetName">待加载资源的名称</param>
+            <param name="assetType">待加载资源的类型</param>
+            <returns>若加载资源成功则返回Object类型的资源，否则返回null</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.LoadAsset``1(System.String,System.String)">
+            <summary>
+            同步加载资源
+            </summary>
+            <typeparam name="T">待加载资源的类型</typeparam>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <param name="assetName">待加载资源的名称</param>
+            <returns>若加载资源成功则返回Object类型的资源，否则返回null</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManager.IsLoaded(System.String)">
+            <summary>
+            判断指定名称的AssetBundle资源包是否已加载
+            </summary>
+            <param name="abName">AssetBundle资源包的名称</param>
+            <returns>已加载则返回true，否则返回false</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManagerPool.Get">
+            <summary>
+            获取AssetBundle资源包管理器
+            </summary>
+            <returns>AssetBundle资源包管理器</returns>
+        </member>
+        <member name="M:ABManagerAPI.IABManagerPool.Return(ABManagerAPI.IABManager)">
+            <summary>
+            归还AssetBundle资源包管理器
+            </summary>
+            <param name="manager">>AssetBundle资源包管理器</param>
+        </member>
+        <member name="M:ABManagerAPI.IABManagerPool.Clear">
+            <summary>
+            清空池
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetResult.mIsDone">
+            <summary>
+            资源是否已加载完成
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetResult.mProgress">
+            <summary>
+            资源加载进度
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetResult.mPriority">
+            <summary>
+            加载优先级
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetResult.mAllowSceneActivation">
+            <summary>
+            是否允许在场景准备就绪后立即激活场景
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetAsyncResult.mAsset">
+            <summary>
+            正在加载的资源对象
+            <para>加载完成前访问资源将会停止加载</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetAsyncResult.mAllAssets">
+            <summary>
+            正在加载的资源对象及子资源
+            <para>加载完成前访问资源将会停止加载</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetAsyncResult`1.mAsset">
+            <summary>
+            正在加载的资源对象
+            <para>加载完成前访问资源将会停止加载</para>
+            </summary>
+        </member>
+        <member name="P:ABManagerAPI.IAssetAsyncResult`1.mAllAssets">
+            <summary>
+            正在加载的资源对象及子资源
+            <para>加载完成前访问资源将会停止加载</para>
+            </summary>
+        </member>
+    </members>
+</doc>
