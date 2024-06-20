@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AudioManager</name>
+    </assembly>
+    <members>
+        <member name="P:AudioManagerAPI.AudioInfo.audioClip">
+            <summary>
+            音频片段
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.name">
+            <summary>
+            音频名称
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.mute">
+            <summary>
+            是否静音
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.playOnAwake">
+            <summary>
+            是否在Awake方法调用时播放音频
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.loop">
+            <summary>
+            是否循环播放音频
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioInfo.volume">
+            <summary>
+            音量,范围[0,1]
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.Reset">
+            <summary>
+            重置
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.CompareTo(AudioManagerAPI.AudioInfo)">
+            <summary>
+            与指定音频信息进行比较
+            </summary>
+            <param name="audioInfo">音频信息</param>
+            <returns>若音频信息相同则返回true，否则返回false</returns>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.Config(UnityEngine.AudioSource)">
+            <summary>
+            将音频信息配置给指定的AudioSource组件
+            </summary>
+            <param name="audioSource">AudioSource组件</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioInfo.IsValid">
+            <summary>
+            该音频信息是否有效
+            </summary>
+            <returns>有效则返回true，否则返回false</returns>
+        </member>
+        <member name="P:AudioManagerAPI.AudioManagerComponent.audioInfoPool">
+            <summary>
+            音频信息池
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.AudioManagerComponent.audioManager">
+            <summary>
+            音频管理器
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.Play(System.String)">
+            <summary>
+            播放音频
+            </summary>
+            <param name="name">音频名称</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.Pause(System.String)">
+            <summary>
+            暂停播放音频
+            </summary>
+            <param name="name">音频名称</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.Stop(System.String,System.Boolean)">
+            <summary>
+            停止播放音频
+            </summary>
+            <param name="name">音频名称</param>
+            <param name="isCache">是否缓存音频状态</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.RegisterEvent(System.String,System.Action{System.Single,System.Single})">
+            <summary>
+            注册音频事件
+            </summary>
+            <param name="name">音频名称</param>
+            <param name="onPlaying">音频播放过程事件:参数为音频播放的当前位置(单位:s)</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.UnregisterEvent(System.String,System.Action{System.Single,System.Single})">
+            <summary>
+            注销音频事件
+            </summary>
+            <param name="name">音频名称</param>
+            <param name="onPlaying">音频播放过程事件:参数为音频播放的当前位置(单位:s)</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.RegisterEvent(System.String,System.Action)">
+            <summary>
+            注册音频事件
+            </summary>
+            <param name="name">音频名称</param>
+            <param name="onComplete">音频播放完成事件</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.UnregisterEvent(System.String,System.Action)">
+            <summary>
+            注销音频事件
+            </summary>
+            <param name="name">音频名称</param>
+            <param name="onComplete">音频播放完成事件</param>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.GetAudioSource(System.String)">
+            <summary>
+            通过音频名称获取与之配对的AudioSource组件
+            <para>声明：只有正在播放或停止播放时缓存了状态的音频才存在与之配对的AudioSource组件</para>
+            </summary>
+            <param name="name">音频名称</param>
+            <returns>若存在则返回AudioSource组件，否则返回null</returns>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.IsPlaying(System.String)">
+            <summary>
+            指定名称的音频是否正在播放
+            </summary>
+            <param name="name">音频名称</param>
+            <returns>若音频正在播放则返回true，音频不存在或未播放则返回false</returns>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.IsCache(System.String)">
+            <summary>
+            指定名称的音频是否缓存了状态
+            <para>声明：缓存状态的音频都未处于播放状态</para>
+            </summary>
+            <param name="name">音频名称</param>
+            <returns>若音频缓存了状态则返回true，音频不存在或未缓存则返回false</returns>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.GetPlayingAudioNames">
+            <summary>
+            获取正在播放的音频名称合集
+            </summary>
+            <returns>正在播放的音频名称合集</returns>
+        </member>
+        <member name="M:AudioManagerAPI.AudioManagerComponent.GetCacheAudioNames">
+            <summary>
+            获取缓存了状态的音频名称合集
+            </summary>
+            <returns>缓存了状态的音频名称合集</returns>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioInfoPool.Get">
+            <summary>
+            获取音频信息实例
+            </summary>
+            <returns>音频信息实例</returns>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioInfoPool.Return(AudioManagerAPI.AudioInfo)">
+            <summary>
+            释放音频信息实例
+            </summary>
+            <param name="audioInfo">音频信息实例</param>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioInfoPool.Clear">
+            <summary>
+            清空池
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.IAudioManager.count">
+            <summary>
+            音频信息数量
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.IAudioManager.names">
+            <summary>
+            音频信息名称合集
+            </summary>
+        </member>
+        <member name="P:AudioManagerAPI.IAudioManager.totalVolume">
+            <summary>
+            总音量
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioManager.Get(System.String)">
+            <summary>
+            获取音频信息
+            </summary>
+            <param name="name">音频名称</param>
+            <returns>存在则返回音频信息，否则返回null</returns>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioManager.TryGet(System.String,AudioManagerAPI.AudioInfo@)">
+            <summary>
+            尝试获取音频信息
+            </summary>
+            <param name="name">音频名称</param>
+            <param name="info">音频信息</param>
+            <returns>获取成功则返回true，否则返回false</returns>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioManager.Add(AudioManagerAPI.AudioInfo)">
+            <summary>
+            添加音频信息
+            </summary>
+            <param name="audioInfo">音频信息</param>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioManager.Remove(System.String)">
+            <summary>
+            删除音频信息
+            </summary>
+            <param name="name">音频名称</param>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioManager.Contains(System.String)">
+            <summary>
+            是否包含指定名称的音频信息
+            </summary>
+            <param name="name">音频名称</param>
+            <returns>包含则返回true，否则返回false</returns>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioManager.Clear">
+            <summary>
+            清空音频信息
+            </summary>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioSourcePool.Get">
+            <summary>
+            获取AudioSource组件
+            </summary>
+            <returns>AudioSource</returns>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioSourcePool.Return(UnityEngine.AudioSource)">
+            <summary>
+            归还AudioSource组件
+            </summary>
+            <param name="audioSource">AudioSource组件</param>
+        </member>
+        <member name="M:AudioManagerAPI.IAudioSourcePool.Clear">
+            <summary>
+            清空AudioSource组件池
+            </summary>
+        </member>
+    </members>
+</doc>
