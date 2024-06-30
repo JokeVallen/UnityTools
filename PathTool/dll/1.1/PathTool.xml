@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PathTool</name>
+    </assembly>
+    <members>
+        <member name="T:PathToolAPI.PathTool">
+            <summary>
+            Windows系统路径有效性检测工具类
+            </summary>
+        </member>
+        <member name="M:PathToolAPI.PathTool.IsFolderPath(System.String)">
+            <summary>
+            传递的字符串所指示路径是否为文件夹路径
+            <para>p_path：指示为路径的字符串</para>
+            </summary>
+        </member>
+        <member name="M:PathToolAPI.PathTool.IsFilePath(System.String)">
+            <summary>
+            传递的字符串所指示路径是否为文件路径
+            <para>p_path：指示为路径的字符串</para>
+            </summary>
+        </member>
+    </members>
+</doc>
