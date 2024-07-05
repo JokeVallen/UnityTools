@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProgressTool</name>
+    </assembly>
+    <members>
+        <member name="M:ProgressToolAPI.MathUtility.RoundToFloat(System.Single,System.Int32)">
+            <summary>
+            获取精确到指定小数点位数的浮点数（四舍五入）
+            </summary>
+            <param name="x">待转换的值</param>
+            <param name="digits">小数点位数</param>
+            <returns>浮点数值</returns>
+        </member>
+        <member name="M:ProgressToolAPI.MathUtility.RoundToFloat(System.Double,System.Int32)">
+            <summary>
+            获取精确到指定小数点位数的浮点数（四舍五入）
+            </summary>
+            <param name="x">待转换的值</param>
+            <param name="digits">小数点位数</param>
+            <returns>浮点数值</returns>
+        </member>
+        <member name="M:ProgressToolAPI.MathUtility.Clamp(System.Single,System.Single,System.Single)">
+            <summary>
+            数值范围限定
+            </summary>
+            <param name="x">待限定范围的数值</param>
+            <param name="min">最小值</param>
+            <param name="max">最大值</param>
+            <returns>限定值</returns>
+        </member>
+        <member name="M:ProgressToolAPI.MathUtility.ExponentialSmoothing(System.Collections.Generic.List{System.Single},System.Single)">
+            <summary>
+            单指数平滑预测
+            </summary>
+            <param name="values">历史数据合集</param>
+            <param name="weight">权值,范围[0,1],数值越大表示对最新数据变化越敏感</param>
+            <returns>预测数据</returns>
+        </member>
+        <member name="P:ProgressToolAPI.IProgressHandler.mIsUsed">
+            <summary>
+            是否正在应用
+            </summary>
+        </member>
+        <member name="E:ProgressToolAPI.IProgressHandler.onProgress">
+            <summary>
+            总进度回调事件
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:ProgressToolAPI.IProgressHandler.GetRecorder(System.String)" -->
+        <member name="M:ProgressToolAPI.IProgressHandler.ReturnRecorder(ProgressToolAPI.IProgressRecorder)">
+            <summary>
+            归还进度记录器
+            </summary>
+            <param name="recorder">进度记录器</param>
+        </member>
+        <member name="M:ProgressToolAPI.IProgressHandler.Config(System.Single[])">
+            <summary>
+            配置进度处理器
+            </summary>
+            <param name="weights">进度记录器权值合集</param>
+        </member>
+        <member name="E:ProgressToolAPI.IProgressRecorder.onProgress">
+            <summary>
+            进度回调事件
+            </summary>
+        </member>
+        <member name="M:ProgressToolAPI.IProgressRecorder.Begin">
+            <summary>
+            记录开始
+            </summary>
+        </member>
+        <member name="M:ProgressToolAPI.IProgressRecorder.End">
+            <summary>
+            记录结束
+            </summary>
+        </member>
+        <member name="M:ProgressToolAPI.IProgressRecorder.BeginIncrement">
+            <summary>
+            进度增加开始
+            </summary>
+        </member>
+        <member name="M:ProgressToolAPI.IProgressRecorder.EndIncrement">
+            <summary>
+            进度增加结束
+            </summary>
+        </member>
+        <member name="M:ProgressToolAPI.IProgressRecorder.BeginDecrement">
+            <summary>
+            进度减少开始
+            </summary>
+        </member>
+        <member name="M:ProgressToolAPI.IProgressRecorder.EndDecrement">
+            <summary>
+            进度减少结束
+            </summary>
+        </member>
+        <member name="P:ProgressToolAPI.ProgressManager.mInstance">
+            <summary>
+            单例
+            </summary>
+        </member>
+        <member name="M:ProgressToolAPI.ProgressManager.GetHandler">
+            <summary>
+            获取进度处理器
+            </summary>
+            <returns>进度处理器</returns>
+        </member>
+        <member name="M:ProgressToolAPI.ProgressManager.ReturnHandler(ProgressToolAPI.IProgressHandler)">
+            <summary>
+            归还进度处理器
+            </summary>
+            <param name="handler">进度处理器</param>
+        </member>
+    </members>
+</doc>
