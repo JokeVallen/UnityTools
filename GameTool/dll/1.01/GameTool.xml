@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GameTool</name>
+    </assembly>
+    <members>
+        <member name="T:GameTool.SerializableIcon">
+            <summary>
+            持久化存储图标资源信息的数据结构
+            </summary>
+        </member>
+        <member name="P:GameTool.SerializableIcon.Name">
+            <summary>
+            图标名称
+            </summary>
+        </member>
+        <member name="P:GameTool.SerializableIcon.Path">
+            <summary>
+            位于 Assets/Editor Default Resources 目录下的图标的相对路径
+            </summary>
+        </member>
+        <member name="P:GameTool.SerializableIcon.IsBuiltin">
+            <summary>
+            是否是 Unity 内置 Editor 图标
+            </summary>
+        </member>
+        <member name="T:NameModifierUtility.GUIDUtility">
+            <summary>
+            工具类：GUID
+            </summary>
+        </member>
+        <member name="M:NameModifierUtility.GUIDUtility.GetOrCreateProjectQualifiedGUID">
+            <summary>
+            获取或创建项目唯一GUID
+            </summary>
+        </member>
+        <member name="M:NameModifierUtility.FindIndex``1(System.Collections.Generic.IReadOnlyList{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            从只读列表中查找值的索引
+            </summary>
+            <typeparam name="T">只读列表中值的类型</typeparam>
+            <param name="source">只读列表</param>
+            <param name="match">匹配表达式</param>
+            <returns>若找到则返回对应的索引，否则返回-1</returns>
+        </member>
+        <member name="M:NameModifierUtility.GetAssetPath(System.String)">
+            <summary>
+            获取基于Assets目录的相对路径
+            </summary>
+        </member>
+        <member name="T:IDataUnit">
+            <summary>
+            数据单元接口
+            </summary>
+        </member>
+        <member name="P:IDataUnit.CurrentIndex">
+            <summary>
+            当前索引
+            </summary>
+        </member>
+        <member name="P:IDataUnit.Count">
+            <summary>
+            数量
+            </summary>
+        </member>
+        <member name="M:IDataUnit.Record(System.String)">
+            <summary>
+            记录名称
+            </summary>
+            <param name="name">名称</param>
+            <returns>记录成功则返回当前名称索引，否则返回-1</returns>
+        </member>
+        <member name="M:IDataUnit.GetCurrent">
+            <summary>
+            获取当前名称
+            </summary>
+            <returns>不存在则返回null</returns>
+        </member>
+        <member name="M:IDataUnit.EnsureCurrentIndex">
+            <summary>
+            将当前索引重定向为最后一位
+            </summary>
+        </member>
+        <member name="M:IDataUnit.MovePrevious">
+            <summary>
+            将当前索引减1
+            </summary>
+        </member>
+        <member name="M:IDataUnit.MoveNext">
+            <summary>
+            将当前索引加1
+            </summary>
+        </member>
+        <member name="M:IDataUnit.MoveTo(System.Int32)">
+            <summary>
+            将当前索引移动至目标索引
+            </summary>
+            <param name="targetIndex">目标索引</param>
+        </member>
+        <member name="M:IDataUnit.GetNameByIndex(System.Int32)">
+            <summary>
+            获取指定索引所指示的名称
+            </summary>
+            <param name="index">索引</param>
+            <returns>不存在则返回null</returns>
+        </member>
+        <member name="T:NameModifier">
+            <summary>
+            名称修改器窗口
+            </summary>
+        </member>
+        <member name="T:NameModifierConfig">
+            <summary>
+            名称修改器配置
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.HandlerPath">
+            <summary>
+            处理器目录路径
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.NameDatasCapacity">
+            <summary>
+            名称数据容量
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.AutoReset">
+            <summary>
+            是否自动重置
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.AutoClearInvalidCache">
+            <summary>
+            是否自动清除无效缓存
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.AutoClearCache">
+            <summary>
+            是否自动清除缓存
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.LogEnabled">
+            <summary>
+            是否启用日志输出
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.IsPersistent">
+            <summary>
+            是否为持久化实例
+            </summary>
+        </member>
+        <member name="P:NameModifierConfig.AssetPathQualifiedKey">
+            <summary>
+            asset文件路径的唯一标识符
+            </summary>
+        </member>
+        <member name="M:NameModifierConfig.ExportToJSON(System.String)">
+            <summary>
+            导出配置到JSON文件
+            </summary>
+        </member>
+        <member name="M:NameModifierConfig.LoadFromJSON(System.String)">
+            <summary>
+            从JSON文件加载配置
+            </summary>
+        </member>
+        <member name="T:NameModifierConfigEditor">
+            <summary>
+            名称修改器配置编辑器
+            </summary>
+        </member>
+        <member name="T:NameModifierHandler">
+            <summary>
+            名称修改器的处理器基类
+            </summary>
+        </member>
+        <member name="P:NameModifierHandler.OptionName">
+            <summary>
+            选项名
+            </summary>
+        </member>
+        <member name="P:NameModifierHandler.Tip">
+            <summary>
+            提示
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.DrawGUI">
+            <summary>
+            GUI绘制回调
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.Modify(UnityEngine.Object,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            修改对象的名称
+            </summary>
+            <param name="obj">对象</param>
+            <param name="index">对象索引</param>
+            <param name="count">对象总数</param>
+            <param name="isAsset">对象是否为资产</param>
+        </member>
+        <member name="M:NameModifierHandler.Reset">
+            <summary>
+            重置回调
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.OnSelected">
+            <summary>
+            该处理器被选中时
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.Undo(UnityEngine.Object,System.Boolean)">
+            <summary>
+            撤销对象的名称修改
+            </summary>
+            <param name="obj">对象</param>
+            <param name="isAsset">对象是否为资产</param>
+        </member>
+        <member name="M:NameModifierHandler.Restore(UnityEngine.Object,System.Boolean)">
+            <summary>
+            恢复对象的名称修改
+            </summary>
+            <param name="obj">对象</param>
+            <param name="isAsset">对象是否为资产</param>
+        </member>
+        <member name="M:NameModifierHandler.Initialize(UnityEngine.Events.UnityAction)">
+            <summary>
+            初始化
+            </summary>
+            <param name="repaintDriver">重绘驱动器</param>
+        </member>
+        <member name="M:NameModifierHandler.ClearInvalidCache">
+            <summary>
+            清理无效的缓存
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.ClearCache">
+            <summary>
+            清理缓存
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.OnInitialize">
+            <summary>
+            初始化回调
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.Repaint">
+            <summary>
+            重绘
+            </summary>
+        </member>
+        <member name="M:NameModifierHandler.GetOrAddDataUnit(System.Int32)">
+            <summary>
+            获取或添加指定实例ID所指示的数据单元
+            </summary>
+            <param name="instanceID">实例ID</param>
+            <returns>数据单元</returns>
+        </member>
+    </members>
+</doc>
