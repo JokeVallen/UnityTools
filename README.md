@@ -1,2 +1,2 @@
 # 工具列表
-- [GameTool](/GameTool/Readme.md)
+- [GameTool](/GameTool/)
