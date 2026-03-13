@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EditorCoroutines.Lit</name>
+    </assembly>
+    <members>
+        <member name="T:EditorCoroutines.Lit.EditorCoroutine">
+            <summary>
+            编辑器协程
+            </summary>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutine.IsRunning">
+            <summary>
+            是否正在运行
+            </summary>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutine.IsCompleted">
+            <summary>
+            是否已完成
+            </summary>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutine.Exception">
+            <summary>
+            异常
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine.StartCoroutine(System.Collections.IEnumerator,System.Action,System.Action{System.Exception})">
+            <summary>
+            启动协程
+            </summary>
+            <param name="routine">迭代器对象</param>
+            <param name="onComplete">完成回调</param>
+            <param name="onException">异常回调</param>
+            <returns>编辑器协程</returns>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine.Start">
+            <summary>
+            启动协程
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine.Stop">
+            <summary>
+            停止协程
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine.Dispose">
+            <summary>
+            释放协程
+            </summary>
+        </member>
+        <member name="T:EditorCoroutines.Lit.EditorCoroutineCancelToken">
+            <summary>
+            编辑器协程取消Token
+            </summary>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutineCancelToken.IsCancelled">
+            <summary>
+            是否已取消
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineCancelToken.Cancel">
+            <summary>
+            取消
+            </summary>
+        </member>
+        <member name="T:EditorCoroutines.Lit.EditorCoroutineExtensions">
+            <summary>
+            编辑器协程扩展方法集合
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineExtensions.WaitSeconds(System.Single,EditorCoroutines.Lit.EditorCoroutineCancelToken)">
+            <summary>
+            在编辑器中等待指定秒数，可选取消
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineExtensions.WaitMilliseconds(System.Single,EditorCoroutines.Lit.EditorCoroutineCancelToken)">
+            <summary>
+            在编辑器中等待指定毫秒数
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineExtensions.WaitFrame(EditorCoroutines.Lit.EditorCoroutineCancelToken)">
+            <summary>
+            在编辑器中等待下一帧
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineExtensions.WaitUntil(System.Func{System.Boolean},EditorCoroutines.Lit.EditorCoroutineCancelToken)">
+            <summary>
+            等待条件为真
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineExtensions.WaitUntil(System.Func{System.Boolean},System.Single,EditorCoroutines.Lit.EditorCoroutineCancelToken)">
+            <summary>
+            等待条件为真，带超时
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineExtensions.Delay(System.Action,System.Single,EditorCoroutines.Lit.EditorCoroutineCancelToken)">
+            <summary>
+            延迟执行一个操作
+            </summary>
+        </member>
+        <member name="T:EditorCoroutines.Lit.EditorCoroutineHelper">
+            <summary>
+            编辑器协程辅助工具类
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutineHelper.WrapRoutine(System.Collections.IEnumerator,System.Action{System.Exception})">
+            <summary>
+            包装协程，支持嵌套协程自动等待，并捕获异常
+            </summary>
+        </member>
+        <member name="T:EditorCoroutines.Lit.EditorCoroutine`1">
+            <summary>
+            编辑器协程
+            </summary>
+            <typeparam name="T">执行结果的类型</typeparam>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutine`1.IsRunning">
+            <summary>
+            是否正在运行
+            </summary>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutine`1.IsCompleted">
+            <summary>
+            是否已完成
+            </summary>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutine`1.Result">
+            <summary>
+            执行结果
+            </summary>
+        </member>
+        <member name="P:EditorCoroutines.Lit.EditorCoroutine`1.Exception">
+            <summary>
+            异常
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine`1.StartCoroutine(System.Collections.IEnumerator,System.Action{`0},System.Action{System.Exception})">
+            <summary>
+            启动协程
+            </summary>
+            <param name="routine">迭代器对象</param>
+            <param name="onComplete">完成回调</param>
+            <param name="onException">异常回调</param>
+            <returns>编辑器协程</returns>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine`1.Start">
+            <summary>
+            启动协程
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine`1.Stop">
+            <summary>
+            停止协程
+            </summary>
+        </member>
+        <member name="M:EditorCoroutines.Lit.EditorCoroutine`1.Dispose">
+            <summary>
+            释放协程
+            </summary>
+        </member>
+    </members>
+</doc>
