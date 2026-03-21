@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>UGUIExtendLayout</name>
+        <name>UGUILayoutExtension</name>
     </assembly>
     <members>
         <member name="T:UGUI.Layout.Extension.AutoLayoutGroup">
