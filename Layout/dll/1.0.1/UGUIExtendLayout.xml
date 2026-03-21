@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UGUIExtendLayout</name>
+    </assembly>
+    <members>
+        <member name="T:UGUI.Layout.Extension.AutoLayoutGroup">
+            <summary>
+            自动布局组件
+            </summary>
+            <remarks>
+            <para>基于 <see cref="T:UGUI.Layout.Extension.BaseAutoLayoutGroup"/> 和 <see cref="T:UnityEngine.AnimationCurve"/> 扩展的自动布局组件，可通过动画曲线映射布局规律。</para>
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PreWrapModeX">
+            <summary>X 轴曲线前端的行为模式</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeX">
+            <summary>X 轴曲线末端的行为模式</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.LengthX">
+            <summary>X 轴布局曲线的关键帧数量</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.KeysX">
+            <summary>X 轴布局曲线的关键帧集合</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PreWrapModeY">
+            <summary>Y 轴曲线前端的行为模式</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeY">
+            <summary>Y 轴曲线末端的行为模式</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.LengthY">
+            <summary>Y 轴布局曲线的关键帧数量</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.KeysY">
+            <summary>Y 轴布局曲线的关键帧集合</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.MappingMode">
+            <summary>关键帧映射模式</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PositionMode">
+            <summary>
+            布局元素位置计算模式
+            </summary>
+            <remarks>
+            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByElementSize"/>（默认）：<c>pos = sizeDelta * factor * scale</c>，
+            偏移量与布局元素自身尺寸成比例。</para>
+            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByPixel"/>：<c>pos = factor * scale</c>，
+            曲线直接描述像素偏移，与布局元素尺寸无关，不同尺寸的布局元素在同一关键帧下位置一致。</para>
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroup">
+            <summary>
+            是否启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSize"/> 约束
+            </summary>
+            <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 模式下有效。</remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSize">
+            <summary>
+            Interpolated 模式下每个曲线周期包含的布局元素数量
+            </summary>
+            <remarks>
+            仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 且 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroup"/> 为
+            <c>true</c> 时生效。布局元素总数超过该值时，超出部分由
+            <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeX"/> / <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeY"/> 决定行为。
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.Cycles">
+            <summary>
+            Interpolated 模式下当前布局元素序列覆盖的曲线周期数（只读）
+            </summary>
+            <remarks>
+            不依赖 <see cref="P:UGUI.Layout.Extension.BaseAutoLayoutGroup.RectChildren"/>，可在布局阶段外安全调用。
+            未启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroup"/> 时固定返回 <c>1</c>。
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.DistributeMode">
+            <summary>
+            Proportional 模式的布局元素分配策略
+            </summary>
+            <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Proportional"/> 模式下有效。</remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ScaleX">
+            <summary>X 轴偏移缩放系数</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ScaleY">
+            <summary>Y 轴偏移缩放系数</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.SpacingHorizontal">
+            <summary>布局元素之间水平方向的固定间距（像素），与曲线偏移叠加</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.SpacingVertical">
+            <summary>布局元素之间垂直方向的固定间距（像素），与曲线偏移叠加</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ReverseArrangement">
+            <summary>
+            是否反序排列布局元素
+            </summary>
+            <remarks>
+            启用后布局元素按倒序与曲线对应：最后一个元素对应第一个关键帧/采样点，
+            可在不修改曲线的情况下快速翻转排列方向。
+            </remarks>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.GetKeyX(System.Int32)">
+            <summary>获取 X 轴曲线指定索引的关键帧</summary>
+            <exception cref="T:System.IndexOutOfRangeException">索引越界</exception>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.AddKeyX(System.Single,System.Single)">
+            <summary>向 X 轴曲线添加关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.AddKeyX(UnityEngine.Keyframe)">
+            <summary>向 X 轴曲线添加关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.EvaluateX(System.Single)">
+            <summary>获取 X 轴曲线在指定时间的值</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.MoveKeyX(System.Int32,UnityEngine.Keyframe)">
+            <summary>移动 X 轴曲线的指定关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.RemoveKeyX(System.Int32)">
+            <summary>移除 X 轴曲线的指定关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.SmoothTangentsX(System.Int32,System.Single)">
+            <summary>平滑 X 轴曲线的指定关键帧切线</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.ClearKeysX">
+            <summary>清空 X 轴曲线所有关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.GetKeyY(System.Int32)">
+            <summary>获取 Y 轴曲线指定索引的关键帧</summary>
+            <exception cref="T:System.IndexOutOfRangeException">索引越界</exception>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.AddKeyY(System.Single,System.Single)">
+            <summary>向 Y 轴曲线添加关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.AddKeyY(UnityEngine.Keyframe)">
+            <summary>向 Y 轴曲线添加关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.EvaluateY(System.Single)">
+            <summary>获取 Y 轴曲线在指定时间的值</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.MoveKeyY(System.Int32,UnityEngine.Keyframe)">
+            <summary>移动 Y 轴曲线的指定关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.RemoveKeyY(System.Int32)">
+            <summary>移除 Y 轴曲线的指定关键帧</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.SmoothTangentsY(System.Int32,System.Single)">
+            <summary>平滑 Y 轴曲线的指定关键帧切线</summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.AutoLayoutGroup.ClearKeysY">
+            <summary>清空 Y 轴曲线所有关键帧</summary>
+        </member>
+        <member name="T:UGUI.Layout.Extension.BaseAutoLayoutGroup">
+            <summary>
+            自动布局组件基类
+            </summary>
+            <remarks>
+            <para>基于 UGUI 布局系统扩展的自动布局组件基类。</para>
+            <para>基于该组件扩展的其它组件针对影响布局的修改应显式标记为脏以触发布局系统重新计算。</para>
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.BaseAutoLayoutGroup.ChildAlignment">
+            <summary>
+            布局元素在容器内的对齐方式
+            </summary>
+            <remarks>
+            当容器尺寸大于所有布局元素的总占用空间时，通过对齐方式决定内容整体
+            在容器内的位置（靠左/居中/靠右，靠上/居中/靠下）。
+            </remarks>
+        </member>
+        <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.GetAlignmentOnAxis(System.Int32)">
+            <summary>
+            获取指定轴上的对齐系数
+            </summary>
+            <param name="axis">0 = 水平，1 = 垂直</param>
+            <returns>0 = 靠前，0.5 = 居中，1 = 靠后</returns>
+        </member>
+        <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.GetStartOffset(System.Int32,System.Single)">
+            <summary>
+            获取布局内容在容器内的起始坐标
+            </summary>
+            <param name="axis">0 = 水平，1 = 垂直</param>
+            <param name="requiredSpaceWithoutPadding">不含 padding 的内容占用空间</param>
+            <returns>内容左/上边缘距容器左/上边缘的像素距离</returns>
+            <remarks>
+            当容器有剩余空间时，通过 <see cref="P:UGUI.Layout.Extension.BaseAutoLayoutGroup.ChildAlignment"/> 决定内容整体的对齐位置。
+            当内容超出容器时（surplusSpace 为负），内容从 startPadding 处开始，对齐不生效。
+            </remarks>
+        </member>
+        <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.SetChildAlongAxis(UnityEngine.RectTransform,System.Int32,System.Single)">
+            <summary>
+            沿指定轴设置布局元素的左/上边缘位置，保持布局元素当前尺寸不变
+            </summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.SetChildAlongAxis(UnityEngine.RectTransform,System.Int32,System.Single,System.Single)">
+            <summary>
+            沿指定轴设置布局元素的左/上边缘位置，同时驱动布局元素尺寸
+            </summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.RebuildLayout">
+            <summary>
+            编辑器中触发布局刷新
+            </summary>
+        </member>
+        <member name="T:UGUI.Layout.Extension.CircleLayoutGroup">
+            <summary>
+            圆形布局组件
+            </summary>
+            <remarks>
+            <para>基于 UGUI 布局系统和 <see cref="T:UnityEngine.UI.LayoutGroup"/> 扩展的圆形布局组件，可以设置圆的半径、旋转和是否顺时针排序。</para>
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.CircleLayoutGroup.Radius">
+            <summary>
+            半径
+            </summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.CircleLayoutGroup.Rotation">
+            <summary>
+            起始旋转角度（度）
+            </summary>
+            <remarks>
+            <para>支持任意整数值，自动归一化到 [0, 360)。</para>
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.CircleLayoutGroup.ClockWise">
+            <summary>
+            是否顺时针布局
+            </summary>
+        </member>
+        <member name="M:UGUI.Layout.Extension.CircleLayoutGroup.RebuildLayout">
+            <summary>
+            编辑器中触发布局刷新
+            </summary>
+        </member>
+        <member name="T:UGUI.Layout.Extension.CurveIndexStepper">
+            <summary>
+            基于 <see cref="T:UnityEngine.WrapMode"/> 的曲线关键帧索引步进器
+            </summary>
+            <remarks>
+            <para>
+            封装了不同 <see cref="T:UnityEngine.WrapMode"/> 下的关键帧索引步进逻辑。
+            <see cref="F:UnityEngine.WrapMode.PingPong"/> 模式持有可变方向状态，因此每次布局计算必须通过
+            <see cref="M:UGUI.Layout.Extension.CurveIndexStepper.Create(UnityEngine.WrapMode,System.Int32,System.Int32)"/> 工厂方法获取新实例，不可跨布局复用同一实例。
+            </para>
+            <para>
+            同时提供无状态的 <see cref="M:UGUI.Layout.Extension.CurveIndexStepper.Resolve(System.Int32,System.Int32,UnityEngine.WrapMode)"/> 静态方法，用于直接将布局元素序号映射到
+            关键帧索引（Direct 模式），无需逐步步进。
+            </para>
+            </remarks>
+        </member>
+        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Create(UnityEngine.WrapMode,System.Int32,System.Int32)">
+            <summary>
+            创建一个新的步进器实例
+            </summary>
+            <param name="mode">曲线行为模式</param>
+            <param name="minIndex">最小关键帧索引（含）</param>
+            <param name="maxIndex">最大关键帧索引（含）</param>
+            <returns>新的步进器实例</returns>
+            <exception cref="T:System.ArgumentException">minIndex &gt; maxIndex</exception>
+        </member>
+        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Next(System.Int32)">
+            <summary>
+            根据当前索引步进到下一个索引
+            </summary>
+            <param name="current">当前索引，必须在 [minIndex, maxIndex] 内</param>
+            <returns>下一个索引</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">current 不在合法范围内</exception>
+        </member>
+        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Resolve(System.Int32,System.Int32,UnityEngine.WrapMode)">
+            <summary>
+            无状态地将布局元素序号直接映射到关键帧索引（Direct 模式专用）
+            </summary>
+            <param name="childIndex">布局元素序号（从 0 开始）</param>
+            <param name="keyCount">关键帧总数</param>
+            <param name="mode">曲线行为模式</param>
+            <returns>对应的关键帧索引</returns>
+        </member>
+        <member name="T:UGUI.Layout.Extension.KeyframeMappingMode">
+            <summary>
+            关键帧映射模式
+            </summary>
+        </member>
+        <member name="F:UGUI.Layout.Extension.KeyframeMappingMode.Direct">
+            <summary>
+            直接映射
+            </summary>
+            <remarks>
+            <para>关键帧与布局元素一一对应，超出时按 PostWrapMode 循环。</para>
+            </remarks>
+        </member>
+        <member name="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated">
+            <summary>
+            曲线插值
+            </summary>
+            <remarks>
+            <para>布局元素索引归一化后在曲线上连续采样，X 轴线性展开，Y 轴按曲线值起伏。</para>
+            </remarks>
+        </member>
+        <member name="F:UGUI.Layout.Extension.KeyframeMappingMode.Proportional">
+            <summary>
+            按比例分配
+            </summary>
+            <remarks>
+            <para>布局元素均匀映射到关键帧索引上，取对应关键帧的坐标值。</para>
+            </remarks>
+        </member>
+        <member name="T:UGUI.Layout.Extension.PositionMode">
+            <summary>
+            布局元素位置计算模式
+            </summary>
+        </member>
+        <member name="F:UGUI.Layout.Extension.PositionMode.ByElementSize">
+            <summary>
+            布局元素尺寸模式（默认）
+            </summary>
+            <remarks>
+            <para><c>pos = effectiveSize × factor × scale</c>，偏移量以布局元素自身尺寸为单位缩放。</para>
+            <para>factor 为 1 时元素偏移恰好等于自身宽/高，适合尺寸一致的场景。</para>
+            </remarks>
+        </member>
+        <member name="F:UGUI.Layout.Extension.PositionMode.ByPixel">
+            <summary>
+            像素模式
+            </summary>
+            <remarks>
+            <para><c>pos = factor × scale</c>，曲线直接描述像素偏移，与元素尺寸无关。</para>
+            <para>不同尺寸的元素在相同关键帧下落在相同位置，适合需要精确像素定位的场景。</para>
+            </remarks>
+        </member>
+        <member name="T:UGUI.Layout.Extension.ProportionalDistributeMode">
+            <summary>
+            Proportional 模式的分组分配策略
+            </summary>
+        </member>
+        <member name="F:UGUI.Layout.Extension.ProportionalDistributeMode.RoundToNearest">
+            <summary>
+            四舍五入（默认）
+            </summary>
+            <remarks>
+            <para>布局元素索引映射到最近的关键帧，分组边界处可能出现相邻组数量差 1。</para>
+            </remarks>
+        </member>
+        <member name="F:UGUI.Layout.Extension.ProportionalDistributeMode.Uniform">
+            <summary>
+            均匀分配
+            </summary>
+            <remarks>
+            <para>基于 Bresenham 算法均匀分配，各组数量差不超过 1，分布最均匀。</para>
+            </remarks>
+        </member>
+        <member name="F:UGUI.Layout.Extension.ProportionalDistributeMode.FloorBias">
+            <summary>
+            前密后疏
+            </summary>
+            <remarks>
+            <para>靠前的关键帧分配更多布局元素。</para>
+            </remarks>
+        </member>
+        <member name="F:UGUI.Layout.Extension.ProportionalDistributeMode.CeilBias">
+            <summary>
+            前疏后密
+            </summary>
+            <remarks>
+            <para>靠后的关键帧分配更多布局元素。</para>
+            </remarks>
+        </member>
+    </members>
+</doc>
