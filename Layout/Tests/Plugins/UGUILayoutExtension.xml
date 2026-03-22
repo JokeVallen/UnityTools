@@ -9,7 +9,8 @@
             自动布局组件
             </summary>
             <remarks>
-            <para>基于 <see cref="T:UGUI.Layout.Extension.BaseAutoLayoutGroup"/> 和 <see cref="T:UnityEngine.AnimationCurve"/> 扩展的自动布局组件，可通过动画曲线映射布局规律。</para>
+            <para>基于 <see cref="T:UGUI.Layout.Extension.BaseAutoLayoutGroup"/> 和 <see cref="T:UnityEngine.AnimationCurve"/> 扩展的自动布局组件，
+            可通过动画曲线映射布局规律。X 轴和 Y 轴的映射模式、位置计算模式及分组参数均可独立配置。</para>
             </remarks>
         </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PreWrapModeX">
@@ -17,6 +18,12 @@
         </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeX">
             <summary>X 轴曲线末端的行为模式</summary>
+            <remarks>
+            <para>在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Direct"/> 模式下，当布局元素数量超过关键帧数量时生效。</para>
+            <para>在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 模式下，当采样时间 t 超出曲线关键帧
+            定义范围时生效，无论是否启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupX"/> 均有效。</para>
+            <para>在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Proportional"/> 模式下无效。</para>
+            </remarks>
         </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.LengthX">
             <summary>X 轴布局曲线的关键帧数量</summary>
@@ -24,11 +31,49 @@
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.KeysX">
             <summary>X 轴布局曲线的关键帧集合</summary>
         </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.MappingModeX">
+            <summary>X 轴关键帧映射模式</summary>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PositionModeX">
+            <summary>X 轴布局元素位置计算模式</summary>
+            <remarks>
+            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByElementSize"/>（默认）：<c>pos = effectiveSize × factor × scale</c>，
+            偏移量与布局元素自身尺寸成比例。</para>
+            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByPixel"/>：<c>pos = factor × scale</c>，
+            曲线直接描述像素偏移，与布局元素尺寸无关。</para>
+            </remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupX">
+            <summary>是否在 X 轴启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSizeX"/> 约束</summary>
+            <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 模式下有效。</remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSizeX">
+            <summary>X 轴 Interpolated 模式下每个曲线周期包含的布局元素数量</summary>
+            <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 且 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupX"/> 为
+            <c>true</c> 时生效。</remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.CyclesX">
+            <summary>X 轴 Interpolated 模式下当前布局元素序列覆盖的曲线周期数（只读）</summary>
+            <remarks>未启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupX"/> 时固定返回 <c>1</c>。</remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.DistributeModeX">
+            <summary>X 轴 Proportional 模式的布局元素分配策略</summary>
+            <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Proportional"/> 模式下有效。</remarks>
+        </member>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ScaleX">
+            <summary>X 轴偏移缩放系数</summary>
+        </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PreWrapModeY">
             <summary>Y 轴曲线前端的行为模式</summary>
         </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeY">
             <summary>Y 轴曲线末端的行为模式</summary>
+            <remarks>
+            <para>在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Direct"/> 模式下，当布局元素数量超过关键帧数量时生效。</para>
+            <para>在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 模式下，当采样时间 t 超出曲线关键帧
+            定义范围时生效，无论是否启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupY"/> 均有效。</para>
+            <para>在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Proportional"/> 模式下无效。</para>
+            </remarks>
         </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.LengthY">
             <summary>Y 轴布局曲线的关键帧数量</summary>
@@ -36,53 +81,34 @@
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.KeysY">
             <summary>Y 轴布局曲线的关键帧集合</summary>
         </member>
-        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.MappingMode">
-            <summary>关键帧映射模式</summary>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.MappingModeY">
+            <summary>Y 轴关键帧映射模式</summary>
         </member>
-        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PositionMode">
-            <summary>
-            布局元素位置计算模式
-            </summary>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.PositionModeY">
+            <summary>Y 轴布局元素位置计算模式</summary>
             <remarks>
-            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByElementSize"/>（默认）：<c>pos = sizeDelta * factor * scale</c>，
+            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByElementSize"/>（默认）：<c>pos = effectiveSize × factor × scale</c>，
             偏移量与布局元素自身尺寸成比例。</para>
-            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByPixel"/>：<c>pos = factor * scale</c>，
-            曲线直接描述像素偏移，与布局元素尺寸无关，不同尺寸的布局元素在同一关键帧下位置一致。</para>
+            <para><see cref="F:UGUI.Layout.Extension.PositionMode.ByPixel"/>：<c>pos = factor × scale</c>，
+            曲线直接描述像素偏移，与布局元素尺寸无关。</para>
             </remarks>
         </member>
-        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroup">
-            <summary>
-            是否启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSize"/> 约束
-            </summary>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupY">
+            <summary>是否在 Y 轴启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSizeY"/> 约束</summary>
             <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 模式下有效。</remarks>
         </member>
-        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSize">
-            <summary>
-            Interpolated 模式下每个曲线周期包含的布局元素数量
-            </summary>
-            <remarks>
-            仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 且 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroup"/> 为
-            <c>true</c> 时生效。布局元素总数超过该值时，超出部分由
-            <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeX"/> / <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.PostWrapModeY"/> 决定行为。
-            </remarks>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.GroupSizeY">
+            <summary>Y 轴 Interpolated 模式下每个曲线周期包含的布局元素数量</summary>
+            <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Interpolated"/> 且 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupY"/> 为
+            <c>true</c> 时生效。</remarks>
         </member>
-        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.Cycles">
-            <summary>
-            Interpolated 模式下当前布局元素序列覆盖的曲线周期数（只读）
-            </summary>
-            <remarks>
-            不依赖 <see cref="P:UGUI.Layout.Extension.BaseAutoLayoutGroup.RectChildren"/>，可在布局阶段外安全调用。
-            未启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroup"/> 时固定返回 <c>1</c>。
-            </remarks>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.CyclesY">
+            <summary>Y 轴 Interpolated 模式下当前布局元素序列覆盖的曲线周期数（只读）</summary>
+            <remarks>未启用 <see cref="P:UGUI.Layout.Extension.AutoLayoutGroup.ConstrainByGroupY"/> 时固定返回 <c>1</c>。</remarks>
         </member>
-        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.DistributeMode">
-            <summary>
-            Proportional 模式的布局元素分配策略
-            </summary>
+        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.DistributeModeY">
+            <summary>Y 轴 Proportional 模式的布局元素分配策略</summary>
             <remarks>仅在 <see cref="F:UGUI.Layout.Extension.KeyframeMappingMode.Proportional"/> 模式下有效。</remarks>
-        </member>
-        <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ScaleX">
-            <summary>X 轴偏移缩放系数</summary>
         </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ScaleY">
             <summary>Y 轴偏移缩放系数</summary>
@@ -94,9 +120,7 @@
             <summary>布局元素之间垂直方向的固定间距（像素），与曲线偏移叠加</summary>
         </member>
         <member name="P:UGUI.Layout.Extension.AutoLayoutGroup.ReverseArrangement">
-            <summary>
-            是否反序排列布局元素
-            </summary>
+            <summary>是否反序排列布局元素</summary>
             <remarks>
             启用后布局元素按倒序与曲线对应：最后一个元素对应第一个关键帧/采样点，
             可在不修改曲线的情况下快速翻转排列方向。
@@ -191,13 +215,21 @@
         </member>
         <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.SetChildAlongAxis(UnityEngine.RectTransform,System.Int32,System.Single)">
             <summary>
-            沿指定轴设置布局元素的左/上边缘位置，保持布局元素当前尺寸不变
+            沿指定轴设置布局元素的左/上边缘位置，保持布局元素当前尺寸不变。
             </summary>
+            <remarks>
+            会同时驱动子节点的 Anchors，确保 anchor 归一化到左上角（与官方 LayoutGroup 行为一致），
+            避免非标准 anchor 导致 <see cref="M:UnityEngine.RectTransform.SetInsetAndSizeFromParentEdge(UnityEngine.RectTransform.Edge,System.Single,System.Single)"/> 计算偏差。
+            </remarks>
         </member>
         <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.SetChildAlongAxis(UnityEngine.RectTransform,System.Int32,System.Single,System.Single)">
             <summary>
-            沿指定轴设置布局元素的左/上边缘位置，同时驱动布局元素尺寸
+            沿指定轴设置布局元素的左/上边缘位置，同时驱动布局元素尺寸。
             </summary>
+            <remarks>
+            会同时驱动子节点的 Anchors，确保 anchor 归一化到左上角（与官方 LayoutGroup 行为一致），
+            避免非标准 anchor 导致 <see cref="M:UnityEngine.RectTransform.SetInsetAndSizeFromParentEdge(UnityEngine.RectTransform.Edge,System.Single,System.Single)"/> 计算偏差。
+            </remarks>
         </member>
         <member name="M:UGUI.Layout.Extension.BaseAutoLayoutGroup.RebuildLayout">
             <summary>
@@ -234,49 +266,6 @@
             <summary>
             编辑器中触发布局刷新
             </summary>
-        </member>
-        <member name="T:UGUI.Layout.Extension.CurveIndexStepper">
-            <summary>
-            基于 <see cref="T:UnityEngine.WrapMode"/> 的曲线关键帧索引步进器
-            </summary>
-            <remarks>
-            <para>
-            封装了不同 <see cref="T:UnityEngine.WrapMode"/> 下的关键帧索引步进逻辑。
-            <see cref="F:UnityEngine.WrapMode.PingPong"/> 模式持有可变方向状态，因此每次布局计算必须通过
-            <see cref="M:UGUI.Layout.Extension.CurveIndexStepper.Create(UnityEngine.WrapMode,System.Int32,System.Int32)"/> 工厂方法获取新实例，不可跨布局复用同一实例。
-            </para>
-            <para>
-            同时提供无状态的 <see cref="M:UGUI.Layout.Extension.CurveIndexStepper.Resolve(System.Int32,System.Int32,UnityEngine.WrapMode)"/> 静态方法，用于直接将布局元素序号映射到
-            关键帧索引（Direct 模式），无需逐步步进。
-            </para>
-            </remarks>
-        </member>
-        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Create(UnityEngine.WrapMode,System.Int32,System.Int32)">
-            <summary>
-            创建一个新的步进器实例
-            </summary>
-            <param name="mode">曲线行为模式</param>
-            <param name="minIndex">最小关键帧索引（含）</param>
-            <param name="maxIndex">最大关键帧索引（含）</param>
-            <returns>新的步进器实例</returns>
-            <exception cref="T:System.ArgumentException">minIndex &gt; maxIndex</exception>
-        </member>
-        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Next(System.Int32)">
-            <summary>
-            根据当前索引步进到下一个索引
-            </summary>
-            <param name="current">当前索引，必须在 [minIndex, maxIndex] 内</param>
-            <returns>下一个索引</returns>
-            <exception cref="T:System.ArgumentOutOfRangeException">current 不在合法范围内</exception>
-        </member>
-        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Resolve(System.Int32,System.Int32,UnityEngine.WrapMode)">
-            <summary>
-            无状态地将布局元素序号直接映射到关键帧索引（Direct 模式专用）
-            </summary>
-            <param name="childIndex">布局元素序号（从 0 开始）</param>
-            <param name="keyCount">关键帧总数</param>
-            <param name="mode">曲线行为模式</param>
-            <returns>对应的关键帧索引</returns>
         </member>
         <member name="T:UGUI.Layout.Extension.KeyframeMappingMode">
             <summary>
@@ -366,6 +355,51 @@
             <remarks>
             <para>靠后的关键帧分配更多布局元素。</para>
             </remarks>
+        </member>
+        <member name="T:UGUI.Layout.Extension.CurveIndexStepper">
+            <summary>
+            基于 <see cref="T:UnityEngine.WrapMode"/> 的曲线关键帧索引步进器
+            </summary>
+            <remarks>
+            <para>
+            封装了不同 <see cref="T:UnityEngine.WrapMode"/> 下的关键帧索引步进逻辑，支持任意整数步长。
+            <see cref="F:UnityEngine.WrapMode.PingPong"/> 模式持有可变方向状态，因此每次布局计算必须通过
+            <see cref="M:UGUI.Layout.Extension.CurveIndexStepper.Create(UnityEngine.WrapMode,System.Int32,System.Int32,System.Int32)"/> 工厂方法获取新实例，不可跨布局复用同一实例。
+            </para>
+            <para>
+            同时提供无状态的 <see cref="M:UGUI.Layout.Extension.CurveIndexStepper.Resolve(System.Int32,System.Int32,UnityEngine.WrapMode,System.Int32)"/> 静态方法，用于直接将布局元素序号映射到
+            关键帧索引（Direct 模式），无需逐步步进。
+            </para>
+            </remarks>
+        </member>
+        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Create(UnityEngine.WrapMode,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            创建一个新的步进器实例
+            </summary>
+            <param name="mode">曲线行为模式</param>
+            <param name="minIndex">最小关键帧索引（含）</param>
+            <param name="maxIndex">最大关键帧索引（含）</param>
+            <param name="step">每次步进的步长，不可为 0，支持负数（反向步进）</param>
+            <returns>新的步进器实例</returns>
+            <exception cref="T:System.ArgumentException">minIndex &gt; maxIndex 或 step 为 0</exception>
+        </member>
+        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Next(System.Int32)">
+            <summary>
+            根据当前索引步进到下一个索引
+            </summary>
+            <param name="current">当前索引，必须在 [minIndex, maxIndex] 内</param>
+            <returns>下一个索引</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">current 不在合法范围内</exception>
+        </member>
+        <member name="M:UGUI.Layout.Extension.CurveIndexStepper.Resolve(System.Int32,System.Int32,UnityEngine.WrapMode,System.Int32)">
+            <summary>
+            无状态地将布局元素序号直接映射到关键帧索引（Direct 模式专用）
+            </summary>
+            <param name="childIndex">布局元素序号（从 0 开始）</param>
+            <param name="keyCount">关键帧总数</param>
+            <param name="mode">曲线行为模式</param>
+            <param name="step">步长，不可为 0，默认为 1</param>
+            <returns>对应的关键帧索引</returns>
         </member>
     </members>
 </doc>

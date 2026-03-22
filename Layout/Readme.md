@@ -1,3 +1,5 @@
+> 项目由 AI 和作者共同设计和开发，已进行基本的单元测试和功能测试，具体测试文件请查看相关目录文件。
+
 # UGUI Layout Extension
 
 ![License](https://img.shields.io/badge/License-MIT-green) ![Unity](https://img.shields.io/badge/Unity-2020.3+-black?logo=unity) ![.NET](https://img.shields.io/badge/.NET_Standard-2.0-512BD4) [![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]() ![UGUI](https://img.shields.io/badge/UGUI-1.0.0+-black?logo=unity)
@@ -8,7 +10,7 @@
 
 ## AutoLayout
 
-通过两条独立的动画曲线（X 轴 / Y 轴）驱动布局元素的位置分布，支持三种映射模式和多种可选参数，可以覆盖大多数非线性布局需求。
+通过两条独立的动画曲线（X 轴 / Y 轴）驱动布局元素的位置分布。**X 轴和 Y 轴的所有参数均可独立配置**，包括映射模式、位置计算模式及分组参数，两轴互不干扰，可以覆盖大多数非线性布局需求。
 
 ### 曲线语义
 
@@ -17,12 +19,12 @@
 - **X 轴曲线**：value 为正时元素偏向右方，value 为负时元素偏向左方
 - **Y 轴曲线**：value 为正时元素偏向上方，value 为负时元素偏向下方
 
-### 位置计算模式
+### 位置计算模式（X / Y 轴独立）
 
-| 模式 | 说明 |
-|------|------|
-| **ByElementSize**（默认）| `pos = effectiveSize × factor × scale`，偏移量以布局元素自身尺寸为单位缩放。factor 为 1 时元素偏移恰好等于自身宽/高，适合尺寸一致的场景。|
-| **ByPixel** | `pos = factor × scale`，曲线直接描述像素偏移，与元素尺寸无关。不同尺寸的元素在相同关键帧下落在相同位置，适合需要精确像素定位的场景。|
+| 模式 | 公式 | 说明 |
+|------|------|------|
+| **ByElementSize**（默认）| `pos = effectiveSize × factor × scale` | 偏移量以布局元素自身尺寸为单位缩放，factor 为 1 时偏移恰好等于自身宽/高，适合尺寸一致的场景 |
+| **ByPixel** | `pos = factor × scale` | 曲线直接描述像素偏移，与元素尺寸无关，不同尺寸的元素在相同关键帧下落在相同位置，适合精确像素定位的场景 |
 
 ---
 
@@ -44,22 +46,25 @@
 布局元素索引归一化后在曲线上**连续采样**，X 轴和 Y 轴均由各自曲线的 `Evaluate(t)` 决定位置。
 
 - **未启用 Constrain By Group**：`t = i / (count - 1)`，所有元素均匀铺满曲线的 `[0, 1]` 区间，增删元素时整体形状不变，只有密度变化。
-- **启用 Constrain By Group**：`t = i / GroupSize`，每 `GroupSize` 个元素走完一个曲线周期，超出部分按 `Post Wrap Mode` 处理。
+- **启用 Constrain By Group**：`t = i / Group Size`，每 `Group Size` 个元素走完一个曲线周期，超出部分按 `Post Wrap Mode` 处理。
+
+X 轴和 Y 轴的 `Constrain By Group` 与 `Group Size` 相互独立，可以分别设置不同的分组粒度。
 
 **适合的场景**
 
 - **整体造型排列**：通过曲线形状控制整体高低起伏，制作拱形、波浪、抛物线等具有造型感的排列。
 - **多周期波浪**：启用 `Constrain By Group` + `Post Wrap Mode = Loop`，实现连续多段波浪，适合大量卡牌、列表项等按波形铺开。
 - **来回起伏**：启用 `Constrain By Group` + `Post Wrap Mode = PingPong`，产生山峰—山谷—山峰的来回起伏效果。
-- **局部区段**：`GroupSize` 设为大于元素总数的值，所有元素只覆盖曲线前半段，展示曲线的局部形状。
+- **局部区段**：`Group Size` 设为大于元素总数的值，所有元素只覆盖曲线前半段，展示曲线的局部形状。
+- **X / Y 轴不同频率**：X 轴 `Group Size = 4`，Y 轴 `Group Size = 6`，两轴以不同周期交替，产生李萨如图形般的二维分布。
 
-> **注意**：未启用 `Constrain By Group` 时，`t` 始终在 `[0, 1]` 内，`Post Wrap Mode` 不生效，Inspector 中会显示为只读。
+> **注意**：`Post Wrap Mode` 在 Interpolated 模式下始终有效——即使未启用 `Constrain By Group`，当 `t` 超出曲线关键帧定义范围时，`Post Wrap Mode` 也会决定采样行为。
 
 ---
 
 ### Proportional 模式
 
-布局元素**均匀映射**到关键帧索引上，多个元素可以共享同一关键帧位置，形成视觉分组效果。通过 `Distribute Mode` 控制分配策略。
+布局元素**均匀映射**到关键帧索引上，多个元素可以共享同一关键帧位置，形成视觉分组效果。通过 `Distribute Mode` 控制分配策略。X 轴和 Y 轴的 `Distribute Mode` 相互独立。
 
 | 分配策略 | 说明 |
 |----------|------|
@@ -72,26 +77,38 @@
 
 - **分组聚集**：10 个元素对应 3 个关键帧，每个关键帧附近聚集约 3—4 个元素，适合分类标签、技能图标分组。
 - **重心偏移**：`FloorBias` / `CeilBias` 人为制造疏密对比，用于视觉引导或强调布局重心。
+- **X / Y 轴不同分组**：X 轴 `Proportional` 产生水平分组，Y 轴 `Interpolated` 产生波形高度，两轴不同模式叠加实现复杂二维分布。
 
 ---
 
-### 通用参数
+### Inspector 参数说明
+
+Inspector 中参数分为**通用属性**和 **X Axis / Y Axis 两个独立折叠组**。
+
+#### 通用属性
 
 | 参数 | 说明 |
 |------|------|
 | Padding | 容器四边内边距（left / right / top / bottom 均生效） |
-| Child Alignment | 内容在容器内的整体对齐方式，容器有剩余空间时生效 |
 | Spacing Horizontal | 元素间水平固定间距（像素，≥ 0），叠加在曲线偏移之上 |
-| Spacing Vertical | 元素间垂直固定间距（像素，≥ 0），叠加在曲线偏移之上 |
-| Position Mode | 位置计算模式：`ByElementSize` 或 `ByPixel` |
+| Spacing Vertical | 元素间垂直固定间距（像素，≥ 0），叠加在曲线偏移之上（在 UGUI 坐标系中向下叠加；若 Y 轴曲线产生向上偏移，SpacingVertical 会部分抵消该偏移，此时应通过增大 Scale Y 来扩大元素间距） |
 | Reverse Arrangement | 启用后元素按倒序与曲线对应，可快速翻转排列方向而无需修改曲线 |
-| Mapping Mode | 映射模式：`Direct` / `Interpolated` / `Proportional` |
-| X Axis Curve | X 方向布局曲线，关键帧 `value` 值为水平偏移因子 |
-| Y Axis Curve | Y 方向布局曲线，关键帧 `value` 值为垂直偏移因子（正值向上）|
-| Post Wrap Mode X/Y | 曲线超出末端时的行为（`Loop` / `PingPong` / `Clamp` 等）|
-| Scale X / Scale Y | X / Y 轴偏移缩放系数 |
+| Child Alignment | 内容在容器内的整体对齐方式，容器有剩余空间时生效 |
 
-> `Pre Wrap Mode` 对当前所有模式均无效，Inspector 中显示为只读。
+#### X Axis / Y Axis 折叠组（各轴独立）
+
+| 参数 | 说明 |
+|------|------|
+| 曲线编辑器 | 该轴的布局曲线，关键帧 `value` 值为对应方向的偏移因子 |
+| Pre Wrap Mode | 曲线前端行为模式（当前版本对所有映射模式均无效，显示为只读） |
+| Post Wrap Mode | 曲线超出末端时的行为（`Loop` / `PingPong` / `Clamp` 等）；`Proportional` 模式下无效，显示为只读 |
+| Mapping Mode | 映射模式：`Direct` / `Interpolated` / `Proportional` |
+| Position Mode | 位置计算模式：`ByElementSize` 或 `ByPixel` |
+| ↳ Constrain By Group | （仅 `Interpolated`）启用后按 `Group Size` 控制每周期元素数量 |
+| ↳ Group Size | （仅 `Interpolated` + `Constrain By Group`）每个曲线周期包含的元素数量 |
+| ↳ Cycles | （仅 `Interpolated` + `Constrain By Group`，只读）当前元素序列覆盖的曲线周期数 |
+| ↳ Distribute Mode | （仅 `Proportional`）分配策略：`RoundToNearest` / `Uniform` / `FloorBias` / `CeilBias` |
+| Scale | 该轴偏移缩放系数 |
 
 ---
 
@@ -120,7 +137,9 @@
 - **minWidth / minHeight**：硬约束，元素实际尺寸不会小于此值
 - **preferredWidth / preferredHeight**：软约束，优先满足期望尺寸
 - **flexibleWidth / flexibleHeight**：如实上报给父布局系统，不干预
-- **ignoreLayout = true**：正确跳过，该元素不参与布局
+- **ignoreLayout = true**：正确跳过，该元素不参与布局计算
+
+`LayoutElement` 属性在 Inspector 中的修改会实时触发 `AutoLayout` 重新计算，行为与官方 `HorizontalLayoutGroup` / `VerticalLayoutGroup` 一致。
 
 `ContentSizeFitter` 挂在子元素上时可正常配合使用——它会在布局前将子元素尺寸设为 preferred 值，`AutoLayout` 会正确读取并使用。
 

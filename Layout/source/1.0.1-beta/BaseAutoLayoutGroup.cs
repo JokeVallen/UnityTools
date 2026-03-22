@@ -204,15 +204,27 @@ namespace UGUI.Layout.Extension
         }
 
         /// <summary>
-        /// 沿指定轴设置布局元素的左/上边缘位置，保持布局元素当前尺寸不变
+        /// 沿指定轴设置布局元素的左/上边缘位置，保持布局元素当前尺寸不变。
         /// </summary>
+        /// <remarks>
+        /// 会同时驱动子节点的 Anchors，确保 anchor 归一化到左上角（与官方 LayoutGroup 行为一致），
+        /// 避免非标准 anchor 导致 <see cref="RectTransform.SetInsetAndSizeFromParentEdge"/> 计算偏差。
+        /// </remarks>
         protected void SetChildAlongAxis(RectTransform rect, int axis, float pos)
         {
             if (rect == null) return;
 
             tracker.Add(this, rect, axis == 0
-                ? DrivenTransformProperties.AnchoredPositionX
-                : DrivenTransformProperties.AnchoredPositionY);
+                ? DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.AnchorMinX | DrivenTransformProperties.AnchorMaxX
+                : DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.AnchorMinY | DrivenTransformProperties.AnchorMaxY);
+
+            // 将该轴的 anchor 归一化到左/上（0），使 SetInsetAndSizeFromParentEdge 的计算基准一致
+            Vector2 anchorMin = rect.anchorMin;
+            Vector2 anchorMax = rect.anchorMax;
+            anchorMin[axis] = 0f;
+            anchorMax[axis] = 0f;
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
 
             rect.SetInsetAndSizeFromParentEdge(
                 axis == 0 ? RectTransform.Edge.Left : RectTransform.Edge.Top,
@@ -221,15 +233,27 @@ namespace UGUI.Layout.Extension
         }
 
         /// <summary>
-        /// 沿指定轴设置布局元素的左/上边缘位置，同时驱动布局元素尺寸
+        /// 沿指定轴设置布局元素的左/上边缘位置，同时驱动布局元素尺寸。
         /// </summary>
+        /// <remarks>
+        /// 会同时驱动子节点的 Anchors，确保 anchor 归一化到左上角（与官方 LayoutGroup 行为一致），
+        /// 避免非标准 anchor 导致 <see cref="RectTransform.SetInsetAndSizeFromParentEdge"/> 计算偏差。
+        /// </remarks>
         protected void SetChildAlongAxis(RectTransform rect, int axis, float pos, float size)
         {
             if (rect == null) return;
 
             tracker.Add(this, rect, axis == 0
-                ? DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.SizeDeltaX
-                : DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.SizeDeltaY);
+                ? DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.SizeDeltaX | DrivenTransformProperties.AnchorMinX | DrivenTransformProperties.AnchorMaxX
+                : DrivenTransformProperties.AnchoredPositionY | DrivenTransformProperties.SizeDeltaY | DrivenTransformProperties.AnchorMinY | DrivenTransformProperties.AnchorMaxY);
+
+            // 将该轴的 anchor 归一化到左/上（0），使 SetInsetAndSizeFromParentEdge 的计算基准一致
+            Vector2 anchorMin = rect.anchorMin;
+            Vector2 anchorMax = rect.anchorMax;
+            anchorMin[axis] = 0f;
+            anchorMax[axis] = 0f;
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
 
             rect.SetInsetAndSizeFromParentEdge(
                 axis == 0 ? RectTransform.Edge.Left : RectTransform.Edge.Top,

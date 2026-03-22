@@ -9,7 +9,6 @@ namespace UGUI.Layout.Extension
     /// <remarks>
     /// <para>基于 UGUI 布局系统和 <see cref="LayoutGroup"/> 扩展的圆形布局组件，可以设置圆的半径、旋转和是否顺时针排序。</para>
     /// </remarks>
-    [AddComponentMenu("Layout/CircleLayoutGroup")]
     public sealed class CircleLayoutGroup : LayoutGroup
     {
         /// <summary>
@@ -113,10 +112,10 @@ namespace UGUI.Layout.Extension
 
         protected override void Reset()
         {
-            base.Reset();
             radius = 0;
             rotation = 0;
             clockWise = false;
+            SetDirty();
         }
 
 #endif
