@@ -1,9 +1,11 @@
+> 项目由 AI 和作者共同设计和开发，已进行基本的单元测试和功能测试，具体测试请查看 `Tests` 下相关文件。
+
+# Unity 编辑器协程库 (Editor Coroutines)
+
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Unity](https://img.shields.io/badge/Unity-2020.3+-blue)](https://unity.com/)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 [![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]()
-
-# Unity 编辑器协程库 (Editor Coroutines)
 
 一个轻量级、零依赖的 Unity 编辑器协程库，让你在编辑器中也能像运行时一样使用协程。支持嵌套协程、取消令牌、等待扩展、泛型返回值等功能，非常适合编辑器工具开发、资源导入流程、批处理任务等场景。
 
