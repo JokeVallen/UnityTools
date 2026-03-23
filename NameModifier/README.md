@@ -1,3 +1,5 @@
+> 项目由 AI 和作者共同设计和开发，已进行基本的单元测试和功能测试，具体测试请查看 `Tests` 下相关文件。
+
 # Unity 编辑器名称修改器 (Name Modifier)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Unity](https://img.shields.io/badge/Unity-2020.3+-blue)](https://unity.com/) [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) [![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]()  
