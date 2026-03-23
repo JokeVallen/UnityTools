@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NameModifier</name>
+    </assembly>
+    <members>
+        <member name="T:EditorTools.NameModifier.INameModifierLogger">
+            <summary>
+            日志记录器接口
+            </summary>
+            <remarks>
+            <para>
+            定义名称修改器工具所使用的日志输出契约。默认实现为
+            <c>NameModifierDefaultLogger</c>，通过 <see cref="P:EditorTools.NameModifier.NameModifierConfig.Logger"/>
+            可替换为自定义实现，以便对接项目自身的日志系统。
+            </para>
+            <para>
+            所有方法的启用与否由 <see cref="T:EditorTools.NameModifier.NameModifierConfig"/> 中的
+            <c>LogEnabled</c> 开关统一控制（默认实现层面）；自定义实现可自行决定过滤策略。
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.INameModifierLogger.Log(System.Object)">
+            <summary>
+            普通日志
+            </summary>
+            <param name="message">消息</param>
+            <remarks>
+            对应 <c>Debug.Log</c> 级别，用于输出常规信息，例如操作完成提示。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.INameModifierLogger.LogWarning(System.Object)">
+            <summary>
+            警告日志
+            </summary>
+            <param name="message">消息</param>
+            <remarks>
+            对应 <c>Debug.LogWarning</c> 级别，用于输出非致命的异常情况提示。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.INameModifierLogger.LogError(System.Object)">
+            <summary>
+            错误日志
+            </summary>
+            <param name="message">消息</param>
+            <remarks>
+            对应 <c>Debug.LogError</c> 级别，用于输出已捕获的错误信息。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.INameModifierLogger.LogException(System.Exception)">
+            <summary>
+            异常日志
+            </summary>
+            <param name="exception">异常</param>
+            <remarks>
+            对应 <c>Debug.LogException</c> 级别，用于输出完整的异常堆栈信息。
+            </remarks>
+        </member>
+        <member name="T:EditorTools.NameModifier.NameModifierConfig">
+            <summary>
+            名称修改器配置
+            </summary>
+            <remarks>
+            <para>
+            以 ScriptableObject 资产形式存储名称修改器工具的所有运行时配置，
+            并以单例模式对外提供访问（<see cref="P:EditorTools.NameModifier.NameModifierConfig.Instance"/>）。
+            </para>
+            <para>
+            使用方式：在项目任意位置通过
+            <c>Assets / Create / EditorTools / NameModifierConfig</c>
+            菜单创建配置资产。创建后工具窗口将自动识别并持久化路径；
+            若未创建资产，则工具以临时内存实例运行，配置不会被保存。
+            </para>
+            <para>
+            配置支持导出为 JSON 文件以及从 JSON 文件导入，便于团队共享或版本管理。
+            </para>
+            </remarks>
+        </member>
+        <member name="P:EditorTools.NameModifier.NameModifierConfig.HandlerPath">
+            <summary>
+            处理器目录路径
+            </summary>
+            <remarks>
+            相对于项目 <c>Assets</c> 目录的路径，工具窗口将在该目录下递归搜索
+            所有 <see cref="T:EditorTools.NameModifier.NameModifierHandler"/> 类型的资产并加载为可选处理器。
+            可在配置面板中通过"选择处理器目录"按钮设置。
+            </remarks>
+        </member>
+        <member name="P:EditorTools.NameModifier.NameModifierConfig.Logger">
+            <summary>
+            日志记录器
+            </summary>
+            <remarks>
+            <para>
+            工具内部所有日志输出的统一出口。默认使用 <c>NameModifierDefaultLogger</c>，
+            将日志转发到 Unity 的 <c>Debug</c> API，并受 <c>LogEnabled</c> 开关控制。
+            </para>
+            <para>
+            可在运行时替换为自定义实现，以便将日志接入项目自有的日志系统：
+            <code>
+            NameModifierConfig.Logger = new MyCustomLogger();
+            </code>
+            替换后立即生效，且对全局单例实例有效。
+            </para>
+            </remarks>
+        </member>
+        <member name="P:EditorTools.NameModifier.NameModifierConfig.Instance">
+            <summary>
+            配置单例
+            </summary>
+            <remarks>
+            <para>
+            首次访问时自动尝试从 <c>EditorPrefs</c> 中读取上次记录的资产路径并加载；
+            若资产不存在或路径无效，则创建一个带有 <c>HideFlags.HideAndDontSave</c>
+            的临时内存实例，此时 <see cref="P:EditorTools.NameModifier.NameModifierConfig.IsPersistent"/> 返回 <c>false</c>。
+            </para>
+            <para>
+            在项目中创建配置资产并通过 Inspector 打开后，路径会被持久化到
+            <c>EditorPrefs</c>，后续访问将始终加载该资产实例。
+            </para>
+            </remarks>
+        </member>
+        <member name="T:EditorTools.NameModifier.NameModifierHandler">
+             <summary>
+             名称修改处理器基类
+             </summary>
+             <remarks>
+             <para>
+             所有自定义重命名策略均需继承此类并实现 <see cref="M:EditorTools.NameModifier.NameModifierHandler.Modify(UnityEngine.Object,System.Int32,System.Int32)"/> 与
+             <see cref="P:EditorTools.NameModifier.NameModifierHandler.OptionName"/>。将派生类保存为 ScriptableObject 资产并放置于
+             <see cref="P:EditorTools.NameModifier.NameModifierConfig.HandlerPath"/> 所指定的目录下，
+             工具窗口将自动扫描并加载。
+             </para>
+             <para>
+             最简实现示例：
+             <code>
+             [CreateAssetMenu(menuName = "EditorTools/Handlers/MyHandler")]
+             public class MyHandler : NameModifierHandler
+             {
+                 public override string OptionName => "我的处理器";
+            
+                 public override void Modify(Object obj, int index, int count)
+                 {
+                     ApplyRename(obj, $"Item_{index:D3}");
+                 }
+             }
+             </code>
+             </para>
+             </remarks>
+        </member>
+        <member name="P:EditorTools.NameModifier.NameModifierHandler.OptionName">
+            <summary>
+            处理器选项名称
+            </summary>
+            <remarks>
+            显示在工具窗口的处理器下拉列表中，用于区分不同的重命名策略。
+            建议使用简短、直观的中文名称，例如"序号后缀"、"前缀替换"等。
+            </remarks>
+        </member>
+        <member name="P:EditorTools.NameModifier.NameModifierHandler.Tip">
+            <summary>
+            处理器提示文本
+            </summary>
+            <remarks>
+            显示在工具窗口底部的 HelpBox 中，用于向用户说明当前处理器的使用方法
+            或注意事项。默认返回空字符串，子类可按需重写。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierHandler.Modify(UnityEngine.Object,System.Int32,System.Int32)">
+            <summary>
+            对单个对象执行重命名
+            </summary>
+            <param name="obj">目标对象</param>
+            <param name="index">批次索引</param>
+            <param name="count">批次总数</param>
+            <remarks>
+            <para>
+            工具窗口点击"修改"后，对每一个已选中的对象依次调用此方法。
+            子类应在此方法内计算目标名称，并通过 <see cref="M:EditorTools.NameModifier.NameModifierHandler.ApplyRename(UnityEngine.Object,System.String)"/> 应用。
+            </para>
+            <para>
+            <paramref name="index"/> 从 0 开始，<paramref name="count"/> 为本次批量操作
+            的对象总数，可利用这两个参数生成带序号的名称，例如：
+            <code>
+            ApplyRename(obj, $"{prefix}_{index:D3}");
+            </code>
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierHandler.DrawGUI">
+            <summary>
+            绘制处理器自定义 GUI
+            </summary>
+            <remarks>
+            在工具窗口中处理器选择下拉框下方调用，用于绘制该处理器专属的参数输入界面。
+            使用标准的 <c>EditorGUILayout</c> API 即可；默认实现为空，子类按需重写。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierHandler.Reset">
+            <summary>
+            重置处理器状态
+            </summary>
+            <remarks>
+            将处理器内部的所有用户输入参数或运行时状态恢复为初始值。
+            在 <see cref="T:EditorTools.NameModifier.NameModifierConfig"/> 的 <c>AutoReset</c> 开关开启时，
+            工具窗口关闭时会自动调用；也可由用户在 GUI 中手动触发。
+            默认实现为空，子类按需重写。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierHandler.OnSelected">
+            <summary>
+            处理器被选中时的回调
+            </summary>
+            <remarks>
+            当用户在下拉列表中切换到本处理器时由工具窗口调用，可用于延迟初始化或刷新
+            缓存数据。默认实现为空，子类按需重写。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierHandler.OnInitialize">
+            <summary>
+            处理器初始化回调
+            </summary>
+            <remarks>
+            在工具窗口完成内部依赖注入（撤销系统、重绘回调）之后调用，
+            子类可在此处执行需要访问这些依赖的初始化逻辑。
+            默认实现为空，按需重写。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierHandler.Repaint">
+            <summary>
+            请求重绘工具窗口
+            </summary>
+            <remarks>
+            当处理器内部状态发生变化（例如异步数据加载完成）需要立即刷新 GUI 时调用。
+            内部转发至工具窗口的 <c>Repaint</c> 委托。
+            </remarks>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierHandler.ApplyRename(UnityEngine.Object,System.String)">
+            <summary>
+            应用重命名并记录历史
+            </summary>
+            <param name="obj">目标对象</param>
+            <param name="newName">新名称</param>
+            <remarks>
+            <para>
+            子类在 <see cref="M:EditorTools.NameModifier.NameModifierHandler.Modify(UnityEngine.Object,System.Int32,System.Int32)"/> 中应调用此方法而非直接修改 <c>obj.name</c>，
+            以确保改名操作被撤销系统正确记录。
+            </para>
+            <para>
+            以下情况下此方法为空操作，不会产生任何副作用：
+            <list type="bullet">
+              <item><description><paramref name="obj"/> 为 <c>null</c></description></item>
+              <item><description><paramref name="newName"/> 为空或纯空白字符</description></item>
+              <item><description><paramref name="newName"/> 与对象当前名称相同</description></item>
+            </list>
+            </para>
+            </remarks>
+        </member>
+        <member name="T:EditorTools.NameModifier.NameModifierUtility.GUIDUtility">
+            <summary>
+            工具类：GUID
+            </summary>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierUtility.GUIDUtility.GetOrCreateProjectQualifiedGUID">
+            <summary>
+            获取或创建项目唯一GUID
+            </summary>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierUtility.FindIndex``1(System.Collections.Generic.IReadOnlyList{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            从只读列表中查找值的索引
+            </summary>
+            <typeparam name="T">只读列表中值的类型</typeparam>
+            <param name="source">只读列表</param>
+            <param name="match">匹配表达式</param>
+            <returns>若找到则返回对应的索引，否则返回-1</returns>
+        </member>
+        <member name="M:EditorTools.NameModifier.NameModifierUtility.GetAssetPath(System.String)">
+            <summary>
+            获取基于Assets目录的相对路径
+            </summary>
+        </member>
+    </members>
+</doc>
