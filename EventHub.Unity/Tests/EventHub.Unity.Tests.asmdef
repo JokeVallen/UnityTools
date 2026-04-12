@@ -1,0 +1,24 @@
+{
+    "name": "EventHub.Unity.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c0dd0d10738d4ad4a9de57c559d0ca1b",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:fbbc6fec69061244da879cab0dd749a4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "EVENTHUB_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
