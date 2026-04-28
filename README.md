@@ -5,3 +5,4 @@
 - [EditorCoroutines.Lit](/EditorCoroutines.Lit/)
 - [NameModifier](/NameModifier/)
 - [EventHub.Unity](/EventHub.Unity/)
+- [CodeGenerator](/CodeGenerator/)
