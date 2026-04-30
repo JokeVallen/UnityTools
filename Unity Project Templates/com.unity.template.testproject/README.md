@@ -49,8 +49,6 @@
         +---ProjectSettings
 ```
 
-在本文中目录结构主要关注 `ProjectData~/Assets` 目录即可。
-
 `Assets` 目录下包括了几个文件和文件夹，其中 `package_blacklist.json` 是与 `TemplateInitializer.cs` 搭配使用的，后者是一个模板初始化脚本，会在基于模板创建的项目打开时自动执行，主要负责清理 Unity 默认引入的的内置资源包以及将 `.Assets` 目录中的资源重新导入 `Assets` 目录，`package_blacklist.json` 用来定义需要移除的 Unity 默认引入的的内置资源包名单，格式与 `manifest.json` 一样，你可以自主决定保留哪些内置资源包，只需要从黑名单中移除它们即可，黑名单功能本质上是覆写 `manifest.json`。
 
 `.Assets` 目录相当于是模板项目中需要放入 `Assets` 目录的资产副本，因为基于模板创建的项目可能不会主动触发 UPM 的 Resolve，此时 `Packages` 目录为空，任何资源包都未导入，这就导致 `Assets` 目录中若存在需要引用资源包的脚本或其它资产就会引发错误，所以 `TemplateInitializer` 的作用则是主动触发 UPM 的 Resolve 并根据黑名单覆写 `manifest.json`，使得你的 `Packages` 目录下只保留你在设计项目模板时显式要求的资源包，在完成以上行为后它会重新将 `.Assets` 目录中的资源移至 `Assets` 目录并进行刷新。
