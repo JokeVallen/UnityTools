@@ -1,0 +1,19 @@
+{
+    "name": "FNV1A.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3fef1f7f6be320140a906711723138a5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
