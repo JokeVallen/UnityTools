@@ -1,20 +1,8 @@
 /// <summary>
-/// 泛型对象工厂接口
-/// </summary>
-/// <typeparam name="T">工厂产物类型</typeparam>
-/// <remarks>
-/// <para>预留接口，当前未定义额外成员，未来扩展时可用于添加与特定产物类型相关的工厂行为。</para>
-/// </remarks>
-internal interface IObjectFactory<T> : IObjectFactory
-{
-
-}
-
-/// <summary>
 /// 对象工厂接口
 /// </summary>
 /// <remarks>
-/// <para>所有对象工厂的基础接口，提供错误处理策略的配置。</para>
+/// <para>所有对象工厂的基础抽象，提供初始化异常处理策略的配置入口。</para>
 /// </remarks>
 public interface IObjectFactory
 {
@@ -22,8 +10,8 @@ public interface IObjectFactory
     /// 是否抛出错误
     /// </summary>
     /// <remarks>
-    /// <para>获取或设置一个值，指示在初始化回调发生异常时是否直接抛出该异常。</para>
-    /// <para>若为 <see langword="false"/>，异常会被记录，并尽可能回滚已创建的对象；默认为 <see langword="false"/>。</para>
+    /// <para>获取或设置一个值，指示在初始化回调抛出异常时是否直接向上抛出。</para>
+    /// <para>默认值为 <see langword="false"/>，此时异常会被捕获并记录，同时已创建的资源会被安全销毁；若为 <see langword="true"/>，异常会立刻重新抛出。</para>
     /// </remarks>
     public bool ThrowOnError { get; set; }
 }
