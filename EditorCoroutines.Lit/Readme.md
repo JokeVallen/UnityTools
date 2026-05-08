@@ -1,175 +1,89 @@
-> 项目由 AI 和作者共同设计和开发，已进行基本的单元测试和功能测试，具体测试请查看 `Tests` 下相关文件。
+> 内容由 AI 根据核心代码生成，已通过人工审核。
 
-# Unity 编辑器协程库 (Editor Coroutines)
+# EditorCoroutines.Lit
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Unity](https://img.shields.io/badge/Unity-2020.3+-blue)](https://unity.com/)
-[![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-[![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Unity](https://img.shields.io/badge/Unity-2019.4+-black?logo=unity)](https://unity.com/)
+[![Tests](https://img.shields.io/badge/UnityTestFramewrok-passing-green)](https://docs.unity3d.com/Packages/com.unity.test-framework@latest)
 
-一个轻量级、零依赖的 Unity 编辑器协程库，让你在编辑器中也能像运行时一样使用协程。支持嵌套协程、取消令牌、等待扩展、泛型返回值等功能，非常适合编辑器工具开发、资源导入流程、批处理任务等场景。
+轻量级 Unity 编辑器协程库，提供与运行时代程类似的异步体验，支持嵌套协程、取消令牌、超时等待与返回值。
 
----
+## 📖 简介
 
-## ✨ 特性
+`EditorCoroutines.Lit` 在 Unity Editor 环境下基于 `EditorApplication.update` 驱动协程，让你可以在编辑器脚本、检查器或工具窗口中使用熟悉的 `yield return` 模式编写异步逻辑。无需依赖 `MonoBehaviour`，所有操作均在编辑器中完成，完美适配自定义编辑器工具、资源导入处理、自动化任务等场景。
 
-- **纯编辑器实现**：仅作用于 `UNITY_EDITOR` 环境下，不影响运行时。
-- **轻量简洁**：无外部依赖，核心代码不到 200 行。
-- **嵌套协程**：自动展开嵌套的 `IEnumerator`，按顺序执行。
-- **取消令牌**：通过 `EditorCoroutineCancelToken` 随时取消正在运行的协程。
-- **丰富的等待扩展**：提供等待秒/毫秒、等待帧、等待条件（可超时）、延迟执行等扩展方法。
-- **泛型返回值**：`EditorCoroutine<T>` 支持协程执行完毕后返回一个结果。
-- **异常安全**：内置异常捕获，并提供 `onException` 回调。
+## 🛠 安装环境要求
 
----
+- Unity 2019.4 或更高版本
+- 仅支持 **Unity Editor** 平台（脚本使用 `#if UNITY_EDITOR` 包裹）
+- 无需额外依赖
 
-## 📦 安装
+## 📥 安装方式
 
-### 注入源码
+### 方式一：通过源码导入
+1. 将仓库中所有 `.cs` 文件复制到你的 Unity 项目的任意 `Editor` 文件夹下（例如 `Assets/Editor/EditorCoroutines/`）。
+2. 确认所有文件位于命名空间 `EditorCoroutines.Lit` 内，脚本自动生效。
 
-将 `EditorCoroutine.cs`、`EditorCoroutineCancelToken.cs`、`EditorCoroutineExtensions.Wait.cs`、`EditorCoroutineHelper.cs`、`EditorCoroutineWithResult.cs` 五个文件复制到你的 Unity 项目的 `Editor` 文件夹或任意符合 `UNITY_EDITOR` 条件的脚本文件夹中。
+### 方式二：通过 DLL 导入
+1. 在 Release 页面下载预编译的 `EditorCoroutines.Lit.dll`。
+2. 将 DLL 放入 `Assets/Editor` 文件夹中。
+3. 确保 Unity 编辑器已加载该程序集。
 
-### 注入 DLL 文件
+## 🎯 设计理念
 
-将 `EditorCoroutines.Lit.dll` 和 `EditorCoroutines.Lit.xml` 放入 Unity 项目的 Plugins 目录中。
+- **零依赖**：纯 C# 实现，仅依靠 Unity Editor API。
+- **最小可用**：模仿 `MonoBehaviour` 协程的使用习惯，降低学习成本。
+- **职责分离**：
+  - `EditorCoroutine` / `EditorCoroutine<T>` 负责协程生命周期（启动、停止、释放、异常处理）。
+  - `EditorCoroutineCancelToken` 提供轻量级取消信号，由用户或扩展方法检查。
+  - `EditorCoroutineExtensions` 提供常用的等待原语（秒、帧、条件、延迟等）。
+- **嵌套支持**：自动展平嵌套 `IEnumerator`，让组合异步逻辑更自然。
+- **安全释放**：支持 `IDisposable` 模式，可安全地停止协程并清空回调，防止内存泄漏。
 
----
+## ⚙️ 具体功能
 
-## 🚀 快速开始
+### 1. 编辑器协程生命周期管理
+- 通过 `StartCoroutine` 启动协程，提供完成与异常回调。
+- `Stop()` 可随时终止协程，取消 `EditorApplication.update` 注册。
+- `Dispose()` 彻底释放资源，可多次调用而不会报错。
 
-### 基本使用
+### 2. 带返回值的协程
+- `EditorCoroutine<T>` 允许协程在结束时产出一个结果（通过 `yield return` 值或 `Func<T>`）。
+- 适用于需要异步计算并返回数据的编辑器操作，如文件处理进度、网络请求结果等。
 
-```csharp
-using EditorCoroutines.Lit;
-using UnityEditor;
-using UnityEngine;
-using System.Collections;
+### 3. 取消令牌与超时控制
+- `EditorCoroutineCancelToken` 为外部提供一个布尔开关，配合扩展方法可提前结束当前等待。
+- 超时版本的 `WaitUntil` 确保协程不会无限期挂起。
 
-public class MyEditorTool
-{
-    [MenuItem("Tools/Start Editor Coroutine")]
-    static void StartDemo()
-    {
-        EditorCoroutine.StartCoroutine(DemoRoutine());
-    }
+### 4. 丰富的时间/条件等待
+- **`WaitSeconds` / `WaitMilliseconds`**：基于 `EditorApplication.timeSinceStartup` 的精确等待。
+- **`WaitFrame`**：等待下一编辑器帧。
+- **`WaitUntil`**：条件等待，支持超时。
+- **`Delay`**：延迟后执行 Action，自动处理取消逻辑。
 
-    static IEnumerator DemoRoutine()
-    {
-        Debug.Log("协程开始");
-        yield return EditorCoroutineExtensions.WaitSeconds(2);
-        Debug.Log("2秒后");
-        yield return EditorCoroutineExtensions.WaitFrame();
-        Debug.Log("下一帧");
-    }
-}
-```
+### 5. 嵌套协程自动展平
+- 你可以在协程中 `yield return` 另一个 `IEnumerator`，协程引擎会自动等待嵌套协程执行完毕，无需额外处理。
 
-### 带取消令牌
+### 6. 异常安全
+- 所有异常通过 `onException` 回调捕获，不会中断编辑器主循环，并正常结束协程。
 
-```csharp
-static EditorCoroutineCancelToken cancelToken;
+## ❓ 常见问题
 
-[MenuItem("Tools/Start Cancellable")]
-static void StartCancellable()
-{
-    cancelToken = new EditorCoroutineCancelToken();
-    EditorCoroutine.StartCoroutine(LongRoutine(cancelToken));
-}
+**Q：取消令牌为什么不能直接停止整个协程？**  
+A：令牌只负责通知等待方法提前结束。要彻底终止，请直接调用协程对象的 `Stop()` 或 `Dispose()`。或者在每次等待后检查 `token.IsCancelled` 并手动 `yield break`。
 
-[MenuItem("Tools/Cancel")]
-static void Cancel()
-{
-    cancelToken?.Cancel();
-}
+**Q：可以在协程运行时访问 `Result` 吗？**  
+A：可以，但只有在协程完全结束后才能获得最终结果。建议在 `onComplete` 回调中使用 `Result`。
 
-static IEnumerator LongRoutine(EditorCoroutineCancelToken token)
-{
-    for (int i = 0; i < 100; i++)
-    {
-        if (token.IsCancelled) yield break;
-        Debug.Log("Step " + i);
-        yield return EditorCoroutineExtensions.WaitSeconds(0.5f, token);
-    }
-}
-```
+**Q：是否支持在播放模式下使用？**  
+A：所有代码均被 `#if UNITY_EDITOR` 限制，仅用于编辑器。播放模式下请使用 `MonoBehaviour.StartCoroutine`。
 
-### 带返回值的协程
+## 📚 其它文档
 
-```csharp
-[MenuItem("Tools/Coroutine With Result")]
-static void TestWithResult()
-{
-    EditorCoroutine<int>.StartCoroutine(ComputeResult(), result =>
-    {
-        Debug.Log("计算结果: " + result);
-    });
-}
-
-static IEnumerator ComputeResult()
-{
-    yield return EditorCoroutineExtensions.WaitSeconds(1);
-    yield return 42; // 返回 int 类型结果
-}
-```
-
-### 使用示例
-
-将根目录下的 `example.unitypackage` 导入你的示例项目以便查看具体的应用
-
----
-
-## 📚 API 文档
-
-### `EditorCoroutine`
-
-| 方法 / 属性 | 说明 |
-|------------|------|
-| `static StartCoroutine(IEnumerator, onComplete, onException)` | 启动一个编辑器协程。 |
-| `Start()` | 启动（适用于延迟启动场景）。 |
-| `Stop()` | 停止协程。 |
-| `Dispose()` | 释放资源并停止协程。 |
-| `IsRunning` | 是否正在运行。 |
-| `IsCompleted` | 是否已完成。 |
-| `Exception` | 捕获到的异常（如果有）。 |
-
-### `EditorCoroutine<T>`
-
-| 方法 / 属性 | 说明 |
-|------------|------|
-| `static StartCoroutine(IEnumerator, onComplete, onException)` | 启动一个带返回值的编辑器协程。 |
-| `Result` | 执行结果（完成后有效）。 |
-| 其他同 `EditorCoroutine`。 |
-
-### `EditorCoroutineCancelToken`
-
-| 方法 / 属性 | 说明 |
-|------------|------|
-| `Cancel()` | 发起取消请求。 |
-| `IsCancelled` | 是否已取消。 |
-
-### 扩展方法 (静态类 `EditorCoroutineExtensions`)
-
-| 方法 | 说明 |
-|------|------|
-| `WaitSeconds(float, token)` | 等待指定秒数。 |
-| `WaitMilliseconds(float, token)` | 等待指定毫秒数。 |
-| `WaitFrame(token)` | 等待一帧。 |
-| `WaitUntil(Func<bool> condition, token)` | 等待条件为真。 |
-| `WaitUntil(Func<bool> condition, float timeoutSeconds, token)` | 等待条件为真，超时后自动结束。 |
-| `Delay(Action action, float seconds, token)` | 延迟执行一个操作。 |
-
-### `EditorCoroutineHelper`（内部类）
-
-内部辅助类，提供 `WrapRoutine` 方法实现嵌套协程自动展开。无需手动调用。
-
----
+- [API 详细文档](./DOCUMENT.md)
+- [测试报告](./TEST_REPORT.md)
+- [更新日志](./RELEASE.md)
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证。详情请参见 [LICENSE](LICENSE) 文件。
-
----
-
-## 🤝 贡献
-
-欢迎提交 Issue 或 Pull Request！如果你有好的建议或发现了 bug，请随时反馈。
+本项目采用 [MIT 许可证](https://opensource.org/licenses/MIT)。你可以自由使用、修改和分发。
