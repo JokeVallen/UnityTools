@@ -97,7 +97,7 @@ EventHub 是一个面向 Unity 的通用事件系统，基于 UniTask 构建，�
 
 所有 API 详细说明、方法签名、代码示例及高级用法请查阅 **[DOCUMENT.md](./DOCUMENT.md)**。
 
-测试报告请参阅 **[TEST_README.md](./Tests/TESTS_README.md)**。  
+测试报告请参阅 **[TEST_README.md](./TESTS_REPORT.md)**。  
 
 ## 环境要求
 
