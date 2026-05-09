@@ -29,3 +29,6 @@
 
 - [Orchestrator](/Orchestrator/)  
     一个轻量级、高性能的异步工作流编排引擎，支持 Task、ValueTask、UniTask 三种异步基元。
+
+- [FSM](/FSM/)  
+    一个基于 .NET Standard 2.0 的通用有限状态机框架，采用接口与实现分离的架构设计，提供 Builder 模式的流式配置体验。
