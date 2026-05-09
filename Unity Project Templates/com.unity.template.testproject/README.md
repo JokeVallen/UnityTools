@@ -4,17 +4,7 @@
 [![Unity](https://img.shields.io/badge/Unity-2020.3+-blue)](https://unity.com/)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 
-提供单元测试、基准测试和测试覆盖率所需的项目环境。
-
-``` text
-"dependencies": {
-    "com.unity.ide.visualstudio": "2.0.23",
-    "com.unity.ide.vscode": "1.2.5",
-    "com.unity.test-framework": "1.1.33",
-    "com.unity.test-framework.performance": "3.0.3",
-    "com.unity.testtools.codecoverage": "1.2.7"
-  }
-```
+测试项目模板提供了单元测试、基准测试和测试覆盖率等功能的依赖。
 
 ## 模板目录结构
 
@@ -61,3 +51,15 @@
  - 不建议阻断 `TemplateInitializer` 的执行，否则需要人为接续处理流程。
 
 上述目录涵盖了 EditMode 和 PlayMode 进行单元测试的目录，`Source` 是放置待测试源码的目录，`FailedTestsHook.cs` 是一个 Test Runner 出现未通过的测试时自动生成失败测试报告的自动处理脚本，模板已引入 `Unity TestFramework` 、`Unity TestFramework Performance` 和 `Code Coverage` 资源包，分别覆盖了单元测试、基准测试和测试覆盖率的需求。
+
+## 依赖项
+
+``` text
+"dependencies": {
+    "com.unity.ide.visualstudio": "2.0.23",
+    "com.unity.ide.vscode": "1.2.5",
+    "com.unity.test-framework": "1.1.33",
+    "com.unity.test-framework.performance": "3.0.3",
+    "com.unity.testtools.codecoverage": "1.2.7"
+  }
+```
