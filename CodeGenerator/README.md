@@ -1,229 +1,73 @@
-# 🔧 CodeGenerator 轻量级代码生成框架
+> 内容由 AI 根据核心代码生成，已通过人工审核。
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-[![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]()  
+# CodeGenerator Framework
 
-一个基于 **中介者模式** 与 **特性标记** 的轻量级代码生成框架。通过清晰的职责划分（模板提供、生成、写入），你可以快速搭建可扩展、可维护的代码生成管线。支持同步与异步操作，适用于工具链开发、定制化代码生成等场景。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![.NET](https://img.shields.io/badge/.NET_Standard-2.0-blueviolet)]()
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
----
+一个轻量、灵活、完全解耦的 C# 代码生成框架，适用于任何需要模板驱动代码生成的 .NET 项目。通过可插拔的 **模板提供者**、**生成器** 和 **写入器** 抽象，配合 **中介者模式** 进行集中管理，让批量生成代码变得简洁可靠，同时完整支持同步与异步执行。
 
-## ✨ 特性
+## 安装环境要求
 
-- **职责分离**：模板读取、代码生成、结果写入各自独立，方便替换和扩展。
-- **中介者托管**：通过 `GeneratorMediator` 自动扫描并管理所有标记的生成器。
-- **特性驱动**：使用 `[GeneratorConfig]` 特性声明模板路径和输出路径，无需手动注册。
-- **同步与异步支持**：提供完整的异步接口，支持 `CancellationToken` 取消操作。
-- **泛型可定制**：可为不同模板和输出类型编写对应的生成器，框架不限制具体实现。
-- **轻量零依赖**：仅依赖 .NET Standard 2.0，无额外第三方库。
+- .NET Framework 4.x / .NET Standard 2.0 或兼容版本
+- C# 7.3 或更高版本
 
----
+## 安装方式
 
-## 📦 安装
+### 通过源码导入
+1. 将本仓库的 `CodeGenerator` 命名空间下的所有 `.cs` 文件复制到您的项目中。
+2. 确保项目脚本编译完成即可使用。
 
-### 注入源码
+### 通过 DLL 导入
+1. 在 Releases 页面下载预编译的 `CodeGenerator.dll`。
+2. 将 DLL 放入您自己的插件目录中。
+3. 重新编译项目即可调用相关 API。
 
-将整个源码文件夹复制到你的项目中，修改相应的命名空间（如有需要），即可直接使用。
+## 设计理念
 
-### 使用 DLL
+框架将代码生成流程抽象为三个独立环节：
 
-可将 `.dll` 和 `.xml` 直接导入项目进行使用。
+- **模板读取**（`ITemplateProvider`） – 从任意来源获取模板内容。
+- **内容生成**（`IGenerator`） – 依据模板生成最终输出。
+- **结果写入**（`IWriter`） – 将生成内容持久化到指定路径。
 
----
+每一环节都通过泛型接口定义，支持不同的数据类型；同步与异步版本完全分离，满足不同 IO 场景的性能需求。所有生成器由 **中介者**（`IGeneratorMediator`）统一扫描、托管和执行，只需在生成器类上标记 `[GeneratorConfig]` 特性即可自动注册。
 
-## 🚀 快速开始
+## 具体功能说明
 
-### 1. 定义你的生成器接口（可选）
+### 1. 模板提供者
+`ITemplateProvider<TTemplate>` 及其异步版本负责从模板路径加载原始模板。您可以实现为文件读取、内嵌资源读取，或从网络获取。
 
-```csharp
-// 例如：将字符串模板转换为字符串代码
-public interface IStringGenerator : IGenerator<string, string> { }
-```
+### 2. 代码生成器
+`IGenerator<TTemplate, TContent>` 是核心转换接口，接收模板并生成最终内容。异步版本 `IGeneratorAsync<TTemplate, TContent>` 支持取消令牌，适合耗时操作。所有生成器只需要实现泛型接口并在类上添加 `[GeneratorConfig]` 特性，框架即可自动发现。
 
-或者直接让你的生成器实现 `IGenerator<T1, T2>` 接口。
+### 3. 内容写入器
+`IWriter<TContent>` 定义写入行为，负责将生成结果保存到 `OutputPath`。异步版本 `IWriterAsync<TContent>` 可避免主线程阻塞。
 
-### 2. 实现生成器并标记特性
+### 4. 中介者管理
+`IGeneratorMediator<TGenerator>` 提供扫描（`Rescan`）、清理（`Clear`）、运行全部（`RunAll`）和运行指定生成器（`Run<T>`）的能力。异步中介者接口 `IGeneratorMediatorAsync<TGenerator>` 功能类似，所有方法均返回 `Task` 并支持取消令牌。基类 `BaseGeneratorMediator<TGenerator>` 已实现字典式访问（通过 `Type` 获取元数据）及资源释放逻辑，您只需继承并实现扫描策略即可快速构建具体的管理器。
 
-```csharp
-[GeneratorConfig("Templates/MyClass.txt", "Output/MyClass.cs")]
-public class MyClassGenerator : IStringGenerator
-{
-    public string Generate(string template)
-    {
-        // 用模板生成具体代码，这里仅作演示，你可以使用正则表达式高效搜索需要替换内容的标识
-        return template.Replace("#NAME#", "MyClass");
-    }
-}
-```
+### 5. 声明式配置
+`GeneratorConfigAttribute` 允许直接在生成器类上指定模板路径和输出路径，免去额外配置文件，遵循“约定优于配置”原则。
 
-### 3. 实现模板提供者和写入器（可选）
+## 常见问题
 
-```csharp
-public class FileTemplateProvider : ITemplateProvider<string>
-{
-    public string GetTemplate(string templatePath)
-        => File.ReadAllText(templatePath);
-}
+**问：我的生成器需要依赖其他服务怎么办？**  
+答：框架只定义了抽象，您可以结合依赖注入容器（如 Zenject、VContainer）在生成器构造函数中注入所需服务，并在中介者的 `Rescan` 阶段完成实例化。
 
-public class FileWriter : IWriter<string>
-{
-    public void Write(string outputPath, string content)
-        => File.WriteAllText(outputPath, content);
-}
-```
+**问：异步生成器与同步接口能否混用？**  
+答：框架刻意将同步与异步接口分离，不建议在同一工作流中混用。通常选择统一使用异步接口以获得更好的可维护性和性能。
 
-模板提供者和写入器是解耦规范，并非必须实现的接口，当你存在多种模板读取方式或最终生成内容的写入途径时往往需要用到它们。
+## 其它文档导航
 
-### 4. 创建中介者并运行
+- [API 详细说明](./DOCUMENT.md)  
+  包含所有公共接口、类、成员的签名与作用。
+- [使用示例](./DOCUMENT.md#使用示例)  
+  一个从模板生成 C# 类文件的完整演示。
+- [测试报告](./TEST_REPORT.md)   
+  单元测试和基准测试。
 
-```csharp
-public class MyMediator : BaseGeneratorMediator<IStringGenerator>
-{
-    private readonly ITemplateProvider<string> templateProvider = new FileTemplateProvider();
-    private readonly IWriter<string> writer = new FileWriter();
+## 许可证
 
-    public override void Rescan()
-    {
-        Clear();
-        // 使用反射扫描所有带 [GeneratorConfig] 的 IStringGenerator 实现
-        var generatorTypes = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(t => typeof(IStringGenerator).IsAssignableFrom(t) && !t.IsAbstract);
-
-        foreach (var type in generatorTypes)
-        {
-            var attr = type.GetCustomAttribute<GeneratorConfigAttribute>();
-            if (attr == null) continue;
-            var generator = (IStringGenerator)Activator.CreateInstance(type);
-            generators[type] = new MetaData(attr.TemplatePath, attr.OutputPath, generator);
-        }
-    }
-
-    public override void Run<T>()
-    {
-        if (!generators.TryGetValue(typeof(T), out var meta))
-            throw new InvalidOperationException("Generator not found.");
-        
-        string template = templateProvider.GetTemplate(meta.TemplatePath);
-        string result = meta.Generator.Generate(template);
-        writer.Write(meta.OutputPath, result);
-    }
-
-    public override void RunAll()
-    {
-        foreach (var type in generators.Keys)
-        {
-            RunByType(type);
-        }
-    }
-
-    private void RunByType(Type type)
-    {
-        var method = typeof(MyMediator).GetMethod(nameof(Run), Type.EmptyTypes);
-        var genericMethod = method.MakeGenericMethod(type);
-        genericMethod.Invoke(this, null);
-    }
-}
-```
-
-中介者负责调度各个组件，避免组件之间显式引用，进一步解耦各个组件的协同工作。
-
-### 5. 运行生成器
-
-```csharp
-var mediator = new MyMediator();
-mediator.Rescan();
-mediator.RunAll();
-```
-
-> 你也可以实现异步版本，只需使用 `ITemplateProviderAsync<TTemplate>` 和 `IWriterAsync<TContent>`，并覆写 `RunAsync<T>` 等方法。
-
----
-
-## 📚 API 文档
-
-### `IGenerator` / `IGenerator<TTemplate, TContent>` / `IGeneratorAsync<TTemplate, TContent>`
-
-生成器核心接口，负责将模板内容 `TTemplate` 转换为输出内容 `TContent`。
-
-| 方法 | 说明 |
-|------|------|
-| `TContent Generate(TTemplate template)` | 同步生成 |
-| `Task<TContent> GenerateAsync(TTemplate, CancellationToken)` | 异步生成（带取消支持） |
-
-### `GeneratorConfigAttribute`
-
-标记一个生成器类，并指定其使用的模板路径和输出路径。
-
-| 属性 | 说明 |
-|------|------|
-| `TemplatePath` | 模板文件路径 |
-| `OutputPath` | 输出文件路径 |
-
-### `ITemplateProvider<TTemplate>` / `ITemplateProviderAsync<TTemplate>`
-
-从指定路径读取模板内容。
-
-| 方法 | 说明 |
-|------|------|
-| `TTemplate GetTemplate(string path)` | 同步获取模板 |
-| `Task<TTemplate> GetTemplateAsync(string, CancellationToken)` | 异步获取模板 |
-
-### `IWriter<TContent>` / `IWriterAsync<TContent>`
-
-将生成的内容写入输出路径。
-
-| 方法 | 说明 |
-|------|------|
-| `void Write(string outputPath, TContent content)` | 同步写入 |
-| `Task WriteAsync(string, TContent, CancellationToken)` | 异步写入 |
-
-### `BaseGeneratorMediator<TGenerator>`
-
-中介者基类，实现生成器存储、扫描和执行的公共逻辑。你可以继承此类并实现抽象方法，也可以自定义中介者类。
-
-| 成员 | 说明 |
-|------|------|
-| `generators` 字典 | 存储所有已扫描生成器的元数据 |
-| `MetaData` 结构体 | 包含 `TemplatePath`, `OutputPath`, `Generator` |
-| `Rescan()` | 扫描并注册所有生成器（需实现） |
-| `Clear()` | 清理并释放所有生成器（基类已实现 `IDisposable` 释放） |
-| `Run<T>()` | 运行指定类型的生成器（需实现） |
-| `RunAll()` | 运行所有已注册的生成器（需实现） |
-| `DisposeInstance(object)` | 安全释放 `IDisposable` 实例 |
-
-### 异步中介者接口 `IGeneratorMediatorAsync<TGenerator>`
-
-| 方法 | 说明 |
-|------|------|
-| `RescanAsync(CancellationToken)` | 异步扫描生成器 |
-| `ClearAsync(CancellationToken)` | 异步清理 |
-| `RunAllAsync(CancellationToken)` | 异步运行所有生成器 |
-| `RunAsync<T>(CancellationToken)` | 异步运行指定生成器 |
-
----
-
-## 🧱 依赖关系图
-
-```
-┌──────────────┐
-│  Generator   │ (你的实现)
-└──────┬───────┘
-       │ 使用
-┌──────▼──────┐      ┌─────────────────┐      ┌──────────┐
-│  Mediator   │ ───► │ITemplateProvider│ ───► │ IWriter  │
-└─────────────┘      └─────────────────┘      └──────────┘
-          扫描并管理所有生成器
-```
-
----
-
-## 📄 许可证
-
-本项目采用 MIT 许可证。详情请参见 [LICENSE](LICENSE) 文件。
-
----
-
-## 🤝 贡献
-
-欢迎提交 Issue 或 Pull Request！如果你有好的建议或发现了 bug，请随时反馈。
+本项目基于 [MIT 许可证](https://opensource.org/licenses/MIT) 开源，您可以自由使用、修改和分发。
