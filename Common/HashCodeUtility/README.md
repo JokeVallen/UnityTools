@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Unity Version](https://img.shields.io/badge/Unity-2020.3.48f1-blue)
-![Test Framework](https://img.shields.io/badge/Test%20Framework-1.1.33-passing)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 高性能、顺序敏感的哈希码工具库，适用于 Unity 项目（兼容 .NET Standard 2.0，C# 7.0）。
 

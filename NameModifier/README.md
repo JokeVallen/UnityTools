@@ -2,7 +2,7 @@
 
 # Unity 编辑器名称修改器 (Name Modifier)
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Unity](https://img.shields.io/badge/Unity-2020.3+-blue)](https://unity.com/) [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) [![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]()  
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Unity](https://img.shields.io/badge/Unity-2020.3+-blue)](https://unity.com/) [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) ![](https://img.shields.io/badge/Unit%20Tests-passing-passing) 
 
 一个灵活、可扩展的 Unity 编辑器批量命名工具，支持撤销/恢复、分组管理、自定义命名策略，适用于场景对象和资产对象的批量重命名。  
 

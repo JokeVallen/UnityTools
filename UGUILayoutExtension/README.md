@@ -2,7 +2,7 @@
 
 # UGUI Layout Extension
 
-![License](https://img.shields.io/badge/License-MIT-green) ![Unity](https://img.shields.io/badge/Unity-2020.3+-black?logo=unity) ![.NET](https://img.shields.io/badge/.NET_Standard-2.0-512BD4) [![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]() ![UGUI](https://img.shields.io/badge/UGUI-1.0.0+-black?logo=unity)
+![License](https://img.shields.io/badge/License-MIT-green) ![Unity](https://img.shields.io/badge/Unity-2020.3+-black?logo=unity) ![.NET](https://img.shields.io/badge/.NET_Standard-2.0-512BD4) ![](https://img.shields.io/badge/Unit%20Tests-passing-passing) ![UGUI](https://img.shields.io/badge/UGUI-1.0.0+-black?logo=unity)
 
 基于 UGUI 布局系统扩展的布局组件库，通过动画曲线和参数配置实现复杂的非线性 UI 布局，无需编写代码。完整融入 UGUI 布局系统，与 `LayoutElement`、`ContentSizeFitter`、`LayoutGroup` 等官方组件兼容搭配。
 

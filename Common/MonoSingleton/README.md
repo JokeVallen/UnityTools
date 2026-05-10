@@ -4,7 +4,7 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Unity Version](https://img.shields.io/badge/Unity-2020.3%2B-blue.svg)](https://unity.com/)
-[![Test Framework](https://img.shields.io/badge/Test%20Framework-1.1.33-passing)](https://docs.unity3d.com/Packages/com.unity.test-framework@1.1/manual/index.html)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 一个轻量级、开箱即用的 Unity MonoBehaviour 单例基类库，支持**非持久化单例**与**跨场景持久化单例**，并提供接口访问变体，帮助你快速搭建结构清晰、生命周期可控的全局管理器。
 

@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![.NET](https://img.shields.io/badge/.NET%20Standard-2.0-512BD4?logo=dotnet)
-![xUnit](https://img.shields.io/badge/xUnit_2.7.0-passing-passing?logo=xunit)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 一个基于 .NET Standard 2.0 的通用有限状态机框架，采用接口与实现分离的架构设计，提供 Builder 模式的流式配置体验。框架聚焦最小正交原语，将高级特性（如分层状态机、装饰器）留给组合模式实现，兼具类型安全、高性能与可扩展性。适用于游戏 AI、UI 流程、业务逻辑等多种场景。
 

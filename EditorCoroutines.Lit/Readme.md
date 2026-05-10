@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Unity](https://img.shields.io/badge/Unity-2019.4+-black?logo=unity)](https://unity.com/)
-[![Tests](https://img.shields.io/badge/UnityTestFramewrok-passing-green)](https://docs.unity3d.com/Packages/com.unity.test-framework@latest)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 轻量级 Unity 编辑器协程库，提供与运行时代程类似的异步体验，支持嵌套协程、取消令牌、超时等待与返回值。
 

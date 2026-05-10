@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Unity](https://img.shields.io/badge/Unity-2020.3%2B-green.svg)
-![TestFramework](https://img.shields.io/badge/Test%20Framework-1.1.33-passing)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 一个轻量级的 C# 比较器全局缓存工具，支持 `IEqualityComparer`/`IEqualityComparer<T>` 和 `IComparer`/`IComparer<T>` 的统一注册、获取与适配，适用于需要在应用中集中管理比较逻辑的场景。
 

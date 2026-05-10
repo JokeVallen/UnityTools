@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Unity](https://img.shields.io/badge/Unity-2020.3%2B-black.svg)](https://unity.com/)
-[![Test Framework](https://img.shields.io/badge/Tests-NUnit%2FUTF-blue.svg)](https://docs.unity3d.com/Packages/com.unity.test-framework@latest)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 一个为 Unity 编辑器扩展提供增强型 `ObjectField` 绘制的轻量工具库。它弥补了原生 `EditorGUI.ObjectField` / `EditorGUILayout.ObjectField` 在只读展示、移除选择器按钮以及自定义选择器行为等方面的不足，让 Inspector 和编辑器窗口的 UI 交互更加灵活。
 

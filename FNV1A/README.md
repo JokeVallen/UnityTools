@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Unity](https://img.shields.io/badge/Unity-2020.3+-blue)](https://unity.com/)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-[![Unity Test Framework](https://img.shields.io/badge/Unity%20Test%20Framework-passing-brightgreen)]()
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 FNV1AUtility 是一个专为 Unity 和 .NET 设计的高性能、零分配、跨平台确定性哈希工具库。它基于 **FNV-1a 64 位算法**，支持多种基础类型、Unity 类型及集合类型的哈希组合，并提供灵活的扩展机制。通过泛型静态缓存与内联优化，该库在保持易用性的同时，将抽象开销降至最低。
 

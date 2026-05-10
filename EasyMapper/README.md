@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Unity](https://img.shields.io/badge/Unity-2020.3+-black.svg)](https://unity.com/)
 [![.NET](https://img.shields.io/badge/.NET-Standard_2.0-512BD4.svg)](https://dotnet.microsoft.com/en-us/platform/dotnet-standard)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](Tests/)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 **EasyMapper** 是一个高性能、可组合的 **运行时 ID 映射框架**，专为 Unity 和 .NET Standard 2.0 设计。  
 它将任意字符串或 UnityEngine.Object 转换为紧凑的 64 位 `LongToken`，并提供了丰富的装饰器流水线，在保持极致性能的同时轻松应对百万级对象。

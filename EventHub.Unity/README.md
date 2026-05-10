@@ -4,7 +4,7 @@
 [![Unity](https://img.shields.io/badge/Unity-2018.3+-blue)](https://unity.com/)
 [![UniTask](https://img.shields.io/badge/UniTask-2.0.0+-green)](https://github.com/Cysharp/UniTask)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue)](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-[![Performance](https://img.shields.io/badge/performance-%3C1μs--0.4ms-blue)]()
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 ## 概述
 

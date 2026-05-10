@@ -2,8 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Unity Version](https://img.shields.io/badge/Unity-2020.3+-black?logo=unity)](https://unity.com/)
-[![Test Framework](https://img.shields.io/badge/Test%20Framework-1.1.33-blue)](https://docs.unity3d.com/Packages/com.unity.test-framework@1.1/manual/index.html)
-[![Performance Testing](https://img.shields.io/badge/Performance%20Testing-3.0.3-green)](https://docs.unity3d.com/Packages/com.unity.test-framework.performance@3.0/manual/index.html)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 一个即拿即用、轻量低耗的 Unity 日志工具库。它统一了控制台输出与文件持久化，提供灵活的级别过滤与格式化扩展，同时几乎不产生运行时开销。
 

@@ -4,7 +4,7 @@
 
 ![MIT License](https://img.shields.io/badge/license-MIT-green)
 ![Unity](https://img.shields.io/badge/Unity-2020.3%2B-blue)
-![Test Framework](https://img.shields.io/badge/Test%20Framework-1.1.33-passing)
+![](https://img.shields.io/badge/Unit%20Tests-passing-passing)
 
 一个轻量级、可扩展的 Unity 对象工厂框架，为 `GameObject` 和 `Component` 的创建提供统一入口，并支持在运行时无缝替换底层实现（如对象池、测试替身等）。
 
