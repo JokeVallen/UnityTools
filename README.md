@@ -32,3 +32,6 @@
 
 - [FSM](/FSM/)  
     一个基于 .NET Standard 2.0 的通用有限状态机框架，采用接口与实现分离的架构设计，提供 Builder 模式的流式配置体验。
+
+- [EasyAttributes](/EasyAttributes/)  
+    轻量级、高性能的 .NET Attribute 驱动 AOP（面向切面编程）内核，提供缓存、重试、事务、日志等横切关注点的声明式处理。
