@@ -1,0 +1,1183 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EasyAttributes.Core</name>
+    </assembly>
+    <members>
+        <member name="T:EasyAttributes.Core.DefaultExecutorBuilder">
+            <summary>
+            执行器构建器
+            </summary>
+            <remarks>
+            <para>通过链式 API 注册处理器、注入功能、配置工厂，最终构建不可变的同步/异步执行器。</para>
+            <para>
+            示例：
+            <code>
+            var executor = DefaultExecutorBuilder.Create()
+                .UseProcessor&lt;MyAttr, MyProcessor&gt;()
+                .UseFeature&lt;ILogger&gt;(new ConsoleLogger())
+                .Build();
+            </code>
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.Create">
+            <summary>创建构建器</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.UseProcessor``2">
+            <summary>注册处理器（泛型）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.UseProcessor(System.Type,System.Type)">
+            <summary>注册处理器</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.UseFeature``1(``0)">
+            <summary>
+            注入全局功能实例（泛型）
+            </summary>
+            <remarks>
+            <para>功能实例将在所有通过此构建器创建的上下文中可用，处理器可通过 <see cref="M:EasyAttributes.Core.Extensions.GetFeature``1(EasyAttributes.IContext,``0)"/> 获取。</para>
+            <para>
+            <b>Features 与 Items 的职责区别</b>：
+            <list type="bullet">
+              <item>
+                <description><see cref="P:EasyAttributes.Core.DefaultExecutorBuilder.Features"/>：用于注入全局、稳定的基础设施服务（如 <c>ILogger</c>、<c>ICache</c>、<c>ISerializer</c>）。
+                构建时注入，处理器只读，不可修改。</description>
+              </item>
+              <item>
+                <description><see cref="P:EasyAttributes.IContext.Items"/>：用于处理器间的临时数据传递（如事务对象、校验令牌）。
+                处理器可通过 <c>SetItem</c> / <c>GetItem</c> 读写，仅限当前上下文的一次执行链。</description>
+              </item>
+            </list>
+            </para>
+            <para>
+            若处理器需要根据运行时条件动态选择不同实现，请使用工厂模式（将工厂作为全局功能注入），
+            或通过 <see cref="P:EasyAttributes.IContext.Items"/> 传递特定实例。
+            </para>
+            </remarks>
+            <typeparam name="TFeature">功能类型，必须实现 <see cref="T:EasyAttributes.IFeature"/></typeparam>
+            <param name="feature">功能实例</param>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.UseFeature(EasyAttributes.IFeature)">
+            <summary>
+            注入全局功能实例（非泛型）
+            </summary>
+            <remarks>
+            <para>以实例的具体类型作为键。优先使用泛型版本以确保键的一致性。</para>
+            <inheritdoc cref="M:EasyAttributes.Core.DefaultExecutorBuilder.UseFeature``1(``0)" path="/remarks/para[position() > 1]"/> 
+            </remarks>
+            <param name="feature">功能实例</param>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.Scan(System.Reflection.Assembly)">
+            <summary>扫描程序集</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.Scan(System.Reflection.Assembly[])">
+            <summary>扫描多个程序集</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.UseFactory(EasyAttributes.Core.IProcessorFactory)">
+            <summary>设置工厂</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.UseExceptionHandler(EasyAttributes.Core.IExceptionHandler)">
+            <summary>设置异常处理器</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.Build">
+            <summary>构建同步执行器</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.DefaultExecutorBuilder.BuildAsync">
+            <summary>构建异步执行器</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.PropertyAccessor">
+            <summary>
+            属性访问器
+            </summary>
+            <remarks>
+            <para>指示属性当前是读取还是写入操作。</para>
+            </remarks>
+        </member>
+        <member name="F:EasyAttributes.Core.PropertyAccessor.Get">
+            <summary>读取</summary>
+        </member>
+        <member name="F:EasyAttributes.Core.PropertyAccessor.Set">
+            <summary>写入</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.EventAccessor">
+            <summary>
+            事件访问器
+            </summary>
+            <remarks>
+            <para>指示事件当前是添加还是移除处理程序。</para>
+            </remarks>
+        </member>
+        <member name="F:EasyAttributes.Core.EventAccessor.Add">
+            <summary>添加</summary>
+        </member>
+        <member name="F:EasyAttributes.Core.EventAccessor.Remove">
+            <summary>移除</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.ContextException">
+            <summary>
+            上下文异常
+            </summary>
+            <remarks>
+            <para>上下文操作相关的异常基类，携带引发异常的 <see cref="T:EasyAttributes.IContext"/> 实例。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.ContextException.Context">
+            <summary>
+            上下文
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextException.#ctor(System.String,EasyAttributes.IContext)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="message">消息</param>
+            <param name="context">上下文</param>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextException.#ctor(System.String,System.Exception,EasyAttributes.IContext)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="message">消息</param>
+            <param name="innerException">内部异常</param>
+            <param name="context">上下文</param>
+        </member>
+        <member name="T:EasyAttributes.Core.EasyAttributeException">
+            <summary>
+            框架异常基类
+            </summary>
+            <remarks>
+            <para>所有 EasyAttributes 框架产生的异常均继承此类。</para>
+            <para>调用方可捕获此基类以统一处理框架层面的错误。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.EasyAttributeException.#ctor(System.String)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="message">消息</param>
+        </member>
+        <member name="M:EasyAttributes.Core.EasyAttributeException.#ctor(System.String,System.Exception)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="message">消息</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="T:EasyAttributes.Core.ExecutorException">
+            <summary>
+            执行器异常
+            </summary>
+            <remarks>
+            <para>执行器调度层面的异常基类。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.ExecutorException.#ctor(System.String)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="message">消息</param>
+        </member>
+        <member name="M:EasyAttributes.Core.ExecutorException.#ctor(System.String,System.Exception)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="message">消息</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="T:EasyAttributes.Core.FeatureTypeException">
+            <summary>
+            功能类型异常
+            </summary>
+            <remarks>
+            <para>当向功能扩展槽写入的类型未实现 <see cref="T:EasyAttributes.IFeature"/> 时抛出。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.FeatureTypeException.FeatureType">
+            <summary>
+            功能类型
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.FeatureTypeException.#ctor(System.Type,EasyAttributes.IContext)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="featureType">功能类型</param>
+            <param name="context">上下文</param>
+        </member>
+        <member name="T:EasyAttributes.Core.ProcessorAfterException">
+            <summary>
+            后置处理异常
+            </summary>
+            <remarks>
+            <para>处理器 <c>After</c> 阶段抛出的异常。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.ProcessorAfterException.#ctor(System.Type,EasyAttributes.IContext,System.Exception)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="processorType">处理器类型</param>
+            <param name="context">上下文</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="T:EasyAttributes.Core.ProcessorBeforeException">
+            <summary>
+            前置处理异常
+            </summary>
+            <remarks>
+            <para>处理器 <c>Before</c> 阶段抛出的异常。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.ProcessorBeforeException.#ctor(System.Type,EasyAttributes.IContext,System.Exception)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="processorType">处理器类型</param>
+            <param name="context">上下文</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="T:EasyAttributes.Core.ProcessorException">
+            <summary>
+            处理器异常基类
+            </summary>
+            <remarks>
+            <para>处理器执行期间抛出的异常，携带处理器类型和上下文。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.ProcessorException.Context">
+            <summary>
+            上下文
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.Core.ProcessorException.ProcessorType">
+            <summary>
+            处理器类型
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ProcessorException.#ctor(System.String,System.Type,EasyAttributes.IContext,System.Exception)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="message">消息</param>
+            <param name="processorType">处理器类型</param>
+            <param name="context">上下文</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="T:EasyAttributes.Core.ProcessorExecuteException">
+            <summary>
+            核心处理异常
+            </summary>
+            <remarks>
+            <para>处理器 <c>Process</c> 阶段抛出的异常。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.ProcessorExecuteException.#ctor(System.Type,EasyAttributes.IContext,System.Exception)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="processorType">处理器类型</param>
+            <param name="context">上下文</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="T:EasyAttributes.Core.ProcessorNotFoundException">
+            <summary>
+            处理器未找到异常
+            </summary>
+            <remarks>
+            <para>在注册表中找不到指定属性类型的处理器时抛出。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.ProcessorNotFoundException.AttributeType">
+            <summary>
+            属性类型
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ProcessorNotFoundException.#ctor(System.Type)">
+            <summary>
+            初始化异常
+            </summary>
+            <param name="attributeType">属性类型</param>
+        </member>
+        <member name="T:EasyAttributes.Core.Extensions">
+            <summary>
+            扩展方法
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.GetItem``1(EasyAttributes.IContext,System.String,``0)">
+            <summary>
+            从共享状态字典获取值
+            </summary>
+            <remarks>
+            <para>用于处理器间传递临时数据。键不存在或类型不匹配时返回 <paramref name="defaultValue"/>。</para>
+            <para>与 <see cref="!:Features"/> 不同，<see cref="!:Items"/> 是处理器可读写的临时存储空间。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.TryGetItem``1(EasyAttributes.IContext,System.String,``0@,``0)">
+            <summary>
+            尝试从共享状态字典获取值
+            </summary>
+            <remarks>
+            <para>用于处理器间传递临时数据。键不存在或类型不匹配时返回 <paramref name="defaultValue"/>。</para>
+            <para>与 <see cref="!:Features"/> 不同，<see cref="!:Items"/> 是处理器可读写的临时存储空间。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.RemoveItem(EasyAttributes.IContext,System.String)">
+            <summary>
+            从Items中移除指定键所对应的Item
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.SetItem(EasyAttributes.IContext,System.String,System.Object)">
+            <summary>
+            向共享状态字典写入值
+            </summary>
+            <remarks>
+            <para>处理器可用此方法在链内传递临时数据（如事务对象、校验令牌）。</para>
+            <para>若上下文不可写（例如外部自定义的只读上下文），会抛出 <see cref="T:System.ArgumentException"/>。</para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.GetFeature``1(EasyAttributes.IContext,``0)">
+            <summary>
+            从全局功能扩展槽获取功能实例
+            </summary>
+            <remarks>
+            <para>功能实例通过 <see cref="M:EasyAttributes.Core.DefaultExecutorBuilder.UseFeature``1(``0)"/> 注入，全局共享且不可被处理器修改。</para>
+            <para>
+            若不存在对应类型的功能，返回 <paramref name="defaultValue"/>。
+            对于需要根据运行时条件动态选择不同实现的场景，建议将工厂接口作为全局功能注入，
+            而非通过此方法获取后自行判断。
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.TryGetFeature``1(EasyAttributes.IContext,``0@,``0)">
+            <summary>
+            尝试从全局功能扩展槽获取功能实例
+            </summary>
+            <remarks>
+            <para>功能实例通过 <see cref="M:EasyAttributes.Core.DefaultExecutorBuilder.UseFeature``1(``0)"/> 注入，全局共享且不可被处理器修改。</para>
+            <para>
+            若不存在对应类型的功能，返回 <paramref name="defaultValue"/>。
+            对于需要根据运行时条件动态选择不同实现的场景，建议将工厂接口作为全局功能注入，
+            而非通过此方法获取后自行判断。
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.GetResult``1(EasyAttributes.IProcessorHandle,``0)">
+            <summary>安全获取结果</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.Extensions.TryGetResult``1(EasyAttributes.IProcessorHandle,``0@)">
+            <summary>尝试获取结果</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.ContextFactory">
+            <summary>
+            上下文工厂
+            </summary>
+            <remarks>
+            <para>提供一系列创建各场景上下文的静态方法，返回强类型接口。</para>
+            <para>
+            示例：
+            <code>
+            var context = ContextFactory.CreateMethodContext(attr, method, target, args);
+            executor.Execute(context);
+            </code>
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateMethodContext(EasyAttributes.EasyAttribute,System.Reflection.MethodInfo,System.Object,System.Object[],System.Threading.CancellationToken)">
+            <summary>创建方法上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreatePropertyContext(EasyAttributes.EasyAttribute,System.Reflection.PropertyInfo,EasyAttributes.Core.PropertyAccessor,System.Object,System.Object,System.Threading.CancellationToken)">
+            <summary>创建属性上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateFieldContext(EasyAttributes.EasyAttribute,System.Reflection.FieldInfo,System.Object,System.Object,System.Threading.CancellationToken)">
+            <summary>创建字段上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateTypeContext(EasyAttributes.EasyAttribute,System.Type,System.Threading.CancellationToken)">
+            <summary>创建类型上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateConstructorContext(EasyAttributes.EasyAttribute,System.Reflection.ConstructorInfo,System.Object,System.Object[],System.Threading.CancellationToken)">
+            <summary>创建构造函数上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateParameterContext(EasyAttributes.EasyAttribute,System.Reflection.ParameterInfo,System.Object,System.Object[],System.Threading.CancellationToken)">
+            <summary>创建参数上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateReturnValueContext(EasyAttributes.EasyAttribute,System.Reflection.MethodInfo,System.Object,System.Threading.CancellationToken)">
+            <summary>创建返回值上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateEventContext(EasyAttributes.EasyAttribute,System.Reflection.EventInfo,EasyAttributes.Core.EventAccessor,System.Object,System.Delegate,System.Threading.CancellationToken)">
+            <summary>创建事件上下文</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ContextFactory.CreateGenericParameterContext(EasyAttributes.EasyAttribute,System.Type,System.Reflection.MemberInfo,System.Object,System.Threading.CancellationToken)">
+            <summary>创建泛型参数上下文</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IAsyncContext">
+            <summary>
+            异步上下文
+            </summary>
+            <remarks>
+            <para>提供异步操作所需的取消令牌。</para>
+            <para>
+            实现此接口的上下文可在异步处理器中通过 <see cref="P:EasyAttributes.Core.IAsyncContext.CancellationToken"/> 获取令牌，
+            以支持取消操作。
+            </para>
+            <para>
+            示例：
+            <code>
+            if (context is IAsyncContext asyncCtx)
+            {
+                var token = asyncCtx.CancellationToken;
+                // 使用 token 执行异步操作
+            }
+            </code>
+            </para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IAsyncContext.CancellationToken">
+            <summary>
+            异步操作取消令牌
+            </summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IConstructorContext">
+            <summary>
+            构造函数上下文
+            </summary>
+            <remarks>
+            <para>提供被标注构造函数的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IConstructorContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IConstructorContext.Constructor">
+            <summary>构造函数元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IConstructorContext.Parameters">
+            <summary>参数列表</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IConstructorContext.Arguments">
+            <summary>参数值</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IConstructorContext.Proceed">
+            <summary>原始调用委托</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IConstructorContext.Exception">
+            <summary>异常</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IEventContext">
+            <summary>
+            事件上下文
+            </summary>
+            <remarks>
+            <para>提供被标注事件的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IEventContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IEventContext.Event">
+            <summary>事件元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IEventContext.Accessor">
+            <summary>访问器</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IEventContext.Handler">
+            <summary>处理程序</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IEventContext.AddOriginal">
+            <summary>原始Add委托</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IEventContext.RemoveOriginal">
+            <summary>原始Remove委托</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IExceptionHandler">
+            <summary>
+            异常处理器
+            </summary>
+            <remarks>
+            <para>用于处理框架执行过程中产生的 <see cref="T:EasyAttributes.Core.EasyAttributeException"/>。</para>
+            <para>
+            若返回 <c>true</c>，则异常被视为已处理，执行器将继续后续流程；
+            若返回 <c>false</c>，则异常将重新抛出。
+            </para>
+            <para>
+            示例：
+            <code>
+            public class CustomExceptionHandler : IExceptionHandler
+            {
+                public bool Handle(EasyAttributeException exception)
+                {
+                    // 记录日志
+                    Console.WriteLine(exception.Message);
+                    return true; // 已处理
+                }
+            }
+            </code>
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.IExceptionHandler.Handle(EasyAttributes.Core.EasyAttributeException)">
+            <summary>
+            处理异常
+            </summary>
+            <param name="exception">异常</param>
+            <returns>是否已处理</returns>
+        </member>
+        <member name="T:EasyAttributes.Core.IFieldContext">
+            <summary>
+            字段上下文
+            </summary>
+            <remarks>
+            <para>提供被标注字段的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IFieldContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IFieldContext.Field">
+            <summary>字段元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IFieldContext.Value">
+            <summary>字段值</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IFieldContext.GetOriginal">
+            <summary>原始Getter委托</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IFieldContext.SetOriginal">
+            <summary>原始Setter委托</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IGenericParameterContext">
+            <summary>
+            泛型参数上下文
+            </summary>
+            <remarks>
+            <para>提供被标注泛型类型参数的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IGenericParameterContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IGenericParameterContext.GenericParameter">
+            <summary>泛型参数类型</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IGenericParameterContext.DeclaringMember">
+            <summary>声明成员</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IMethodContext">
+            <summary>
+            方法上下文
+            </summary>
+            <remarks>
+            <para>提供被标注方法的完整运行时信息。</para>
+            <para>
+            处理器可通过 <see cref="P:EasyAttributes.Core.IMethodContext.Proceed"/> 委托调用原始方法，
+            通过 <see cref="P:EasyAttributes.Core.IMethodContext.Result"/> 和 <see cref="P:EasyAttributes.Core.IMethodContext.Exception"/> 获取执行后的返回值或异常。
+            </para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IMethodContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IMethodContext.Method">
+            <summary>方法元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IMethodContext.Parameters">
+            <summary>参数列表</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IMethodContext.Arguments">
+            <summary>参数值</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IMethodContext.Proceed">
+            <summary>原始方法调用委托</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IMethodContext.Result">
+            <summary>返回值</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IMethodContext.Exception">
+            <summary>异常</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IContextWriter">
+            <summary>
+            上下文写入接口
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.IContextWriter.SetItem(System.String,System.Object)">
+            <summary>
+            向上下文写入或更新一个条目
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:EasyAttributes.Core.IContextWriter.RemoveItem(System.String)">
+            <summary>
+            从上下文移除指定键的条目
+            </summary>
+            <param name="key">要移除的条目的键</param>
+        </member>
+        <member name="M:EasyAttributes.Core.IContextWriter.SetFeature(System.Type,EasyAttributes.IFeature)">
+            <summary>
+            向上下文写入或更新一个功能实例
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.IContextWriter.RemoveFeature(System.Type)">
+            <summary>
+            从上下文中移除指定类型的功能实例
+            </summary>
+            <param name="featureType">要移除的功能实例对应的类型</param>
+        </member>
+        <member name="T:EasyAttributes.Core.IParameterContext">
+            <summary>
+            参数上下文
+            </summary>
+            <remarks>
+            <para>提供被标注方法参数的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IParameterContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IParameterContext.Method">
+            <summary>方法元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IParameterContext.Parameter">
+            <summary>参数元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IParameterContext.ParameterIndex">
+            <summary>参数索引</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IParameterContext.Value">
+            <summary>参数值</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IParameterContext.Arguments">
+            <summary>所有参数值</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IProcessorAsync`1">
+            <summary>
+            泛型异步处理器
+            </summary>
+            <remarks>
+            <para>定义特定属性类型的异步处理器契约。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.IProcessorAsync`1.BeforeAsync(EasyAttributes.IContext,`0)">
+            <summary>异步前置处理</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.IProcessorAsync`1.ProcessAsync(EasyAttributes.IContext,`0)">
+            <summary>异步核心处理</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.IProcessorAsync`1.AfterAsync(EasyAttributes.IContext,`0)">
+            <summary>异步后置处理</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IProcessorFactory">
+            <summary>
+            处理器工厂
+            </summary>
+            <remarks>
+            <para>根据处理器类型创建或获取处理器实例。</para>
+            <para>
+            框架内置了 <see cref="T:EasyAttributes.Core.TransientProcessorFactory"/>（每次新建）和
+            <see cref="T:EasyAttributes.Core.SingletonProcessorFactory"/>（单例复用）两种实现。
+            使用者可替换此接口接入依赖注入容器。
+            </para>
+            </remarks>
+        </member>
+        <member name="M:EasyAttributes.Core.IProcessorFactory.Create(System.Type)">
+            <summary>
+            创建处理器实例
+            </summary>
+            <param name="processorType">处理器类型</param>
+            <returns>处理器实例</returns>
+            <exception cref="T:EasyAttributes.Core.ExecutorException">无法创建时抛出</exception>
+        </member>
+        <member name="T:EasyAttributes.Core.IProcessor`1">
+            <summary>
+            泛型同步处理器
+            </summary>
+            <remarks>
+            <para>定义特定属性类型的同步处理器契约。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.IProcessor`1.Before(EasyAttributes.IContext,`0)">
+            <summary>前置处理</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.IProcessor`1.Process(EasyAttributes.IContext,`0)">
+            <summary>核心处理</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.IProcessor`1.After(EasyAttributes.IContext,`0)">
+            <summary>后置处理</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IPropertyContext">
+            <summary>
+            属性上下文
+            </summary>
+            <remarks>
+            <para>提供被标注属性的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IPropertyContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IPropertyContext.Property">
+            <summary>属性元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IPropertyContext.Accessor">
+            <summary>访问器</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IPropertyContext.Value">
+            <summary>属性值</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IPropertyContext.GetOriginal">
+            <summary>原始Getter委托</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IPropertyContext.SetOriginal">
+            <summary>原始Setter委托</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.IReturnValueContext">
+            <summary>
+            返回值上下文
+            </summary>
+            <remarks>
+            <para>提供被标注方法返回值的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.IReturnValueContext.Target">
+            <summary>目标对象</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IReturnValueContext.Method">
+            <summary>方法元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IReturnValueContext.ReturnParameter">
+            <summary>返回参数元数据</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.IReturnValueContext.Result">
+            <summary>返回值</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.ITypeContext">
+            <summary>
+            类型上下文
+            </summary>
+            <remarks>
+            <para>提供被标注类型的运行时信息。</para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.ITypeContext.Target">
+            <summary>目标对象（始终为null）</summary>
+        </member>
+        <member name="P:EasyAttributes.Core.ITypeContext.Type">
+            <summary>类型</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.ProcessorHandle">
+            <summary>
+            处理器句柄
+            </summary>
+            <remarks>
+            <para>
+            通过静态工厂方法创建，提供 <see cref="F:EasyAttributes.Core.ProcessorHandle.Continue"/>、<see cref="F:EasyAttributes.Core.ProcessorHandle.Aborted"/>、<see cref="F:EasyAttributes.Core.ProcessorHandle.AbortedAll"/> 三个单例，
+            以及 <see cref="M:EasyAttributes.Core.ProcessorHandle.Abort(System.Object)"/> 和 <see cref="M:EasyAttributes.Core.ProcessorHandle.AbortAll(System.Object)"/> 携带返回值。
+            </para>
+            </remarks>
+        </member>
+        <member name="P:EasyAttributes.Core.ProcessorHandle.IsAborted">
+            <inheritdoc/>
+        </member>
+        <member name="P:EasyAttributes.Core.ProcessorHandle.SkipAfterCallbacks">
+            <inheritdoc/>
+        </member>
+        <member name="P:EasyAttributes.Core.ProcessorHandle.Result">
+            <inheritdoc/>
+        </member>
+        <member name="F:EasyAttributes.Core.ProcessorHandle.Continue">
+            <summary>
+            继续执行
+            </summary>
+        </member>
+        <member name="F:EasyAttributes.Core.ProcessorHandle.Aborted">
+            <summary>
+            中止并运行After
+            </summary>
+        </member>
+        <member name="F:EasyAttributes.Core.ProcessorHandle.AbortedAll">
+            <summary>
+            完全中止
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ProcessorHandle.Abort(System.Object)">
+            <summary>
+            中止并返回结果
+            </summary>
+            <param name="result">替换结果</param>
+        </member>
+        <member name="M:EasyAttributes.Core.ProcessorHandle.AbortAll(System.Object)">
+            <summary>
+            完全中止并返回结果
+            </summary>
+            <param name="result">替换结果</param>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncConstructorProcessor`1">
+            <summary>
+            异步构造函数处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IConstructorContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncConstructorProcessor`1.BeforeAsync(EasyAttributes.Core.IConstructorContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncConstructorProcessor`1.ProcessAsync(EasyAttributes.Core.IConstructorContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncConstructorProcessor`1.AfterAsync(EasyAttributes.Core.IConstructorContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncEventProcessor`1">
+            <summary>
+            异步事件处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IEventContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncEventProcessor`1.BeforeAsync(EasyAttributes.Core.IEventContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncEventProcessor`1.ProcessAsync(EasyAttributes.Core.IEventContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncEventProcessor`1.AfterAsync(EasyAttributes.Core.IEventContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncFieldProcessor`1">
+            <summary>
+            异步字段处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IFieldContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncFieldProcessor`1.BeforeAsync(EasyAttributes.Core.IFieldContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncFieldProcessor`1.ProcessAsync(EasyAttributes.Core.IFieldContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncFieldProcessor`1.AfterAsync(EasyAttributes.Core.IFieldContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncGenericParameterProcessor`1">
+            <summary>
+            异步泛型参数处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IGenericParameterContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncGenericParameterProcessor`1.BeforeAsync(EasyAttributes.Core.IGenericParameterContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncGenericParameterProcessor`1.ProcessAsync(EasyAttributes.Core.IGenericParameterContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncGenericParameterProcessor`1.AfterAsync(EasyAttributes.Core.IGenericParameterContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncMethodProcessor`1">
+            <summary>
+            异步方法处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IMethodContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncMethodProcessor`1.BeforeAsync(EasyAttributes.Core.IMethodContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncMethodProcessor`1.ProcessAsync(EasyAttributes.Core.IMethodContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncMethodProcessor`1.AfterAsync(EasyAttributes.Core.IMethodContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncParameterProcessor`1">
+            <summary>
+            异步参数处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IParameterContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncParameterProcessor`1.BeforeAsync(EasyAttributes.Core.IParameterContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncParameterProcessor`1.ProcessAsync(EasyAttributes.Core.IParameterContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncParameterProcessor`1.AfterAsync(EasyAttributes.Core.IParameterContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncProcessor`1">
+            <summary>
+            异步处理器基类
+            </summary>
+            <remarks>
+            <para>继承此类并实现 <see cref="M:EasyAttributes.Core.AsyncProcessor`1.ProcessAsync(EasyAttributes.IContext,`0)"/> 即可定义特定属性类型的异步处理逻辑。</para>
+            <para>
+            桥接层自动从 <see cref="P:EasyAttributes.IContext.Attribute"/> 提取强类型属性，类型不匹配时静默跳过。
+            </para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncProcessor`1.BeforeAsync(EasyAttributes.IContext,`0)">
+            <summary>异步前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncProcessor`1.ProcessAsync(EasyAttributes.IContext,`0)">
+            <summary>异步核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncProcessor`1.AfterAsync(EasyAttributes.IContext,`0)">
+            <summary>异步后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncPropertyProcessor`1">
+            <summary>
+            异步属性处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IPropertyContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncPropertyProcessor`1.BeforeAsync(EasyAttributes.Core.IPropertyContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncPropertyProcessor`1.ProcessAsync(EasyAttributes.Core.IPropertyContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncPropertyProcessor`1.AfterAsync(EasyAttributes.Core.IPropertyContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncReturnValueProcessor`1">
+            <summary>
+            异步返回值处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IReturnValueContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncReturnValueProcessor`1.BeforeAsync(EasyAttributes.Core.IReturnValueContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncReturnValueProcessor`1.ProcessAsync(EasyAttributes.Core.IReturnValueContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncReturnValueProcessor`1.AfterAsync(EasyAttributes.Core.IReturnValueContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.AsyncTypeProcessor`1">
+            <summary>
+            异步类型处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.ITypeContext"/> 时调用子类重写的异步强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncTypeProcessor`1.BeforeAsync(EasyAttributes.Core.ITypeContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncTypeProcessor`1.ProcessAsync(EasyAttributes.Core.ITypeContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.AsyncTypeProcessor`1.AfterAsync(EasyAttributes.Core.ITypeContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.ConstructorProcessor`1">
+            <summary>
+            构造函数处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IConstructorContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.ConstructorProcessor`1.Before(EasyAttributes.Core.IConstructorContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ConstructorProcessor`1.Process(EasyAttributes.Core.IConstructorContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ConstructorProcessor`1.After(EasyAttributes.Core.IConstructorContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.EventProcessor`1">
+            <summary>
+            事件处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IEventContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.EventProcessor`1.Before(EasyAttributes.Core.IEventContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.EventProcessor`1.Process(EasyAttributes.Core.IEventContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.EventProcessor`1.After(EasyAttributes.Core.IEventContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.FieldProcessor`1">
+            <summary>
+            字段处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IFieldContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.FieldProcessor`1.Before(EasyAttributes.Core.IFieldContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.FieldProcessor`1.Process(EasyAttributes.Core.IFieldContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.FieldProcessor`1.After(EasyAttributes.Core.IFieldContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.GenericParameterProcessor`1">
+            <summary>
+            泛型参数处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IGenericParameterContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.GenericParameterProcessor`1.Before(EasyAttributes.Core.IGenericParameterContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.GenericParameterProcessor`1.Process(EasyAttributes.Core.IGenericParameterContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.GenericParameterProcessor`1.After(EasyAttributes.Core.IGenericParameterContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.MethodProcessor`1">
+            <summary>
+            方法处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IMethodContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.MethodProcessor`1.Before(EasyAttributes.Core.IMethodContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.MethodProcessor`1.Process(EasyAttributes.Core.IMethodContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.MethodProcessor`1.After(EasyAttributes.Core.IMethodContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.ParameterProcessor`1">
+            <summary>
+            参数处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IParameterContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.ParameterProcessor`1.Before(EasyAttributes.Core.IParameterContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ParameterProcessor`1.Process(EasyAttributes.Core.IParameterContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ParameterProcessor`1.After(EasyAttributes.Core.IParameterContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.Processor`1">
+            <summary>
+            同步处理器基类
+            </summary>
+            <remarks>
+            <para>继承此类并实现 <see cref="M:EasyAttributes.Core.Processor`1.Process(EasyAttributes.IContext,`0)"/> 即可定义特定属性类型的同步处理逻辑。</para>
+            <para>
+            桥接层自动从 <see cref="P:EasyAttributes.IContext.Attribute"/> 提取强类型属性，类型不匹配时静默跳过。
+            </para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.Processor`1.Before(EasyAttributes.IContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.Processor`1.Process(EasyAttributes.IContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.Processor`1.After(EasyAttributes.IContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.PropertyProcessor`1">
+            <summary>
+            属性处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IPropertyContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.PropertyProcessor`1.Before(EasyAttributes.Core.IPropertyContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.PropertyProcessor`1.Process(EasyAttributes.Core.IPropertyContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.PropertyProcessor`1.After(EasyAttributes.Core.IPropertyContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.ReturnValueProcessor`1">
+            <summary>
+            返回值处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.IReturnValueContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.ReturnValueProcessor`1.Before(EasyAttributes.Core.IReturnValueContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ReturnValueProcessor`1.Process(EasyAttributes.Core.IReturnValueContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.ReturnValueProcessor`1.After(EasyAttributes.Core.IReturnValueContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+        <member name="T:EasyAttributes.Core.TypeProcessor`1">
+            <summary>
+            类型处理器基类
+            </summary>
+            <remarks>
+            <para>当上下文为 <see cref="T:EasyAttributes.Core.ITypeContext"/> 时调用子类重写的强类型方法，否则跳过。</para>
+            </remarks>
+            <typeparam name="TAttr">属性类型</typeparam>
+        </member>
+        <member name="M:EasyAttributes.Core.TypeProcessor`1.Before(EasyAttributes.Core.ITypeContext,`0)">
+            <summary>前置处理（可重写）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.TypeProcessor`1.Process(EasyAttributes.Core.ITypeContext,`0)">
+            <summary>核心处理（必须实现）</summary>
+        </member>
+        <member name="M:EasyAttributes.Core.TypeProcessor`1.After(EasyAttributes.Core.ITypeContext,`0)">
+            <summary>后置处理（可重写）</summary>
+        </member>
+    </members>
+</doc>

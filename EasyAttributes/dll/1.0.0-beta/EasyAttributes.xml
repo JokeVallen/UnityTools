@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EasyAttributes</name>
+    </assembly>
+    <members>
+        <member name="T:EasyAttributes.EasyAttribute">
+            <summary>
+            纳入框架管理的 Attribute 基类
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.EasyAttribute.Enabled">
+            <summary>
+            是否启用
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.EasyAttribute.Priority">
+            <summary>
+            优先级
+            </summary>
+        </member>
+        <member name="T:EasyAttributes.IContext">
+            <summary>
+            上下文接口
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IContext.Attribute">
+            <summary>
+            当前正在处理的 Attribute 实例
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IContext.Items">
+            <summary>
+            处理器间共享的状态字典
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IContext.Features">
+            <summary>
+            功能扩展槽字典
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IContext.IsEnabled">
+            <summary>
+            上下文构建时从 <see cref="P:EasyAttributes.EasyAttribute.Enabled"/> 读取的启用状态快照
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IContext.Priority">
+            <summary>
+            上下文构建时从 <see cref="P:EasyAttributes.EasyAttribute.Priority"/> 读取的优先级快照
+            </summary>
+        </member>
+        <member name="T:EasyAttributes.IExecutor">
+            <summary>
+            执行器接口
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.IExecutor.Execute(EasyAttributes.IContext)">
+            <summary>
+            执行处理器链
+            </summary>
+            <param name="context">上下文实例</param>
+            <returns>处理器执行句柄</returns>
+        </member>
+        <member name="T:EasyAttributes.IExecutorAsync">
+            <summary>
+            执行器异步接口
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.IExecutorAsync.ExecuteAsync(EasyAttributes.IContext,System.Threading.CancellationToken)">
+            <summary>
+            异步执行处理器链
+            </summary>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">用于取消异步操作的令牌</param>
+            <returns>附带处理器句柄的异步任务实例</returns>
+        </member>
+        <member name="T:EasyAttributes.IFeature">
+            <summary>
+            扩展功能接口
+            </summary>
+        </member>
+        <member name="T:EasyAttributes.IProcessor">
+            <summary>
+            属性处理器接口
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.IProcessor.Before(EasyAttributes.IContext)">
+            <summary>
+            在 <see cref="M:EasyAttributes.IProcessor.Process(EasyAttributes.IContext)"/> 之前执行的前置回调
+            </summary>
+            <param name="context">当前执行上下文</param>
+        </member>
+        <member name="M:EasyAttributes.IProcessor.Process(EasyAttributes.IContext)">
+            <summary>
+            执行核心处理逻辑
+            </summary>
+            <param name="context">当前执行上下文</param>
+            <returns>处理器句柄</returns>
+        </member>
+        <member name="M:EasyAttributes.IProcessor.After(EasyAttributes.IContext)">
+            <summary>
+            在 <see cref="M:EasyAttributes.IProcessor.Process(EasyAttributes.IContext)"/> 之后执行的后置回调
+            </summary>
+            <param name="context">当前执行上下文</param>
+        </member>
+        <member name="T:EasyAttributes.IProcessorAsync">
+            <summary>
+            属性处理器异步接口
+            </summary>
+        </member>
+        <member name="M:EasyAttributes.IProcessorAsync.BeforeAsync(EasyAttributes.IContext)">
+            <summary>
+            在 <see cref="M:EasyAttributes.IProcessorAsync.ProcessAsync(EasyAttributes.IContext)"/> 之前执行的异步前置回调
+            </summary>
+            <param name="context">当前执行上下文</param>
+        </member>
+        <member name="M:EasyAttributes.IProcessorAsync.ProcessAsync(EasyAttributes.IContext)">
+            <summary>
+            异步执行核心处理逻辑
+            </summary>
+            <param name="context">当前执行上下文</param>
+            <returns>处理器句柄</returns>
+        </member>
+        <member name="M:EasyAttributes.IProcessorAsync.AfterAsync(EasyAttributes.IContext)">
+            <summary>
+            在 <see cref="M:EasyAttributes.IProcessorAsync.ProcessAsync(EasyAttributes.IContext)"/> 之后执行的异步后置回调
+            </summary>
+            <param name="context">当前执行上下文</param>
+        </member>
+        <member name="T:EasyAttributes.IProcessorHandle">
+            <summary>
+            处理器句柄接口
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IProcessorHandle.IsAborted">
+            <summary>
+            是否中止后续处理器的执行
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IProcessorHandle.SkipAfterCallbacks">
+            <summary>
+            中止时是否跳过所有 <c>OnAfter</c> 回调
+            </summary>
+        </member>
+        <member name="P:EasyAttributes.IProcessorHandle.Result">
+            <summary>
+            中止时向调用方返回的替代结果
+            </summary>
+        </member>
+    </members>
+</doc>
