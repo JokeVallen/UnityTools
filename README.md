@@ -35,3 +35,6 @@
 
 - [EasyAttributes](/EasyAttributes/)  
     轻量级、高性能的 .NET Attribute 驱动 AOP（面向切面编程）内核，提供缓存、重试、事务、日志等横切关注点的声明式处理。
+
+- [EasyProgress](/EasyProgress/)  
+    EasyProgress 是一个通用、高性能、线程安全的进度管理工具库，通过叶子节点、组合节点和可插拔规则实现单一任务、并行加权、顺序串行、动态子任务及树形嵌套进度，并内置对象池与快捷扩展方法以降低 GC 压力。
