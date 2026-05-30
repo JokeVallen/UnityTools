@@ -1,0 +1,821 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EventHub.Unity</name>
+    </assembly>
+    <members>
+        <member name="T:EventHub.Unity.EventDispatcher">
+            <summary>
+            事件分发器
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.PublishAsync``1(``0,System.Threading.CancellationToken)">
+            <summary>
+            异步串行发布异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.Subscribe``1(System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.Unsubscribe``1(System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask})">
+            <summary>
+            取消订阅异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.UnsubscribeAsyncEvents``1">
+            <summary>
+            取消订阅指定异步事件类型的所有事件
+            </summary>
+            <typeparam name="TEvent">异步事件类型</typeparam>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.UnsubscribeAllAsyncEvents">
+            <summary>
+            取消订阅所有异步事件
+            </summary>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.Disposed">
+            <summary>
+            是否已释放
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.TryCleanupUnusedLocks">
+            <summary>
+            尝试同步清理未使用的锁对象
+            </summary>
+            <returns>成功清理的锁对象的个数</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.TryCleanupUnusedCollections">
+            <summary>
+            尝试同步清理未使用的订阅者集合
+            </summary>
+            <returns>成功清理的订阅者集合的个数</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.TryCleanupUnusedLocksAndCollections">
+            <summary>
+            尝试同步清理未使用的锁对象和订阅者集合
+            </summary>
+            <returns>成功清理的锁对象和订阅者集合的总个数</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.UnsubscribeAllEvents">
+            <summary>
+            取消订阅所有事件
+            </summary>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.Dispose">
+            <summary>
+            释放所有资源
+            </summary>
+            <remarks>
+            <para>注意：外部注入的可替换组件的生命周期不受本工具库管控，工具库只会置空对它们的引用，可替换组件的释放由使用者自行负责。</para>
+            </remarks>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SafeDispose">
+            <summary>
+            安全释放所有资源
+            </summary>
+            <remarks>
+            <para>注意：外部注入的可替换组件的生命周期不受本工具库管控，工具库只会置空对它们的引用，可替换组件的释放由使用者自行负责。</para>
+            <para>安全释放会避免在其它线程访问事件集合过程中触发释放而导致异常，但这意味着可能会比 <see cref="M:EventHub.Unity.EventDispatcher.Dispose"/> 方法更慢更久。</para>
+            </remarks>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.Dispatcher">
+            <summary>
+            复合事件分发器实例
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.AsyncDispatcher">
+            <summary>
+            异步事件分发器实例
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.SyncDispatcher">
+            <summary>
+            同步事件分发器实例
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.Parallelizable">
+            <summary>
+            并发事件分发器实例
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.Logger">
+            <summary>
+            日志记录器
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.LogEnabled">
+            <summary>
+            是否启用日志记录
+            </summary>
+        </member>
+        <member name="E:EventHub.Unity.EventDispatcher.OnError">
+            <summary>
+            异常捕获事件
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.ExceptionCatchEnabled">
+            <summary>
+            是否启用异常捕获
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SubscribeOnce``1(System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅一次性异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SubscribeOnce``1(System.Action{``0},System.Int32)">
+            <summary>
+            订阅一次性同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SubscribeIf``1(System.Predicate{``0},System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅条件异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SubscribeIf``1(System.Predicate{``0},System.Action{``0},System.Int32)">
+            <summary>
+            订阅条件同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.PublishInterruptableEvents``1(``0)">
+            <summary>
+            发布支持中断的同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.PublishCancelableEvents``1(``0)">
+            <summary>
+            发布支持取消执行的同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.PublishParallelAsync``1(``0,System.Threading.CancellationToken)">
+            <summary>
+            异步并发发布异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.Publish``1(``0)">
+            <summary>
+            发布同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.Subscribe``1(System.Action{``0},System.Int32)">
+            <summary>
+            订阅同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.Unsubscribe``1(System.Action{``0})">
+            <summary>
+            取消订阅同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <returns>取消订阅的事件个数</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.UnsubscribeSyncEvents``1">
+            <summary>
+            取消订阅指定同步事件类型的所有事件
+            </summary>
+            <typeparam name="TEvent">同步事件类型</typeparam>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.UnsubscribeAllSyncEvents">
+            <summary>
+            取消订阅所有同步事件
+            </summary>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.SubscriptionMonitor">
+            <summary>
+            事件订阅句柄监视器
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.EventDispatcher.SubscriptionMonitorConfig">
+            <summary>
+            事件订阅句柄监视器配置
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SubscribeOnMainThread``1(System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅在 Unity 主线程执行的异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SubscribeOnceOnMainThread``1(System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅在 Unity 主线程执行的一次性异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.EventDispatcher.SubscribeIfOnMainThread``1(System.Predicate{``0},System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅在 Unity 主线程执行的条件异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="T:EventHub.Unity.IAsyncEventDispatcherExtension">
+            <summary>
+            异步事件分发器扩展接口
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.IAsyncEventDispatcherExtension.UnsubscribeAsyncEvents``1">
+            <summary>
+            取消订阅指定异步事件类型的所有事件
+            </summary>
+            <typeparam name="TEvent">异步事件类型</typeparam>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.Unity.IAsyncEventDispatcherExtension.UnsubscribeAll">
+            <summary>
+            取消订阅所有异步事件
+            </summary>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="T:EventHub.Unity.ICancelableEvent">
+            <summary>
+            可取消事件接口
+            </summary>
+            <remarks>
+            <para>该接口作为事件分发器特定方法的取消检测途径，例如 <see cref="M:EventHub.Unity.EventDispatcher.PublishCancelableEvents``1(``0)"/>。</para>
+            <para>该接口的语义是当处于特定事件发布方法执行过程中，如果某个尚未执行的事件要求取消自身的执行，则可通过实现该接口来获得该功能。</para>
+            </remarks>
+        </member>
+        <member name="P:EventHub.Unity.ICancelableEvent.Cancelled">
+            <summary>
+            是否取消执行
+            </summary>
+        </member>
+        <member name="T:EventHub.Unity.IInterruptableEvent">
+            <summary>
+            可中断事件接口
+            </summary>
+            <remarks>
+            <para>该接口作为事件分发器特定方法的中断检测途径，例如 <see cref="M:EventHub.Unity.EventDispatcher.PublishInterruptableEvents``1(``0)"/>。</para>
+            <para>该接口的语义是当处于特定事件发布方法执行过程中，如果某个尚未执行的事件要求中断自身及后续事件的执行，则可通过实现该接口来获得该功能。</para>
+            </remarks>
+        </member>
+        <member name="P:EventHub.Unity.IInterruptableEvent.Interrupted">
+            <summary>
+            是否中断执行
+            </summary>
+        </member>
+        <member name="T:EventHub.Unity.ILogger">
+            <summary>
+            日志记录器接口
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.ILogger.LogError(System.Type,System.Delegate,System.Exception)">
+            <summary>
+            记录错误
+            </summary>
+            <param name="eventType">事件类型</param>
+            <param name="originalHandler">原生事件委托</param>
+            <param name="exception">异常</param>
+        </member>
+        <member name="M:EventHub.Unity.ILogger.LogError(System.Exception)">
+            <summary>
+            记录错误
+            </summary>
+            <param name="exception">异常</param>
+        </member>
+        <member name="M:EventHub.Unity.ILogger.LogError(System.String)">
+            <summary>
+            记录错误
+            </summary>
+            <param name="message">错误信息</param>
+        </member>
+        <member name="M:EventHub.Unity.ILogger.LogWarning(System.String)">
+            <summary>
+            记录警告
+            </summary>
+            <param name="message">警告信息</param>
+        </member>
+        <member name="M:EventHub.Unity.ILogger.LogInfo(System.String)">
+            <summary>
+            记录普通信息
+            </summary>
+            <param name="message">普通信息</param>
+        </member>
+        <member name="T:EventHub.Unity.ISyncEventDispatcherExtension">
+            <summary>
+            同步事件分发器扩展接口
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.ISyncEventDispatcherExtension.UnsubscribeSyncEvents``1">
+            <summary>
+            取消订阅指定同步事件类型的所有事件
+            </summary>
+            <typeparam name="TEvent">同步事件类型</typeparam>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.Unity.ISyncEventDispatcherExtension.UnsubscribeAll">
+            <summary>
+            取消订阅所有同步事件
+            </summary>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="T:EventHub.Unity.ISubscriptionMonitor">
+            <summary>
+            事件订阅句柄监视器
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.ISubscriptionMonitor.StartTimer(System.Threading.CancellationToken)">
+            <summary>
+            开启自动清理计时器
+            </summary>
+            <param name="cancellationToken">取消令牌</param>
+        </member>
+        <member name="M:EventHub.Unity.ISubscriptionMonitor.StopTimer">
+            <summary>
+            停止自动清理计时器
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.ISubscriptionMonitor.Register(UnityEngine.Component,EventHub.ISubscription)">
+            <summary>
+            注册组件及与之关联的事件订阅句柄
+            </summary>
+            <param name="component">组件</param>
+            <param name="subscription">事件订阅句柄</param>
+        </member>
+        <member name="M:EventHub.Unity.ISubscriptionMonitor.Register(UnityEngine.Component,EventHub.ISubscription,EventHub.ISubscription)">
+            <summary>
+            注册组件及与之关联的事件订阅句柄
+            </summary>
+            <param name="component">组件</param>
+            <param name="subscription1">事件订阅句柄1</param>
+            <param name="subscription2">事件订阅句柄2</param>
+        </member>
+        <member name="M:EventHub.Unity.ISubscriptionMonitor.Register(UnityEngine.Component,EventHub.ISubscription[])">
+            <summary>
+            注册组件及与之关联的事件订阅句柄
+            </summary>
+            <param name="component">组件</param>
+            <param name="subscriptions">三个及以上的事件句柄</param>
+        </member>
+        <member name="M:EventHub.Unity.ISubscriptionMonitor.UnsubscribeAll(UnityEngine.Component)">
+            <summary>
+            为与指定组件关联的所有事件订阅句柄取消订阅
+            </summary>
+            <param name="component">组件</param>
+        </member>
+        <member name="T:EventHub.Unity.ISubscriptionMonitorConfig">
+            <summary>
+            事件订阅句柄监视器配置
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.ISubscriptionMonitorConfig.MilliSecondsDelay">
+            <summary>
+            清理时间间隔，单位 ms，默认 1000 ms
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.ISubscriptionMonitorConfig.StartTimerOnInitialize">
+            <summary>
+            是否在监视器初始化完成时便启动清理计时器，默认 true
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.ISubscriptionMonitorConfig.AutoSave">
+            <summary>
+            是否在存在修改时自动存储，默认 true
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.ISubscriptionMonitorConfig.AutoSaveDirtyCount">
+            <summary>
+            触发自动存储的脏数据个数临界值，仅开启自动存储时该字段有效，默认 5
+            </summary>
+        </member>
+        <member name="T:EventHub.Unity.SubscriptionMonitorConfig">
+            <summary>
+            事件订阅句柄监视器配置
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.SubscriptionMonitorConfig.Instance">
+            <summary>
+            全局单例
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.SubscriptionMonitorConfig.MilliSecondsDelay">
+            <summary>
+            清理时间间隔，单位 ms，默认 1000 ms
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.SubscriptionMonitorConfig.StartTimerOnInitialize">
+            <summary>
+            是否在监视器初始化完成时便启动清理计时器，默认 true
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.SubscriptionMonitorConfig.AutoSave">
+            <summary>
+            是否在存在修改时自动存储，默认 true
+            </summary>
+        </member>
+        <member name="P:EventHub.Unity.SubscriptionMonitorConfig.AutoSaveDirtyCount">
+            <summary>
+            触发自动存储的脏数据个数临界值，仅开启自动存储时该字段有效，默认 5
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.SubscriptionMonitorConfig.Save">
+            <summary>
+            保存配置数据
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.SubscriptionMonitorConfig.Reload">
+            <summary>
+            重新加载配置数据
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.SubscriptionMonitorConfig.ResetDefault">
+            <summary>
+            重置配置数据为默认值
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.SubscriptionMonitorConfig.Dispose">
+            <summary>
+            释放资源
+            </summary>
+        </member>
+        <member name="T:EventHub.Unity.UnityExtension">
+            <summary>
+            面向 Unity 的扩展类实现
+            </summary>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.Subscribe``1(UnityEngine.Component,System.Action{``0},System.Int32)">
+            <summary>
+            订阅同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribe``1(UnityEngine.Component,System.Action{``0},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.Subscribe``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅异步事件
+            </summary>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribe``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.SubscribeOnce``1(UnityEngine.Component,System.Action{``0},System.Int32)">
+            <summary>
+            订阅一次性同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribeOnce``1(UnityEngine.Component,System.Action{``0},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅一次性同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.SubscribeOnce``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅一次性异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribeOnce``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅一次性异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.SubscribeIf``1(UnityEngine.Component,System.Predicate{``0},System.Action{``0},System.Int32)">
+            <summary>
+            订阅条件同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribeIf``1(UnityEngine.Component,System.Predicate{``0},System.Action{``0},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅条件同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.SubscribeIf``1(UnityEngine.Component,System.Predicate{``0},System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅条件异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribeIf``1(UnityEngine.Component,System.Predicate{``0},System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅条件异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.SubscribeOnMainThread``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅在 Unity 主线程执行的异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribeOnMainThread``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅在 Unity 主线程执行的异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.SubscribeOnceOnMainThread``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅在 Unity 主线程运行的一次性异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribeOnceOnMainThread``1(UnityEngine.Component,System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅在 Unity 主线程运行的一次性异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.SubscribeIfOnMainThread``1(UnityEngine.Component,System.Predicate{``0},System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅在 Unity 主线程运行的条件异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.TrySubscribeIfOnMainThread``1(UnityEngine.Component,System.Predicate{``0},System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},EventHub.ISubscription@,System.Int32)">
+            <summary>
+            尝试订阅在 Unity 主线程运行的条件异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="component"></param>
+            <param name="filter">前置过滤条件</param>
+            <param name="handler">事件委托</param>
+            <param name="subscription">事件订阅句柄</param>
+            <param name="priority">优先级</param>
+            <returns>订阅成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:EventHub.Unity.UnityExtension.UnsubscribeAll(UnityEngine.Component)">
+            <summary>
+            为与指定组件关联的所有事件订阅句柄取消订阅
+            </summary>
+            <param name="component"></param>
+        </member>
+        <member name="T:EventHub.IAsyncEventDispatcher">
+            <summary>
+            异步事件分发器接口
+            </summary>
+            <remarks>
+            <para>提供订阅、取消订阅和发布异步事件的方法。</para>
+            <para>框架级接口采用版本接口，稳定版本的接口不会在后续版本出现更改，且新版本兼容旧版本。</para>
+            </remarks>
+        </member>
+        <member name="M:EventHub.IAsyncEventDispatcher.Subscribe``1(System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask},System.Int32)">
+            <summary>
+            订阅异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.IAsyncEventDispatcher.Unsubscribe``1(System.Func{``0,System.Threading.CancellationToken,Cysharp.Threading.Tasks.UniTask})">
+            <summary>
+            取消订阅异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.IAsyncEventDispatcher.PublishAsync``1(``0,System.Threading.CancellationToken)">
+            <summary>
+            异步串行发布异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="T:EventHub.IEventDispatcher">
+            <summary>
+            复合事件分发器接口
+            </summary>
+            <remarks>
+            <para>类型：复合型扩展接口</para>
+            <para>通过该接口可同时对同步、异步和并发等任意一个或多个局部行为进行自定义，而无需实现多个实例。</para>
+            <para>该接口现在及未来不会提供任何强制约束，可以和任何其它局部扩展接口组合，以提供复合型扩展。</para>
+            <para>注意：该接口优先级仅大于默认实现，小于局部扩展的接口。</para>
+            <para>框架级接口采用版本接口，稳定版本的接口不会在后续版本出现更改，且新版本兼容旧版本。</para>
+            </remarks>
+        </member>
+        <member name="T:EventHub.IParallelizable">
+            <summary>
+            事件并发发布接口
+            </summary>
+        </member>
+        <member name="M:EventHub.IParallelizable.PublishParallelAsync``1(``0,System.Threading.CancellationToken)">
+            <summary>
+            异步并发发布异步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+            <param name="cancellationToken">取消令牌</param>
+        </member>
+        <member name="T:EventHub.ISubscription">
+            <summary>
+            事件订阅句柄接口
+            </summary>
+            <remarks>
+            <para>实现了 IDisposable 接口，允许通过 using 语句自动管理资源释放。</para>
+            <para>框架级接口采用版本接口，稳定版本的接口不会在后续版本出现更改，且新版本兼容旧版本。</para>
+            </remarks>
+        </member>
+        <member name="M:EventHub.ISubscription.Unsubscribe">
+            <summary>
+            取消订阅
+            </summary>
+        </member>
+        <member name="P:EventHub.ISubscription.IsDisposed">
+            <summary>
+            句柄是否已释放
+            </summary>
+        </member>
+        <member name="P:EventHub.ISubscription.EventType">
+            <summary>
+            事件类型
+            </summary>
+        </member>
+        <member name="P:EventHub.ISubscription.Priority">
+            <summary>
+            优先级
+            </summary>
+        </member>
+        <member name="T:EventHub.ISyncEventDispatcher">
+            <summary>
+            同步事件分发器接口
+            </summary>
+            <remarks>
+            <para>提供订阅、取消订阅和发布同步事件的方法。</para>
+            <para>框架级接口采用版本接口，稳定版本的接口不会在后续版本出现更改，且新版本兼容旧版本。</para>
+            </remarks>
+        </member>
+        <member name="M:EventHub.ISyncEventDispatcher.Subscribe``1(System.Action{``0},System.Int32)">
+            <summary>
+            订阅同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <param name="priority">优先级</param>
+            <returns>事件订阅句柄</returns>
+        </member>
+        <member name="M:EventHub.ISyncEventDispatcher.Unsubscribe``1(System.Action{``0})">
+            <summary>
+            取消订阅同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="handler">事件委托</param>
+            <returns>取消订阅的事件数量</returns>
+        </member>
+        <member name="M:EventHub.ISyncEventDispatcher.Publish``1(``0)">
+            <summary>
+            发布同步事件
+            </summary>
+            <typeparam name="TEvent">事件类型</typeparam>
+            <param name="event">事件</param>
+        </member>
+    </members>
+</doc>
