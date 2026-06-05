@@ -1,0 +1,722 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ViewPipeline.Unity.Core</name>
+    </assembly>
+    <members>
+        <member name="T:ViewPipeline.Unity.Core.DefaultDynamicMiddlewareList">
+            <summary>
+            默认中间件动态增删列表（包装器）
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultDynamicMiddlewareList.ViewPipeline#Unity#Core#IDynamicMiddlewareCollection#Add(ViewPipeline.Unity.Core.IViewMiddleware)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultDynamicMiddlewareList.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultDynamicMiddlewareList.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultDynamicMiddlewareList.ViewPipeline#Unity#Core#IResstable#Reset">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.DefaultPipelineContext">
+            <summary>
+            默认管线执行上下文
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultPipelineContext.Reset">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.DefaultPipelineContextCollection">
+            <summary>
+            默认管线上下文集合
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultPipelineContextCollection.Acquire">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultPipelineContextCollection.Return(ViewPipeline.Unity.Core.IPipelineContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultPipelineContextCollection.DisposeAsync">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.DefaultViewRegistry">
+            <summary>
+            默认的视图活跃状态注册表
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.DefaultViewRegistry.Count">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewRegistry.Register(ViewPipeline.Unity.IView)">
+            <inheritdoc/>
+            <exception cref="T:System.ArgumentNullException">当传入的 <paramref name="view"/> 为空时抛出。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewRegistry.Unregister(ViewPipeline.Unity.IView)">
+            <inheritdoc/>
+            <exception cref="T:System.ArgumentNullException">当传入的 <paramref name="view"/> 为空时抛出。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewRegistry.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewRegistry.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.DefaultViewStackPolicy">
+            <summary>
+            默认的视图层级导航与堆栈管理策略
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.DefaultViewStackPolicy.Count">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewStackPolicy.Push(ViewPipeline.Unity.IView)">
+            <inheritdoc/>
+            <exception cref="T:System.ArgumentNullException">当传入的 <paramref name="view"/> 为空时抛出。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewStackPolicy.Pop(ViewPipeline.Unity.IView)">
+            <inheritdoc/>
+            <exception cref="T:System.ArgumentNullException">当传入的 <paramref name="view"/> 为空时抛出。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewStackPolicy.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.DefaultViewStackPolicy.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.PipelineDirection">
+            <summary>
+            表示管线当前的拓扑执行流向
+            </summary>
+        </member>
+        <member name="F:ViewPipeline.Unity.Core.PipelineDirection.Open">
+            <summary> 打开/激活视图流向 </summary>
+        </member>
+        <member name="F:ViewPipeline.Unity.Core.PipelineDirection.Close">
+            <summary> 关闭/隐藏视图流向 </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.ValidationSeverity">
+            <summary>
+            验证器：严重等级
+            </summary>
+        </member>
+        <member name="F:ViewPipeline.Unity.Core.ValidationSeverity.Error">
+            <summary>
+            错误：阻止构建
+            </summary>
+        </member>
+        <member name="F:ViewPipeline.Unity.Core.ValidationSeverity.Warning">
+            <summary>
+            仅警告
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.Extension">
+            <summary>
+            扩展方法
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.Extension.WithLogger(ViewPipeline.Unity.Core.ViewSessionBuilder,ViewPipeline.Unity.Core.ILogger)">
+            <summary>
+            自定义日志记录器
+            </summary>
+            <param name="logger">日志记录器</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="logger"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.Extension.AddExtension(ViewPipeline.Unity.Core.ViewSessionBuilder,ViewPipeline.Unity.Core.IExtension)">
+            <summary>
+            添加扩展包
+            </summary>
+            <param name="extension">扩展包</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="extension"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.Extension.SetMiddlewareExecutionPolicy(ViewPipeline.Unity.Core.ViewSessionBuilder,ViewPipeline.Unity.Core.IMiddlewareExecutionPolicy)">
+            <summary>
+            设置中间件执行策略
+            </summary>
+            <param name="executionPolicy">中间件执行策略</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="executionPolicy"/> 不能为 null。</exception>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IAsyncDisposable">
+            <summary>
+            提供异步释放资源的能力。
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IAsyncDisposable.DisposeAsync">
+            <summary>
+            异步释放资源。
+            </summary>
+            <returns>表示异步释放操作的任务。</returns>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IDynamicMiddlewareCollection">
+            <summary>
+            中间件可动态增删集合接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IDynamicMiddlewareCollection.Add(ViewPipeline.Unity.Core.IViewMiddleware)">
+            <summary>
+            添加中间件
+            </summary>
+            <param name="middleware">中间件</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IDynamicMiddlewareProvider">
+            <summary>
+            动态中间件流式供应器接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IDynamicMiddlewareProvider.PopulateMiddlewares(ViewPipeline.Unity.IView,System.Collections.Generic.IReadOnlyList{ViewPipeline.Unity.Core.IViewMiddleware},ViewPipeline.Unity.Core.IDynamicMiddlewareCollection)">
+            <summary>
+            根据当前操作的视图上下文，向运行时中间件可动态增删集合中追加属于本扩展包的动态切面组件
+            </summary>
+            <param name="view">当前操作的视图实例</param>
+            <param name="staticMiddlewares">静态中间价只读集合</param>
+            <param name="dynamicMiddlewares">动态中间件收纳集合</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IExtendedViewSession">
+            <summary>
+            视图会话扩展接口
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.IExtendedViewSession.Key">
+            <summary>
+            唯一标识符
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IExtendedViewSession.RegisterDynamicProvider(ViewPipeline.Unity.Core.PipelineDirection,ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <summary>
+            注册动态中间件流式供应器
+            </summary>
+            <param name="direction">管线执行方向</param>
+            <param name="provider">动态中间件流式供应器</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IExtendedViewSession.UnregisterDynamicProvider(ViewPipeline.Unity.Core.PipelineDirection,ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <summary>
+            注销动态中间件流式供应器
+            </summary>
+            <param name="direction">管线执行方向</param>
+            <param name="provider">动态中间件流式供应器</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IExtension">
+            <summary>
+            扩展包接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IExtension.GetMiddlewares(ViewPipeline.Unity.Core.PipelineDirection)">
+            <summary>
+            获取静态中间件
+            </summary>
+            <param name="direction">管线流转方向</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IExtension.GetDynamicProviders(ViewPipeline.Unity.Core.PipelineDirection)">
+            <summary>
+            获取动态中间件供应器
+            </summary>
+            <param name="direction">管线流转方向</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IExtension.GetMiddlewareValidators">
+            <summary>
+            获取中间件验证器
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IExtension.Initialize">
+            <summary>
+            初始化
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.ILogger">
+            <summary>
+            日志记录器接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ILogger.Info(System.String)">
+            <summary>
+            记录普通日志
+            </summary>
+            <param name="message">日志</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ILogger.Warning(System.String)">
+            <summary>
+            记录警告日志
+            </summary>
+            <param name="message">日志</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ILogger.Error(System.String)">
+            <summary>
+            记录错误日志
+            </summary>
+            <param name="message">日志</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IMiddlewareExecutionPolicy">
+            <summary>
+            中间件执行策略
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IMiddlewareExecutionPolicy.ShouldSkip(ViewPipeline.Unity.IView,ViewPipeline.Unity.Core.IViewMiddleware)">
+            <summary>
+            判断指定视图是否应跳过指定中间件
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IMiddlewareValidator">
+            <summary>
+            验证器接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IMiddlewareValidator.Validate(System.Collections.Generic.IReadOnlyCollection{ViewPipeline.Unity.Core.IViewMiddleware},System.Collections.Generic.IList{ViewPipeline.Unity.Core.ValidationError})">
+            <summary>
+            执行验证
+            </summary>
+            <param name="middlewares">静态中间件数组</param>
+            <param name="errors">错误集合</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IPipelineContext">
+            <summary>
+            执行管道上下文接口
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IPipelineContextCollection">
+            <summary>
+            管道上下文集合接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IPipelineContextCollection.Acquire">
+            <summary>
+            获取上下文实例
+            </summary>
+            <returns>上下文实例</returns>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IPipelineContextCollection.Return(ViewPipeline.Unity.Core.IPipelineContext)">
+            <summary>
+            归还上下文实例
+            </summary>
+            <param name="context">上下文实例</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IPipelineEngine">
+            <summary>
+            管线引擎接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IPipelineEngine.RegisterDynamicProvider(ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <summary>
+            注册动态中间件流式供应器
+            </summary>
+            <param name="provider">动态中间件流式供应器</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IPipelineEngine.UnregisterDynamicProvider(ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <summary>
+            注销动态中间件流式供应器
+            </summary>
+            <param name="provider">动态中间件流式供应器</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IPipelineEngineInternal.ExecuteAsync(ViewPipeline.Unity.IView,ViewPipeline.Unity.Core.IPipelineContext,ViewPipeline.Unity.Core.IPipelineSession,System.Threading.CancellationToken)">
+            <summary>
+            异步驱动管线引擎
+            </summary>
+            <param name="view">当前操作的视图实例</param>
+            <param name="context">管道上下文</param>
+            <param name="token">异步取消令牌</param>
+            <returns>异步任务句柄</returns>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IPipelineSession">
+            <summary>
+            管道会话接口
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.IPipelineSession.IsTerminalReached">
+            <summary>
+            管道是否已执行完成
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.IPipelineSession.IsAborted">
+            <summary>
+            管道是否已中断执行
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.IPipelineSession.Direction">
+            <summary>
+            管道执行方向
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IResstable">
+            <summary>
+            可重置能力扩展接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IResstable.Reset">
+            <summary>
+            重置
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IViewMiddleware">
+            <summary>
+            中间件扩展接口
+            </summary>
+            <remarks>
+            <para>通过实现该接口可以接入扩展包或其它自定义的扩展。</para>
+            </remarks>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IViewMiddleware.InvokeAsync(ViewPipeline.Unity.IView,ViewPipeline.Unity.Core.UIPipelineExecutor,System.Threading.CancellationToken)">
+            <summary>
+            异步执行中间件的切面拦截或流转控制逻辑
+            </summary>
+            <param name="view">当前操作的视图实例</param>
+            <param name="executor">当前管线的流转驱动器</param>
+            <param name="token">异步取消令牌</param>
+            <returns>异步任务句柄</returns>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IViewRegistry">
+            <summary>
+            视图注册表接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IViewRegistry.Register(ViewPipeline.Unity.IView)">
+            <summary>
+            注册视图
+            </summary>
+            <param name="view">视图</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IViewRegistry.Unregister(ViewPipeline.Unity.IView)">
+            <summary>
+            注销视图
+            </summary>
+            <param name="view">视图</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.IViewStackPolicy">
+            <summary>
+            视图层级组织与导航栈管理策略接口。
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IViewStackPolicy.Push(ViewPipeline.Unity.IView)">
+            <summary>
+            视图入栈
+            </summary>
+            <param name="view">视图</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.IViewStackPolicy.Pop(ViewPipeline.Unity.IView)">
+            <summary>
+            视图出栈
+            </summary>
+            <param name="view">视图</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.Log">
+            <summary>
+            日志门面类
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.Log.Logger">
+            <summary>
+            日志记录器
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.PipelineSession">
+            <summary>
+            框架内核管线执行运行时会话状态
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.PipelineSession.MaxExecutedIndex">
+            <summary>
+            当前最大执行索引
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.PipelineSession.IsTerminalReached">
+            <inheritdoc/>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.PipelineSession.Direction">
+            <inheritdoc/>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.PipelineSession.IsAborted">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.PipelineSession.Acquire">
+            <summary>
+            获取会话实例
+            </summary>
+            <returns>会话实例</returns>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.PipelineSession.Complete">
+            <summary>
+            标记管道执行完成
+            </summary>
+            <exception cref="T:System.NotSupportedException">会话实例已回收。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.PipelineSession.Abort">
+            <summary>
+            标记管道已中断执行
+            </summary>
+            <exception cref="T:System.NotSupportedException">会话实例已回收。</exception>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.UIPipelineEngine">
+            <summary>
+            执行管道引擎
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineEngine.#ctor(System.Guid,System.Collections.Generic.IEnumerable{ViewPipeline.Unity.Core.IViewMiddleware},System.Func{ViewPipeline.Unity.Core.IDynamicMiddlewareCollection})">
+            <param name="staticMiddlewares">静态中间件集合</param>
+            <param name="dynamicMiddlewareCollectionFactory">动态中间件集合工厂方法</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineEngine.#ctor(System.Guid,System.Collections.Generic.IEnumerable{ViewPipeline.Unity.Core.IViewMiddleware},System.Collections.Generic.IEnumerable{ViewPipeline.Unity.Core.IDynamicMiddlewareProvider},System.Func{ViewPipeline.Unity.Core.IDynamicMiddlewareCollection})">
+            <param name="staticMiddlewares">静态中间件集合</param>
+            <param name="dynamicProviders">动态中间件流式供应器集合</param>
+            <param name="dynamicMiddlewareCollectionFactory">动态中间件集合工厂方法</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineEngine.ViewPipeline#Unity#Core#IPipelineEngine#RegisterDynamicProvider(ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineEngine.ViewPipeline#Unity#Core#IPipelineEngine#UnregisterDynamicProvider(ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineEngine.ViewPipeline#Unity#Core#IPipelineEngineInternal#ExecuteAsync(ViewPipeline.Unity.IView,ViewPipeline.Unity.Core.IPipelineContext,ViewPipeline.Unity.Core.IPipelineSession,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineEngine.DisposeAsync">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.UIPipelineExecutor">
+            <summary>
+            管道执行器
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.UIPipelineExecutor.CurrentIndex">
+            <summary>
+            当前索引
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.UIPipelineExecutor.Context">
+            <summary>
+            执行管道上下文
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.UIPipelineExecutor.Session">
+            <summary>
+            管道会话实例
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineExecutor.#ctor(System.Guid,ViewPipeline.Unity.Core.IViewMiddleware[],System.Int32,System.Int32,ViewPipeline.Unity.Core.IPipelineContext,ViewPipeline.Unity.Core.PipelineSession)">
+            <param name="flatArray">扁平化中间件数组</param>
+            <param name="validLength">有效长度</param>
+            <param name="index">起始索引</param>
+            <param name="context">管道执行上下文</param>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineExecutor.NextAsync(ViewPipeline.Unity.IView,System.Threading.CancellationToken)">
+            <summary>
+            异步步进到下一个阶段
+            </summary>
+            <param name="view">视图实例</param>
+            <param name="token">异步取消令牌</param>
+            <returns>异步任务句柄</returns>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.UIPipelineExecutor.Abort">
+            <summary>
+            中断执行
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.Validation.RegisterValidator(System.Guid,ViewPipeline.Unity.Core.IMiddlewareValidator)">
+            <summary>
+            注册验证器
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.Validation.ValidateAll(System.Guid,System.Collections.Generic.IReadOnlyList{ViewPipeline.Unity.Core.IViewMiddleware})">
+            <summary>
+            执行所有已注册的验证器
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.Validation.DisposeAsync(System.Guid)">
+            <summary>
+            异步释放资源
+            </summary>
+            <param name="key">标识符</param>
+            <returns>异步任务实例</returns>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.Validation.Dispose(System.Guid)">
+            <summary>
+            同步释放资源
+            </summary>
+            <param name="key">标识符</param>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.ValidationError">
+            <summary>
+            验证错误信息
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.ValidationError.Message">
+            <summary>
+            消息
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.ValidationError.Severity">
+            <summary>
+            严重等级
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ValidationError.#ctor(System.String,ViewPipeline.Unity.Core.ValidationSeverity)">
+            <param name="message">消息</param>
+            <param name="severity">严重等级</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ValidationError.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.ViewPipelineUtility">
+            <summary>
+            工具类
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewPipelineUtility.FilterAndToArray(System.Collections.Generic.IEnumerable{ViewPipeline.Unity.Core.IViewMiddleware})">
+            <summary>
+            辅助过滤并安全转换中间件集合
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.ViewSession">
+            <summary>
+            视图会话
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.ViewSession.Key">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSession.OpenViewAsync(ViewPipeline.Unity.IView,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSession.CloseViewAsync(ViewPipeline.Unity.IView,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSession.RegisterDynamicProvider(ViewPipeline.Unity.Core.PipelineDirection,ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSession.UnregisterDynamicProvider(ViewPipeline.Unity.Core.PipelineDirection,ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <inheritdoc/>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSession.DisposeAsync">
+            <inheritdoc/>
+        </member>
+        <member name="T:ViewPipeline.Unity.Core.ViewSessionBuilder">
+            <summary>
+            视图会话构建器
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.ViewSessionBuilder.Key">
+            <summary>
+            唯一标识
+            </summary>
+        </member>
+        <member name="P:ViewPipeline.Unity.Core.ViewSessionBuilder.Built">
+            <summary>
+            构建器已执行构建
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.Create">
+            <summary>创建一个配置流式构建器</summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.WithRegistry(ViewPipeline.Unity.Core.IViewRegistry)">
+            <summary>
+            自定义视图注册表
+            </summary>
+            <param name="registry">视图注册表</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="registry"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.WithStackPolicy(ViewPipeline.Unity.Core.IViewStackPolicy)">
+            <summary>
+            自定义导航栈策略
+            </summary>
+            <param name="stackPolicy">导航栈策略</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="stackPolicy"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.WithContextFactory(System.Func{ViewPipeline.Unity.Core.IPipelineContext})">
+            <summary>
+            自定义管道上下文工厂方法
+            </summary>
+            <param name="contextFactory">管道上下文工厂方法</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="contextFactory"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.WithContextCollection(ViewPipeline.Unity.Core.IPipelineContextCollection)">
+            <summary>
+            自定义管道上下文集合
+            </summary>
+            <param name="contextCollection">管道上下文集合</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="contextCollection"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.WithDynamicMiddlewareCollectionFactory(System.Func{ViewPipeline.Unity.Core.IDynamicMiddlewareCollection})">
+            <summary>
+            自定义动态中间件集合工厂方法
+            </summary>
+            <param name="dynamicMiddlewareCollectionFactory">动态中间件集合工厂方法</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="dynamicMiddlewareCollectionFactory"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.AddOpenMiddleware(ViewPipeline.Unity.Core.IViewMiddleware)">
+            <summary>
+            向激活/打开管线注册静态中间件
+            </summary>
+            <param name="middleware">静态中间件</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="middleware"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.AddOpenDynamicProvider(ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <summary>
+            向激活/打开管线注册动态中间件流式供应器
+            </summary>
+            <param name="provider">动态中间件流式供应器</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="provider"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.AddCloseMiddleware(ViewPipeline.Unity.Core.IViewMiddleware)">
+            <summary>
+            向隐藏/关闭管线注册静态中间件
+            </summary>
+            <param name="middleware">静态中间件</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="middleware"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.AddCloseDynamicProvider(ViewPipeline.Unity.Core.IDynamicMiddlewareProvider)">
+            <summary>
+            向隐藏/关闭管线注册动态中间件流式供应器
+            </summary>
+            <param name="provider">动态中间件流式供应器</param>
+            <returns>构建器实例</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="provider"/> 不能为 null。</exception>
+        </member>
+        <member name="M:ViewPipeline.Unity.Core.ViewSessionBuilder.Build">
+            <summary>
+            构建 UI 会话实例
+            </summary>
+            <returns>UI 会话实例</returns>
+        </member>
+        <member name="T:ViewPipeline.Unity.IView">
+            <summary>
+            最高层视口行为契约（最小原语：只有可显示、可隐藏两个原子动作）
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.IView.ShowAsync(System.Threading.CancellationToken)">
+            <summary>
+            驱动视口进入显示管线。
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.IView.HideAsync(System.Threading.CancellationToken)">
+            <summary>
+            驱动视口进入隐藏管线。
+            </summary>
+        </member>
+        <member name="T:ViewPipeline.Unity.IViewSession">
+            <summary>
+            视图会话接口
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.IViewSession.OpenViewAsync(ViewPipeline.Unity.IView,System.Threading.CancellationToken)">
+            <summary>
+            将一个已经构建完毕、填充好数据的 View 纳入架构管线并激活显示。
+            </summary>
+        </member>
+        <member name="M:ViewPipeline.Unity.IViewSession.CloseViewAsync(ViewPipeline.Unity.IView,System.Threading.CancellationToken)">
+            <summary>
+            将指定的 View 从架构管线中移出并隐藏。
+            </summary>
+        </member>
+    </members>
+</doc>
