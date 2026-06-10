@@ -3,9 +3,10 @@
 > 内容由 AI 根据核心代码生成，已通过人工审核。
 
 ![MIT License](https://img.shields.io/badge/License-MIT-green.svg)
-![Unity Version](https://img.shields.io/badge/Unity-2020.3%2B-blue.svg)
+![Unity Version](https://img.shields.io/badge/Unity-2018.4%2B-blue.svg)
 ![Dependencies](https://img.shields.io/badge/dependencies-UniTask-orange.svg)
 ![Tests](https://img.shields.io/badge/tests-NUnit%20%7C%20UnityTestFramework-red.svg)
+![Version](https://img.shields.io/badge/version-1.0.1--beta-yellow.svg)
 
 ## 📖 简介
 
@@ -14,19 +15,19 @@ ViewPipeline 是一个为 Unity 游戏引擎设计的高性能、可扩展的视
 **核心特性：**
 - 🔄 **双向管线**：分别管理 Open 和 Close 两个独立的执行管道
 - 🧩 **中间件机制**：支持静态中间件和动态中间件流式供应器
-- ✅ **验证器系统**：构建时对中间件配置进行校验，支持 Error/Warning 级别
-- 🎯 **执行策略**：可动态决定是否跳过特定中间件
-- ♻️ **对象池化**：上下文、会话等高频对象使用对象池，减少 GC 分配
-- 📦 **扩展包支持**：通过 `IExtension` 接口实现模块化集成
+- 📦 **扩展包系统**：通过 `IExtension` + `IValidatable` 实现模块化集成和前置验证
+- 🎯 **流程控制**：支持跳过（`ISkippable*`）、终止（`ITerminable`）、外部策略（`IExecutionPolicy`）
+- 💾 **强类型上下文**：`ITypedPipelineContext` 提供零装箱的键值存储
+- 📸 **快照系统**：`SnapshotCache` 支持运行时状态检查、调试和扩展包自检
+- ♻️ **对象池化**：上下文、会话、数组等高频对象使用池化，减少 GC 分配
 
 ## 📋 环境要求
 
 | 要求 | 版本/说明 |
 |------|-----------|
-| Unity | 2020.3 及以上 |
-| .NET | 4.x 或 Standard 2.0 |
+| Unity | 2018.4 及以上（推荐 2020.3+） |
+| .NET | 3.5 Equivalent 或更高 |
 | UniTask | 2.x 或更高 |
-| 测试框架 | NUnit 1.0+, Unity Test Framework 1.1+ |
 
 ## 📦 安装方式
 
@@ -48,7 +49,7 @@ ViewPipeline 是一个为 Unity 游戏引擎设计的高性能、可扩展的视
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   OpenViewAsync                      │
+│                   OpenViewAsync                     │
 ├─────────────────────────────────────────────────────┤
 │  Middleware 1 → Middleware 2 → ... → View.ShowAsync │
 └─────────────────────────────────────────────────────┘
@@ -59,76 +60,145 @@ ViewPipeline 是一个为 Unity 游戏引擎设计的高性能、可扩展的视
 - 决定是否继续执行下一个中间件
 - 中断整个管线的执行
 
+### 洋葱模型执行顺序
+
+```
+Middleware 1 (Before)
+  ├─ Middleware 2 (Before)
+  │    ├─ View.ShowAsync()
+  │    └─ Middleware 2 (After)
+  └─ Middleware 1 (After)
+```
+
 ### 静态与动态中间件
 
-- **静态中间件**：在构建会话时确定，对每个视图都执行
-- **动态中间件**：通过供应器（Provider）在运行时根据视图类型、状态等条件动态决定是否添加
+- **静态中间件**：在构建会话时确定，默认对每个视图都执行。
+- **动态中间件**：通过供应器（Provider）在运行时根据视图类型、状态等条件动态决定是否添加。
 
-### 资源管理
+## 🔧 快速开始
 
-- 所有可释放资源都实现标准的 `IDisposable` 或 `IAsyncDisposable` 接口
-- 会话对象支持异步释放，等待所有进行中的操作完成后再释放资源
-
-## 🔧 功能说明
-
-### 1. 视图会话（ViewSession）
-
-`IViewSession` 是框架的核心入口，提供两个主要方法：
-- `OpenViewAsync`：打开/激活视图
-- `CloseViewAsync`：关闭/隐藏视图
-
-### 2. 构建器（ViewSessionBuilder）
-
-使用流式 API 配置和创建视图会话：
-
-- 自定义视图注册表
-- 自定义导航栈策略
-- 添加静态中间件（Open/Close）
-- 添加动态中间件供应器（Open/Close）
-- 设置中间件执行策略
-- 集成扩展包
-
-### 3. 中间件（IViewMiddleware）
-
-中间件通过 `InvokeAsync` 方法实现拦截逻辑，并通过 `UIPipelineExecutor.NextAsync` 控制流转：
+### 最简示例
 
 ```csharp
-public async UniTask InvokeAsync(IView view, UIPipelineExecutor executor, CancellationToken token)
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using ViewPipeline.Unity;
+using ViewPipeline.Unity.Core;
+
+public class MyView : IView
 {
-    // 前置逻辑
-    await executor.NextAsync(view, token);  // 继续执行
-    // 后置逻辑
+    public async UniTask ShowAsync(CancellationToken cancellationToken)
+    {
+        gameObject.SetActive(true);
+    }
+    
+    public async UniTask HideAsync(CancellationToken cancellationToken)
+    {
+        gameObject.SetActive(false);
+    }
+}
+
+// 创建并打开视图
+var session = ViewSessionBuilder.Create().Build();
+await session.OpenViewAsync(new MyView(), CancellationToken.None);
+```
+
+### 添加中间件
+
+```csharp
+public class LoggingMiddleware : IViewMiddleware
+{
+    public async UniTask InvokeAsync(IView view, ViewPipelineExecutor executor, CancellationToken token)
+    {
+        Debug.Log($"[Before] {view.GetType().Name}");
+        await executor.NextAsync(view, token);
+        Debug.Log($"[After] {view.GetType().Name}");
+    }
+}
+
+var session = ViewSessionBuilder.Create()
+    .AddOpenMiddleware(new LoggingMiddleware())
+    .Build();
+```
+
+### 使用强类型上下文
+
+```csharp
+var session = ViewSessionBuilder.Create()
+    .WithTypedContext()
+    .Build();
+
+// 在中间件中
+public class DataMiddleware : IViewMiddleware
+{
+    public async UniTask InvokeAsync(IView view, ViewPipelineExecutor executor, CancellationToken token)
+    {
+        executor.SetData("userId", 12345);
+        var userId = executor.GetData<int>("userId");
+        await executor.NextAsync(view, token);
+    }
 }
 ```
 
-### 4. 动态中间件供应器（IDynamicMiddlewareProvider）
+## 📚 API 文档
 
-根据当前视图和静态中间件集合，动态决定添加哪些中间件：
+详细 API 文档请参阅 [DOCUMENT.md](./DOCUMENT.md)
+
+### 核心接口
+
+| 接口 | 说明 |
+|------|------|
+| `IView` | 视图必须实现的基础接口 |
+| `IExtendedViewSession` | 会话接口，提供 Open/Close 操作 |
+| `IViewMiddleware` | 中间件接口 |
+| `ITypedPipelineContext` | 强类型上下文 |
+| `IExtension` | 扩展包接口 |
+| `IValidatable` | 可验证接口 |
+| `IExecutionPolicy` | 执行策略接口 |
+
+### 构建器
 
 ```csharp
-void PopulateMiddlewares(IView view, IReadOnlyList<IViewMiddleware> staticMiddlewares, IDynamicMiddlewareCollection dynamicMiddlewares);
+var session = ViewSessionBuilder.Create()
+    .WithTypedContext()                              // 启用强类型上下文
+    .AddOpenMiddleware(new AuthMiddleware())         // 添加中间件
+    .AddOpenDynamicProvider(new DynamicProvider())   // 添加动态供应器
+    .AddExtension(new MyExtension())                 // 添加扩展包
+    .WithLogger(new UnityLogger())                   // 自定义日志
+    .WithMiddlewareExecutionPolicy(new MyPolicy())   // 执行策略
+    .Build();
 ```
 
-### 5. 验证器（IMiddlewareValidator）
+## 🧪 测试
 
-在构建会话时对中间件配置进行校验，可抛出错误阻止构建或输出警告日志。
+本项目包含完整的单元测试和性能测试。
 
-### 6. 执行策略（IMiddlewareExecutionPolicy）
+### 运行测试
 
-运行时判断是否跳过特定中间件，适用于 A/B 测试、功能开关等场景。
+在 Unity 编辑器中打开 **Window → General → Test Runner**，选择 **EditMode** 或 **PlayMode** 运行所有测试。
 
-### 7. 扩展包（IExtension）
+### 测试覆盖
 
-将中间件、供应器、验证器打包成一个独立模块，通过 `builder.AddExtension(extension)` 一键装配。
+| 测试类型 | 覆盖范围 | 状态 |
+|----------|---------|------|
+| 单元测试 | 基础功能、中间件、拦截、动态供应器、策略、扩展包、强类型上下文 | ✅ 全部通过 |
+| 性能测试 | 构建耗时、打开/关闭耗时、GC 分配、压力测试 | ✅ 通过 |
 
-### 8. 内置实现
+详细测试报告请参阅 [TEST_REPORT.md](./TEST_REPORT.md)
 
-| 类型 | 实现 | 说明 |
-|------|------|------|
-| 视图注册表 | `DefaultViewRegistry` | 基于 HashSet 的活跃视图管理 |
-| 导航栈策略 | `DefaultViewStackPolicy` | 基于 LinkedList + Dictionary 的 O(1) 栈操作 |
-| 动态中间件集合 | `DefaultDynamicMiddlewareList` | 支持动态增删的中间件包装器 |
-| 上下文集合 | `DefaultPipelineContextCollection` | 带异步释放的上下文对象池 |
+### 性能基准（参考）
+
+| 场景 | 耗时 | GC 分配 |
+|------|------|--------|
+| 空视图 Open+Close | ~0.02 ms | 71 B |
+| 5 中间件 Open+Close | ~0.03 ms | 91 B |
+| 20 中间件 Open+Close | ~0.04 ms | 140 B |
+| TypedContext 读写 | ~0.03 ms | 85 B |
+| 500 次顺序操作 | ~2.15 ms | - |
+
+## 📌 版本历史
+
+请参阅 [RELEASE.md](./RELEASE.md)
 
 ## ❓ 常见问题
 
@@ -140,9 +210,13 @@ A: 按照添加到构建器的顺序执行。前置逻辑（NextAsync 之前）�
 
 A: 调用 `executor.Abort()` 方法，并且不调用 `NextAsync`。此时不会执行后续中间件，也不会执行视图的 ShowAsync/HideAsync。
 
-### Q: 动态供应器中的 staticMiddlewares 参数有什么用？
+### Q: 强类型上下文和普通上下文有什么区别？
 
-A: 供应器可以根据静态中间件的配置来决定是否添加特定的动态中间件，例如避免重复添加功能相同的中间件。
+A: `ITypedPipelineContext` 提供类型安全的键值存储，零装箱零反射，适合在中间件之间传递数据。普通 `IPipelineContext` 是空标记接口，由用户自行实现。
+
+### Q: 扩展包的验证器什么时候执行？
+
+A: 在 `AddExtension` 时自动执行。如果验证返回 `Error`，扩展包不会被添加；如果返回 `Warning`，会记录日志但继续添加。
 
 ### Q: 会话释放后还能操作吗？
 
@@ -152,10 +226,9 @@ A: 不能。调用 `DisposeAsync` 后，再调用 `OpenViewAsync` 或 `CloseView
 
 A: 是的。`ViewSession` 内部维护了操作计数器，并在释放时会等待所有进行中的操作完成。
 
-## 📚 其它文档
+### Q: 性能如何？
 
-- [API 文档 (DOCUMENT.md)](DOCUMENT.md) - 公共 API 详细说明
-- [测试报告 (TEST_REPORT.md)](TEST_REPORT.md) - 单元测试与性能测试结果
+A: 框架开销极低（~0.02-0.04ms/次），GC 分配可控（~70-140 字节/次），适合对性能敏感的游戏项目。详见 [TEST_REPORT.md](./TEST_REPORT.md)。
 
 ## 📄 许可证
 

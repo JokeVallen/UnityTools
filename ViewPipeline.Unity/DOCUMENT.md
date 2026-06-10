@@ -19,10 +19,10 @@
 
 | 字段 | 说明 |
 |------|------|
-| `Error` | 错误：阻止构建 |
-| `Warning` | 仅警告，不阻止构建 |
+| `Info` | 普通信息 |
+| `Warning` | 警告 |
+| `Error` | 错误 |
 
----
 
 ## 核心接口
 
@@ -45,28 +45,19 @@ public interface IView
 ```csharp
 public interface IViewSession
 {
-    /// <summary>将一个已经构建完毕、填充好数据的 View 纳入架构管线并激活显示。</summary>
     UniTask OpenViewAsync(IView view, CancellationToken cancellationToken);
-    
-    /// <summary>将指定的 View 从架构管线中移出并隐藏。</summary>
     UniTask CloseViewAsync(IView view, CancellationToken cancellationToken);
 }
 ```
 
 ### IExtendedViewSession
 
-视图会话扩展接口，继承自 `IViewSession` 和 `IAsyncDisposable`。
+视图会话扩展接口，继承自 `IViewSession`、`IAsyncDisposable` 和 `ISessionKeyGetter`。
 
 ```csharp
-public interface IExtendedViewSession : IViewSession, IAsyncDisposable
+public interface IExtendedViewSession : IViewSession, IAsyncDisposable, ISessionKeyGetter
 {
-    /// <summary>唯一标识符</summary>
-    Guid Key { get; }
-    
-    /// <summary>注册动态中间件流式供应器</summary>
     void RegisterDynamicProvider(PipelineDirection direction, IDynamicMiddlewareProvider provider);
-    
-    /// <summary>注销动态中间件流式供应器</summary>
     void UnregisterDynamicProvider(PipelineDirection direction, IDynamicMiddlewareProvider provider);
 }
 ```
@@ -78,13 +69,7 @@ public interface IExtendedViewSession : IViewSession, IAsyncDisposable
 ```csharp
 public interface IViewMiddleware
 {
-    /// <summary>
-    /// 异步执行中间件的切面拦截或流转控制逻辑
-    /// </summary>
-    /// <param name="view">当前操作的视图实例</param>
-    /// <param name="executor">当前管线的流转驱动器</param>
-    /// <param name="token">异步取消令牌</param>
-    UniTask InvokeAsync(IView view, UIPipelineExecutor executor, CancellationToken token);
+    UniTask InvokeAsync(IView view, ViewPipelineExecutor executor, CancellationToken token);
 }
 ```
 
@@ -95,13 +80,7 @@ public interface IViewMiddleware
 ```csharp
 public interface IDynamicMiddlewareProvider
 {
-    /// <summary>
-    /// 根据当前操作的视图上下文，向运行时中间件可动态增删集合中追加属于本扩展包的动态切面组件
-    /// </summary>
-    /// <param name="view">当前操作的视图实例</param>
-    /// <param name="staticMiddlewares">静态中间件只读集合</param>
-    /// <param name="dynamicMiddlewares">动态中间件收纳集合</param>
-    void PopulateMiddlewares(IView view, IReadOnlyList<IViewMiddleware> staticMiddlewares, IDynamicMiddlewareCollection dynamicMiddlewares);
+    void PopulateMiddlewares(IView view, IDynamicMiddlewareCollection dynamicMiddlewares);
 }
 ```
 
@@ -112,79 +91,90 @@ public interface IDynamicMiddlewareProvider
 ```csharp
 public interface IDynamicMiddlewareCollection : IEnumerable<IViewMiddleware>
 {
-    /// <summary>添加中间件</summary>
     void Add(IViewMiddleware middleware);
 }
 ```
 
-### IMiddlewareValidator
+### IValidatable
+
+可验证接口，扩展包或中间件可实现此接口进行前置条件检查。
+
+```csharp
+public interface IValidatable
+{
+    IValidator GetValidator();
+}
+```
+
+### IValidator
 
 验证器接口。
 
 ```csharp
-public interface IMiddlewareValidator
+public interface IValidator
 {
-    /// <summary>执行验证</summary>
-    /// <param name="middlewares">静态中间件数组</param>
-    /// <param name="errors">错误集合</param>
-    void Validate(IReadOnlyCollection<IViewMiddleware> middlewares, IList<ValidationError> errors);
+    ValidationResult Validate();
 }
 ```
 
-### IMiddlewareExecutionPolicy
+### IExecutionPolicy
 
-中间件执行策略接口。
+执行策略接口，用于跳过或终止中间件执行。
 
 ```csharp
-public interface IMiddlewareExecutionPolicy
+public interface IExecutionPolicy
 {
-    /// <summary>判断指定视图是否应跳过指定中间件</summary>
-    bool ShouldSkip(IView view, IViewMiddleware middleware);
+    bool ShouldSkipMiddleware(IView view, IViewMiddleware middleware);
+    bool ShouldSkipView(IViewMiddleware middleware, IView view);
+    bool ShouldTerminate(IView view);
+    bool ShouldTerminate(IViewMiddleware middleware);
+}
+```
+
+### ISkippableView
+
+附带跳过中间件处理功能的视图。
+
+```csharp
+public interface ISkippableView
+{
+    bool ShouldSkip(IViewMiddleware middleware);
+}
+```
+
+### ISkippableMiddleware
+
+附带跳过视图功能的中间件。
+
+```csharp
+public interface ISkippableMiddleware
+{
+    bool ShouldSkip(IView view);
+}
+```
+
+### ITerminable
+
+可终止执行流程的功能接口。
+
+```csharp
+public interface ITerminable
+{
+    bool ShouldTerminate();
 }
 ```
 
 ### IExtension
 
-扩展包接口，用于批量装配中间件、供应器和验证器。
+扩展包接口，用于批量装配中间件和供应器。
 
 ```csharp
 public interface IExtension
 {
-    /// <summary>获取静态中间件</summary>
-    IEnumerable<IViewMiddleware> GetMiddlewares(PipelineDirection direction);
-    
-    /// <summary>获取动态中间件供应器</summary>
-    IEnumerable<IDynamicMiddlewareProvider> GetDynamicProviders(PipelineDirection direction);
-    
-    /// <summary>获取中间件验证器</summary>
-    IEnumerable<IMiddlewareValidator> GetMiddlewareValidators();
-    
-    /// <summary>初始化</summary>
+    bool IsInitialized { get; }
     void Initialize();
-}
-```
-
-### IViewRegistry
-
-视图注册表接口，管理当前活跃视图。
-
-```csharp
-public interface IViewRegistry : IReadOnlyCollection<IView>
-{
-    void Register(IView view);
-    void Unregister(IView view);
-}
-```
-
-### IViewStackPolicy
-
-视图层级组织与导航栈管理策略接口。
-
-```csharp
-public interface IViewStackPolicy : IReadOnlyCollection<IView>
-{
-    void Push(IView view);
-    void Pop(IView view);
+    IEnumerable<IViewMiddleware> GetMiddlewares(PipelineDirection direction);
+    IEnumerable<IDynamicMiddlewareProvider> GetDynamicProviders(PipelineDirection direction);
 }
 ```
 
@@ -194,6 +184,21 @@ public interface IViewStackPolicy : IReadOnlyCollection<IView>
 
 ```csharp
 public interface IPipelineContext { }
+```
+
+### ITypedPipelineContext
+
+强类型管道上下文接口，提供类型安全的键值存储能力。
+
+```csharp
+public interface ITypedPipelineContext : IPipelineContext
+{
+    void Set<TKey, TValue>(TKey key, TValue value);
+    Optional<TValue> Get<TKey, TValue>(TKey key);
+    bool Remove<TKey, TValue>(TKey key);
+    bool ContainsKey<TKey, TValue>(TKey key);
+    void Clear();
+}
 ```
 
 ### IPipelineContextCollection
@@ -213,27 +218,44 @@ public interface IPipelineContextCollection
 管道会话接口，记录执行状态。
 
 ```csharp
-public interface IPipelineSession
+public interface IPipelineSession : ISessionKeyGetter
 {
-    /// <summary>管道是否已执行完成</summary>
     bool IsTerminalReached { get; }
-    
-    /// <summary>管道是否已中断执行</summary>
     bool IsAborted { get; }
-    
-    /// <summary>管道执行方向</summary>
     PipelineDirection Direction { get; }
 }
 ```
 
-### IResstable
+### ISessionKeyGetter
+
+会话唯一标识访问接口。
+
+```csharp
+public interface ISessionKeyGetter
+{
+    Guid Key { get; }
+}
+```
+
+### IResettable
 
 可重置能力接口。
 
 ```csharp
-public interface IResstable
+public interface IResettable
 {
     void Reset();
+}
+```
+
+### IAsyncDisposable
+
+异步释放资源接口。
+
+```csharp
+public interface IAsyncDisposable
+{
+    UniTask DisposeAsync();
 }
 ```
 
@@ -250,61 +272,132 @@ public interface ILogger
 }
 ```
 
-### IAsyncDisposable
-
-异步释放资源接口。
-
-```csharp
-public interface IAsyncDisposable
-{
-    UniTask DisposeAsync();
-}
-```
-
----
 
 ## 核心结构体
 
-### UIPipelineExecutor
+### Optional\<T\>
+
+可选值包装器，明确区分「无值」和「值为默认值」。
+
+```csharp
+public readonly struct Optional<T> : IEquatable<Optional<T>>
+{
+    public bool HasValue { get; }
+    public T Value { get; }
+    
+    public static Optional<T> None { get; }
+    public static implicit operator Optional<T>(T value);
+    public static explicit operator T(Optional<T> optional);
+    public static bool operator ==(Optional<T> left, Optional<T> right);
+    public static bool operator !=(Optional<T> left, Optional<T> right);
+    
+    public T GetValueOrDefault();
+    public T GetValueOrDefault(T defaultValue);
+}
+```
+
+### ViewPipelineExecutor
 
 管道执行器，作为中间件的流转控制参数传递。
 
 ```csharp
-public readonly struct UIPipelineExecutor
+public readonly struct ViewPipelineExecutor
 {
-    /// <summary>当前索引</summary>
     public int CurrentIndex { get; }
-    
-    /// <summary>执行管道上下文</summary>
     public IPipelineContext Context { get; }
-    
-    /// <summary>管道会话实例</summary>
     public IPipelineSession Session { get; }
     
-    /// <summary>异步步进到下一个阶段</summary>
     public UniTask NextAsync(IView view, CancellationToken token);
-    
-    /// <summary>中断执行</summary>
     public void Abort();
 }
 ```
 
-### ValidationError
+### ValidationResult
 
-验证错误信息结构体。
+验证结果结构体。
 
 ```csharp
-public readonly struct ValidationError
+public readonly struct ValidationResult
 {
+    public bool IsValid { get; }
     public string Message { get; }
     public ValidationSeverity Severity { get; }
     
-    public ValidationError(string message, ValidationSeverity severity);
-    public override string ToString();
+    public static ValidationResult Success();
+    public static ValidationResult Error(string msg);
+    public static ValidationResult Warning(string msg);
 }
 ```
 
----
+
+## 快照系统
+
+### SnapshotCache
+
+快照缓存类。
+
+```csharp
+public static class SnapshotCache
+{
+    public static event Action<Guid, Type> OnRefresh;
+    
+    public static void Store<TSnapshot>(Guid key, TSnapshot snapshot);
+    public static bool TryGet<TSnapshot>(Guid key, out TSnapshot snapshot);
+    public static TSnapshot Get<TSnapshot>(Guid key);
+    public static bool Exists<TSnapshot>(Guid key);
+    public static void Remove<TSnapshot>(Guid key);
+    public static void RemoveAll(Guid key);
+    public static void Clear();
+    public static void Refresh<TSnapshot>(Guid key);
+    public static void Refresh(Guid key);
+}
+```
+
+### SnapshotCache\<TTag\>
+
+带标签的快照缓存类。
+
+```csharp
+public static class SnapshotCache<TTag>
+{
+    public static event Action<Guid, Optional<TTag>, Type> OnRefresh;
+    
+    public static void Store<TSnapshot>(Guid key, TSnapshot snapshot, TTag tag);
+    public static bool TryGet<TSnapshot>(Guid key, out TSnapshot snapshot, TTag tag);
+    public static TSnapshot Get<TSnapshot>(Guid key, TTag tag);
+    public static void Refresh<TSnapshot>(Guid key, TTag tag);
+}
+```
+
+### 快照类型
+
+| 快照类型 | 说明 |
+|----------|------|
+| `ViewSessionBuilderSnapshot` | 构建器快照，包含 `ContextType`、中间件列表、扩展包列表等 |
+| `ViewSessionSnapshot` | 会话快照，包含扩展包状态、管线快照、活跃操作数 |
+| `ViewPipelineEngineSnapshot` | 引擎快照，包含静态中间件、动态供应器、当前中间件列表 |
+| `ViewPipelineExecutorSnapshot` | 执行器快照，包含当前索引、会话快照 |
+| `PipelineSessionSnapshot` | 管道会话快照，包含执行进度、方向、中断状态 |
+| `MiddlewareSnapshot` | 中间件快照，包含中间件类型 |
+| `ExtensionSnapshot` | 扩展包快照，包含扩展包类型和初始化状态 |
+| `DynamicMiddlewareProviderSnapshot` | 动态供应器快照，包含供应器类型 |
+
+
+## 会话注册表
+
+### ViewSessionRegistry
+
+全局会话注册表，可查看所有活跃会话。
+
+```csharp
+public static class ViewSessionRegistry
+{
+    public static IReadOnlyDictionary<Guid, IViewSession> Sessions { get; }
+    public static UniTask DisposeAsync();
+    public static void Clear();
+}
+```
+
 
 ## 构建器
 
@@ -313,84 +406,106 @@ public readonly struct ValidationError
 视图会话构建器，支持流式 API 配置。
 
 ```csharp
-public sealed class ViewSessionBuilder
+public sealed class ViewSessionBuilder : ISessionKeyGetter, IFullSnapshotable<ViewSessionBuilderSnapshot>
 {
-    /// <summary>唯一标识</summary>
     public Guid Key { get; }
-    
-    /// <summary>构建器已执行构建</summary>
     public bool Built { get; }
     
-    /// <summary>创建一个配置流式构建器</summary>
     public static ViewSessionBuilder Create();
     
-    /// <summary>自定义视图注册表</summary>
-    public ViewSessionBuilder WithRegistry(IViewRegistry registry);
+    /// <summary>自定义管道上下文工厂方法（泛型版本，自动记录类型）</summary>
+    public ViewSessionBuilder WithContextFactory<TContextType>(Func<IPipelineContext> contextFactory)
+        where TContextType : IPipelineContext;
     
-    /// <summary>自定义导航栈策略</summary>
-    public ViewSessionBuilder WithStackPolicy(IViewStackPolicy stackPolicy);
-    
-    /// <summary>自定义管道上下文工厂方法</summary>
-    public ViewSessionBuilder WithContextFactory(Func<IPipelineContext> contextFactory);
+    /// <summary>使用强类型可读写上下文（推荐）</summary>
+    public ViewSessionBuilder WithTypedContext();
     
     /// <summary>自定义管道上下文集合</summary>
-    public ViewSessionBuilder WithContextCollection(IPipelineContextCollection contextCollection);
+    public ViewSessionBuilder WithContextCollection<TContextType>(IPipelineContextCollection contextCollection)
+        where TContextType : IPipelineContext;
     
     /// <summary>自定义动态中间件集合工厂方法</summary>
     public ViewSessionBuilder WithDynamicMiddlewareCollectionFactory(Func<IDynamicMiddlewareCollection> dynamicMiddlewareCollectionFactory);
     
-    /// <summary>向激活/打开管线注册静态中间件</summary>
+    /// <summary>向打开管线添加静态中间件</summary>
     public ViewSessionBuilder AddOpenMiddleware(IViewMiddleware middleware);
     
-    /// <summary>向激活/打开管线注册动态中间件流式供应器</summary>
+    /// <summary>向打开管线添加动态中间件流式供应器</summary>
     public ViewSessionBuilder AddOpenDynamicProvider(IDynamicMiddlewareProvider provider);
     
-    /// <summary>向隐藏/关闭管线注册静态中间件</summary>
+    /// <summary>向关闭管线添加静态中间件</summary>
     public ViewSessionBuilder AddCloseMiddleware(IViewMiddleware middleware);
     
-    /// <summary>向隐藏/关闭管线注册动态中间件流式供应器</summary>
+    /// <summary>向关闭管线添加动态中间件流式供应器</summary>
     public ViewSessionBuilder AddCloseDynamicProvider(IDynamicMiddlewareProvider provider);
     
-    /// <summary>构建 UI 会话实例</summary>
+    /// <summary>添加扩展包</summary>
+    public ViewSessionBuilder AddExtension(IExtension extension);
+    
+    /// <summary>自定义日志记录器</summary>
+    public ViewSessionBuilder WithLogger(ILogger logger);
+    
+    /// <summary>自定义中间件执行策略</summary>
+    public ViewSessionBuilder WithMiddlewareExecutionPolicy(IExecutionPolicy executionPolicy);
+    
+    /// <summary>构建视图会话实例</summary>
     public IExtendedViewSession Build();
+    
+    /// <summary>获取构建器快照</summary>
+    public ViewSessionBuilderSnapshot GetFullSnapshot();
 }
 ```
 
----
 
-## 扩展方法（Extension 类）
+## 扩展方法
+
+### ViewPipelineExecutor 扩展方法
 
 ```csharp
-public static partial class Extension
+public static class TypedPipelineContextExtensions
 {
-    /// <summary>自定义日志记录器</summary>
-    public static ViewSessionBuilder WithLogger(this ViewSessionBuilder builder, ILogger logger);
+    /// <summary>获取强类型上下文（不支持时抛出异常）</summary>
+    public static ITypedPipelineContext GetTypedContext(this ViewPipelineExecutor executor);
     
-    /// <summary>添加扩展包</summary>
-    public static ViewSessionBuilder AddExtension(this ViewSessionBuilder builder, IExtension extension);
+    /// <summary>尝试获取强类型上下文</summary>
+    public static bool TryGetTypedContext(this ViewPipelineExecutor executor, out ITypedPipelineContext typedContext);
     
-    /// <summary>设置中间件执行策略</summary>
-    public static ViewSessionBuilder SetMiddlewareExecutionPolicy(this ViewSessionBuilder builder, IMiddlewareExecutionPolicy executionPolicy);
+    /// <summary>设置数据（不支持时抛出异常）</summary>
+    public static void SetData<T>(this ViewPipelineExecutor executor, string key, T value);
+    
+    /// <summary>获取数据（不支持时抛出异常）</summary>
+    public static Optional<T> GetData<T>(this ViewPipelineExecutor executor, string key);
+    
+    /// <summary>移除数据（不支持时抛出异常）</summary>
+    public static bool RemoveData<T>(this ViewPipelineExecutor executor, string key);
+    
+    /// <summary>尝试设置数据（不抛出异常）</summary>
+    public static bool TrySetData<T>(this ViewPipelineExecutor executor, string key, T value);
+    
+    /// <summary>尝试获取数据（不抛出异常）</summary>
+    public static Optional<T> TryGetData<T>(this ViewPipelineExecutor executor, string key);
+    
+    /// <summary>尝试移除数据（不抛出异常）</summary>
+    public static bool TryRemoveData<T>(this ViewPipelineExecutor executor, string key);
+    
+    /// <summary>检查是否包含指定键（不支持时抛出异常）</summary>
+    public static bool ContainsKey<T>(this ViewPipelineExecutor executor, string key);
+    
+    /// <summary>尝试检查是否包含指定键（不抛出异常）</summary>
+    public static bool TryContainsKey<T>(this ViewPipelineExecutor executor, string key);
 }
 ```
 
----
 
 ## 使用示例
 
-### 基础用法：最简单的视图会话
+### 基础用法
 
 ```csharp
-using Cysharp.Threading.Tasks;
-using System.Threading;
-using ViewPipeline.Unity;
-using ViewPipeline.Unity.Core;
-
 public class MyView : IView
 {
     public async UniTask ShowAsync(CancellationToken cancellationToken)
     {
-        // 显示 UI 的逻辑
         gameObject.SetActive(true);
         await UniTask.CompletedTask;
     }
@@ -402,17 +517,16 @@ public class MyView : IView
     }
 }
 
-// 创建并打开视图
 var session = ViewSessionBuilder.Create().Build();
 await session.OpenViewAsync(new MyView(), CancellationToken.None);
 ```
 
-### 中间件示例：日志记录器
+### 中间件示例
 
 ```csharp
 public class LoggingMiddleware : IViewMiddleware
 {
-    public async UniTask InvokeAsync(IView view, UIPipelineExecutor executor, CancellationToken token)
+    public async UniTask InvokeAsync(IView view, ViewPipelineExecutor executor, CancellationToken token)
     {
         Debug.Log($"[Logging] Before: {view.GetType().Name}");
         await executor.NextAsync(view, token);
@@ -420,122 +534,84 @@ public class LoggingMiddleware : IViewMiddleware
     }
 }
 
-// 注册
 var session = ViewSessionBuilder.Create()
     .AddOpenMiddleware(new LoggingMiddleware())
     .Build();
 ```
 
-### 动态中间件供应器
+### 强类型上下文
 
 ```csharp
-public class DynamicAnalyticsProvider : IDynamicMiddlewareProvider
+var session = ViewSessionBuilder.Create()
+    .WithTypedContext()
+    .Build();
+
+// 在中间件中
+public class DataMiddleware : IViewMiddleware
 {
-    private readonly AnalyticsMiddleware _middleware = new AnalyticsMiddleware();
-    
-    public void PopulateMiddlewares(IView view, IReadOnlyList<IViewMiddleware> staticMiddlewares, IDynamicMiddlewareCollection dynamicMiddlewares)
+    public async UniTask InvokeAsync(IView view, ViewPipelineExecutor executor, CancellationToken token)
     {
-        // 只为特定类型的视图添加埋点中间件
-        if (view is IPageView)
-        {
-            dynamicMiddlewares.Add(_middleware);
-        }
+        executor.SetData("userId", 12345);
+        var userId = executor.GetData<int>("userId");
+        await executor.NextAsync(view, token);
     }
 }
-
-// 注册
-var session = ViewSessionBuilder.Create()
-    .AddOpenDynamicProvider(new DynamicAnalyticsProvider())
-    .Build();
-```
-
-### 自定义上下文
-
-```csharp
-public class MyCustomContext : IPipelineContext, IResstable
-{
-    public Dictionary<string, object> Data { get; } = new Dictionary<string, object>();
-    
-    public void Reset()
-    {
-        Data.Clear();
-    }
-}
-
-var session = ViewSessionBuilder.Create()
-    .WithContextFactory(() => new MyCustomContext())
-    .Build();
 ```
 
 ### 扩展包实现
 
 ```csharp
-public class UIExtension : IExtension
+public class UIExtension : IExtension, IValidatable
 {
+    private readonly Guid _builderKey;
+    
+    public UIExtension(Guid builderKey) => _builderKey = builderKey;
+    
+    public bool IsInitialized { get; private set; }
+    public void Initialize() => IsInitialized = true;
+    
     public IEnumerable<IViewMiddleware> GetMiddlewares(PipelineDirection direction)
     {
-        yield return new UILoadingMiddleware();
         if (direction == PipelineDirection.Open)
-            yield return new UIOpenAnalyticsMiddleware();
+            yield return new UILoadingMiddleware();
     }
     
     public IEnumerable<IDynamicMiddlewareProvider> GetDynamicProviders(PipelineDirection direction)
-    {
-        yield return new DynamicPermissionProvider();
-    }
+        => Array.Empty<IDynamicMiddlewareProvider>();
     
-    public IEnumerable<IMiddlewareValidator> GetMiddlewareValidators()
-    {
-        yield return new NoDuplicateValidators();
-    }
-    
-    public void Initialize()
-    {
-        Debug.Log("UI Extension initialized");
-    }
+    public IValidator GetValidator()
+        => new UIExtensionValidator(_builderKey);
 }
 
-// 一键装配
+// 使用
 var session = ViewSessionBuilder.Create()
-    .AddExtension(new UIExtension())
+    .WithTypedContext()
+    .AddExtension(new UIExtension(builder.Key))
     .Build();
 ```
 
-### 自定义验证器
+### 扩展包验证器
 
 ```csharp
-public class NoDuplicateValidators : IMiddlewareValidator
+public class UIExtensionValidator : IValidator
 {
-    public void Validate(IReadOnlyCollection<IViewMiddleware> middlewares, IList<ValidationError> errors)
+    private readonly Guid _builderKey;
+    
+    public UIExtensionValidator(Guid builderKey) => _builderKey = builderKey;
+    
+    public ValidationResult Validate()
     {
-        var types = middlewares.Select(m => m.GetType()).ToList();
-        var duplicates = types.GroupBy(t => t).Where(g => g.Count() > 1);
-        
-        foreach (var dup in duplicates)
+        var snapshot = SnapshotCache.Get<ViewSessionBuilderSnapshot>(_builderKey);
+        if (!typeof(ITypedPipelineContext).IsAssignableFrom(snapshot.ContextType))
         {
-            errors.Add(new ValidationError(
-                $"Duplicate middleware type: {dup.Key}", 
-                ValidationSeverity.Warning));
+            return ValidationResult.Error("This extension requires ITypedPipelineContext");
         }
+        return ValidationResult.Success();
     }
 }
 ```
 
-### 执行策略
 
-```csharp
-public class FeatureFlagPolicy : IMiddlewareExecutionPolicy
-{
-    private readonly HashSet<string> _disabledFeatures;
-    
-    public bool ShouldSkip(IView view, IViewMiddleware middleware)
-    {
-        return _disabledFeatures.Contains(middleware.GetType().Name);
-    }
-}
+## 版本信息
 
-var session = ViewSessionBuilder.Create()
-    .AddOpenMiddleware(new NewFeatureMiddleware())
-    .SetMiddlewareExecutionPolicy(new FeatureFlagPolicy())
-    .Build();
-```
+当前版本：1.0.1-beta
