@@ -140,66 +140,6 @@ public class DataMiddleware : IViewMiddleware
 }
 ```
 
-## 📚 API 文档
-
-详细 API 文档请参阅 [DOCUMENT.md](./DOCUMENT.md)
-
-### 核心接口
-
-| 接口 | 说明 |
-|------|------|
-| `IView` | 视图必须实现的基础接口 |
-| `IExtendedViewSession` | 会话接口，提供 Open/Close 操作 |
-| `IViewMiddleware` | 中间件接口 |
-| `ITypedPipelineContext` | 强类型上下文 |
-| `IExtension` | 扩展包接口 |
-| `IValidatable` | 可验证接口 |
-| `IExecutionPolicy` | 执行策略接口 |
-
-### 构建器
-
-```csharp
-var session = ViewSessionBuilder.Create()
-    .WithTypedContext()                              // 启用强类型上下文
-    .AddOpenMiddleware(new AuthMiddleware())         // 添加中间件
-    .AddOpenDynamicProvider(new DynamicProvider())   // 添加动态供应器
-    .AddExtension(new MyExtension())                 // 添加扩展包
-    .WithLogger(new UnityLogger())                   // 自定义日志
-    .WithMiddlewareExecutionPolicy(new MyPolicy())   // 执行策略
-    .Build();
-```
-
-## 🧪 测试
-
-本项目包含完整的单元测试和性能测试。
-
-### 运行测试
-
-在 Unity 编辑器中打开 **Window → General → Test Runner**，选择 **EditMode** 或 **PlayMode** 运行所有测试。
-
-### 测试覆盖
-
-| 测试类型 | 覆盖范围 | 状态 |
-|----------|---------|------|
-| 单元测试 | 基础功能、中间件、拦截、动态供应器、策略、扩展包、强类型上下文 | ✅ 全部通过 |
-| 性能测试 | 构建耗时、打开/关闭耗时、GC 分配、压力测试 | ✅ 通过 |
-
-详细测试报告请参阅 [TEST_REPORT.md](./TEST_REPORT.md)
-
-### 性能基准（参考）
-
-| 场景 | 耗时 | GC 分配 |
-|------|------|--------|
-| 空视图 Open+Close | ~0.02 ms | 71 B |
-| 5 中间件 Open+Close | ~0.03 ms | 91 B |
-| 20 中间件 Open+Close | ~0.04 ms | 140 B |
-| TypedContext 读写 | ~0.03 ms | 85 B |
-| 500 次顺序操作 | ~2.15 ms | - |
-
-## 📌 版本历史
-
-请参阅 [RELEASE.md](./RELEASE.md)
-
 ## ❓ 常见问题
 
 ### Q: 中间件执行顺序是怎样的？
@@ -229,6 +169,13 @@ A: 是的。`ViewSession` 内部维护了操作计数器，并在释放时会等
 ### Q: 性能如何？
 
 A: 框架开销极低（~0.02-0.04ms/次），GC 分配可控（~70-140 字节/次），适合对性能敏感的游戏项目。详见 [TEST_REPORT.md](./TEST_REPORT.md)。
+
+## 📚 其它文档
+
+概念文档请参阅[CONCEPT.md](./CONCEPT.md)
+详细 API 文档请参阅 [DOCUMENT.md](./DOCUMENT.md)
+详细测试报告请参阅 [TEST_REPORT.md](./TEST_REPORT.md)
+版本历史请参阅 [RELEASE.md](./RELEASE.md)
 
 ## 📄 许可证
 
