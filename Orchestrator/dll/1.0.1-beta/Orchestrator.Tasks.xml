@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Orchestrator.Tasks</name>
+    </assembly>
+    <members>
+        <member name="T:Orchestrator.Tasks.ITaskBehavior`1">
+            <summary>横切行为</summary>
+            <typeparam name="TKey">步骤唯一标识的类型</typeparam>
+        </member>
+        <member name="M:Orchestrator.Tasks.ITaskBehavior`1.HandleAsync(Orchestrator.ITypedPipelineContext,Orchestrator.Tasks.TaskBehaviorStepper{`0},System.Threading.CancellationToken)">
+            <summary>异步环绕处理</summary>
+            <param name="context">上下文</param>
+            <param name="stepper">步进器</param>
+            <param name="token">取消令牌</param>
+            <returns>步骤执行结果</returns>
+        </member>
+        <member name="T:Orchestrator.Tasks.ITaskStep`1">
+            <summary>异步步骤</summary>
+            <typeparam name="TKey">步骤唯一标识的类型</typeparam>
+        </member>
+        <member name="M:Orchestrator.Tasks.ITaskStep`1.ExecuteAsync(Orchestrator.ITypedPipelineContext,System.Threading.CancellationToken)">
+            <summary>异步执行</summary>
+            <param name="context">上下文</param>
+            <param name="token">取消令牌</param>
+            <returns>步骤执行结果</returns>
+        </member>
+        <member name="T:Orchestrator.Tasks.TaskBehaviorStepper`1">
+            <summary>步进器</summary>
+            <typeparam name="TKey">步骤唯一标识的类型</typeparam>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskBehaviorStepper`1.NextAsync(System.Threading.CancellationToken)">
+            <summary>
+            步进到下一个行为
+            </summary>
+            <param name="token">取消令牌</param>
+            <returns>步骤结果</returns>
+        </member>
+        <member name="T:Orchestrator.Tasks.TaskOrchestrator`1">
+            <summary>任务编排器</summary>
+            <typeparam name="TKey">步骤唯一标识的类型</typeparam>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.ExecuteAsync(Orchestrator.ITypedPipelineContext,System.Threading.CancellationToken)">
+            <summary>执行编排</summary>
+            <param name="context">上下文</param>
+            <param name="token">取消令牌</param>
+            <returns>编排执行结果</returns>
+        </member>
+        <member name="T:Orchestrator.Tasks.TaskOrchestrator`1.Builder">
+            <summary>编排器构建器</summary>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.Create">
+            <summary>创建构建器</summary>
+            <returns>新的构建器实例</returns>
+            <remarks>
+            <para>静态工厂方法，每次调用返回独立的构建器。</para>
+            </remarks>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddStep(Orchestrator.Tasks.ITaskStep{`0})">
+            <summary>添加步骤</summary>
+            <param name="step">步骤实例</param>
+            <returns>构建器实例</returns>
+            <remarks>
+            <para>步骤将根据其内部定义的依赖关系自动决定执行顺序，添加顺序不代表执行顺序。</para>
+            <para>不能添加 null 步骤。</para>
+            </remarks>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehavior``1(Orchestrator.Tasks.ITaskBehavior{`0})">
+            <summary>为指定步骤添加行为</summary>
+            <typeparam name="TStep">步骤类型</typeparam>
+            <param name="behavior">行为实例</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehavior``2(Orchestrator.Tasks.ITaskBehavior{`0})">
+            <summary>批量为多种步骤添加行为</summary>
+            <typeparam name="TStep1">步骤类型1</typeparam>
+            <typeparam name="TStep2">步骤类型2</typeparam>
+            <param name="behavior">行为实例</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehavior``3(Orchestrator.Tasks.ITaskBehavior{`0})">
+            <summary>批量为多种步骤添加行为</summary>
+            <typeparam name="TStep1">步骤类型1</typeparam>
+            <typeparam name="TStep2">步骤类型2</typeparam>
+            <typeparam name="TStep3">步骤类型3</typeparam>
+            <param name="behavior">行为实例</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehavior(Orchestrator.Tasks.ITaskBehavior{`0},System.Type)">
+            <summary>
+            为指定步骤添加行为
+            </summary>
+            <param name="behavior">行为实例</param>
+            <param name="stepType">步骤类型</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehavior(Orchestrator.Tasks.ITaskBehavior{`0},System.Type,System.Type)">
+            <summary>
+            批量为多种步骤添加行为
+            </summary>
+            <param name="behavior">行为实例</param>
+            <param name="stepType1">步骤类型1</param>
+            <param name="stepType2">步骤类型2</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehavior(Orchestrator.Tasks.ITaskBehavior{`0},System.Type,System.Type,System.Type)">
+            <summary>
+            批量为多种步骤添加行为
+            </summary>
+            <param name="behavior">行为实例</param>
+            <param name="stepType1">步骤类型1</param>
+            <param name="stepType2">步骤类型2</param>
+            <param name="stepType3">步骤类型3</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehavior(Orchestrator.Tasks.ITaskBehavior{`0},System.Type[])">
+            <summary>批量为多种步骤添加行为</summary>
+            <param name="behavior">行为实例</param>
+            <param name="stepTypes">步骤行为数组</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.AddBehaviorForAll(Orchestrator.Tasks.ITaskBehavior{`0})">
+            <summary>为当前所有步骤添加行为</summary>
+            <param name="behavior">行为实例</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.UsePolicy(Orchestrator.InterruptionPolicy)">
+            <summary>设置中断策略</summary>
+            <param name="policy">策略</param>
+            <returns>构建器实例</returns>
+            <remarks>
+            <para>默认策略为 <see cref="F:Orchestrator.InterruptionPolicy.DependencyBased"/>。</para>
+            <para>仅在步骤返回非 <see cref="F:Orchestrator.StepFlow.Continue"/> 时生效。</para>
+            </remarks>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.WithMaxConcurrency(System.Int32)">
+            <summary>设置最大并发数</summary>
+            <param name="count">最大并发数（必须大于0）</param>
+            <returns>构建器实例</returns>
+            <remarks>
+            <para>限制同时执行的步骤数量，超出数量时后续步骤会等待直到有可用资源。</para>
+            <para>若未设置，则不限制并发量（但同时受 <see cref="T:System.Threading.SemaphoreSlim"/> 和任务调度器影响）。</para>
+            </remarks>
+        </member>
+        <member name="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.Build">
+            <summary>构建编排器</summary>
+            <returns>配置完成的编排器实例</returns>
+            <exception cref="T:System.InvalidOperationException">步骤集合为空、检测到循环依赖、无法确定最终步骤或检测到多个汇点步骤时抛出</exception>
+            <remarks>
+            <para>根据当前配置完成依赖分析、拓扑排序、管道编译和并发控制初始化。</para>
+            <para>每个构建器实例只能调用一次 <see cref="M:Orchestrator.Tasks.TaskOrchestrator`1.Builder.Build"/>，之后不能再修改配置。</para>
+            </remarks>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,17 @@
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Orchestrator.ValueTasks
+{
+    /// <summary>横切关注点行为</summary>
+    /// <typeparam name="TKey">步骤唯一标识的类型</typeparam>
+    public interface IValueTaskBehavior<TKey>
+    {
+        /// <summary>异步环绕处理</summary>
+        /// <param name="context">上下文</param>
+        /// <param name="stepper">步进器</param>
+        /// <param name="token">取消令牌</param>
+        /// <returns>步骤执行结果</returns>
+        ValueTask<StepResult> HandleAsync(ITypedPipelineContext context, ValueTaskBehaviorStepper<TKey> stepper, CancellationToken token);
+    }
+}
