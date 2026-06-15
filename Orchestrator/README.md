@@ -244,8 +244,8 @@ var orchestrator = TaskOrchestrator<StepType>.Builder
 
 ## 其它文档
 
-- [API 文档](/documents/) — 全部公开 API 的详细说明
-- [测试报告](/tests/) — 单元测试与性能测试的详细结果
+- [API 文档](./documents/1.0.1-beta/DOCUMENT.md) — 全部公开 API 的详细说明
+- [测试报告](./tests/1.0.1-beta/Orchestrator%20Performance%20Evaluation%20Report.md) — 单元测试与性能测试的详细结果
 
 ## 许可证
 
