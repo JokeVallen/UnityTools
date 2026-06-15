@@ -1,11 +1,10 @@
+using System.Collections.Generic;
+
 namespace Orchestrator
 {
     /// <summary>
     /// 强类型上下文接口
     /// </summary>
-    /// <remarks>
-    /// <para>提供类型安全的键值存储能力</para>
-    /// </remarks>
     public interface ITypedPipelineContext
     {
         /// <summary>
@@ -43,6 +42,28 @@ namespace Orchestrator
         /// <param name="key">键</param>
         /// <returns>若包含则返回 true，否则返回 false。</returns>
         bool ContainsKey<TKey, TValue>(TKey key);
+
+        /// <summary>
+        /// 追加步骤执行结果
+        /// </summary>
+        /// <typeparam name="TStepKey">步骤唯一标识的类型</typeparam>
+        /// <param name="stepExecutionResult">步骤执行结果</param>
+        void AddStepExecutionResult<TStepKey>(StepExecutionResult<TStepKey> stepExecutionResult);
+
+        /// <summary>
+        /// 获取步骤执行结果
+        /// </summary>
+        /// <typeparam name="TStepKey">步骤唯一标识的类型</typeparam>
+        /// <param name="key">步骤唯一标识</param>
+        /// <returns>步骤执行结果</returns>
+        Optional<StepExecutionResult<TStepKey>> GetStepExecutionResult<TStepKey>(TStepKey key);
+
+        /// <summary>
+        /// 获取所有步骤执行结果
+        /// </summary>
+        /// <typeparam name="TStepKey">步骤唯一标识的类型</typeparam>
+        /// <returns>步骤执行结果集合</returns>
+        IEnumerable<StepExecutionResult<TStepKey>> GetAllStepExecutionResults<TStepKey>();
 
         /// <summary>
         /// 清空所有值

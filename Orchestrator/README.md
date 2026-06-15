@@ -152,7 +152,7 @@ public class LoggingBehavior : ITaskBehavior<string>
 
 ## 使用示例
 
-### 快速开始
+### 快速开始（串行执行）
 
 ```csharp
 using Orchestrator;
@@ -171,12 +171,19 @@ var orchestrator = TaskOrchestrator<string>.Builder.Create()
     .AddBehaviorForAll(new MetricsBehavior())
     .Build();
 
-// 3. 执行
-var result = await orchestrator.ExecuteAsync(context);
+// 3. 串行执行
+var result = await orchestrator.ExecuteAsyncSequentially(context);
 
 // 4. 读取结果
 var orderId = context.Get<string, int>("orderId").Value;
 Console.WriteLine($"Order {orderId} completed");
+```
+
+### 并行执行
+
+```csharp
+// 对于无依赖关系的步骤，可以使用并行执行提高吞吐量
+var result = await orchestrator.ExecuteAsyncInParallel(context);
 ```
 
 ### 步骤流转控制
@@ -192,6 +199,22 @@ return StepResult.Break();
 return StepResult.Fail(new Exception("Something went wrong"));
 ```
 
+### 构建器配置详解
+
+```csharp
+var orchestrator = TaskOrchestrator<StepType>.Builder
+    .Create()
+    .AddStep(step1)
+    .AddStep(step2)
+    .AddStep(step3)
+    .UsePolicy(InterruptionPolicy.DependencyBased)  // 设置中断策略
+    .WithMaxConcurrency(4)                          // 限制最大并发数
+    .AddBehavior<StepA>(new RetryBehavior(3))       // 为特定步骤添加行为
+    .AddBehavior(typeof(StepB), typeof(StepC), new MetricsBehavior())  // 批量添加
+    .AddBehaviorForAll(new LoggingBehavior())       // 为所有步骤添加行为
+    .Build();
+```
+
 ## 版本选择指南
 
 | 使用场景 | 推荐版本 |
@@ -199,6 +222,18 @@ return StepResult.Fail(new Exception("Something went wrong"));
 | Unity 游戏客户端，GC 要求苛刻 | UniTask |
 | .NET 服务器/桌面应用，追求生态兼容 | Task |
 | .NET 服务器/桌面应用，追求低内存分配 | ValueTask |
+
+## 版本差异说明
+
+| 特性 | Task 版本 | ValueTask 版本 | UniTask 版本 |
+|------|-----------|----------------|--------------|
+| 串行执行 | ✅ | ✅ | ✅ |
+| 并行执行 | ✅ | ❌ | ✅ |
+| 行为管道 | ✅ | ✅ | ✅ |
+| 中断策略 | ✅ | ✅ | ✅ |
+| 并发限制 | ✅ | ✅ | ✅ |
+
+> ⚠️ **注意**：`ValueTaskOrchestrator` 当前仅支持串行执行，并行执行支持将在后续版本中添加。
 
 ## 性能特性
 

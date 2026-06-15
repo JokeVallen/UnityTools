@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -208,5 +209,23 @@ public class RetryBehavior : IUniTaskBehavior<string>
             if (result.Flow != StepFlow.Fail || attempts >= maxRetries)
                 return result;
         }
+    }
+}
+
+public sealed class EmptyContext : ITypedPipelineContext
+{
+    public string Tag { get; private set; }
+    public void Set<TKey, TValue>(TKey key, TValue value) { }
+    public Optional<TValue> Get<TKey, TValue>(TKey key) => Optional<TValue>.None;
+    public void AddStepExecutionResult<TStepKey>(StepExecutionResult<TStepKey> stepExecutionResult) { }
+    public Optional<StepExecutionResult<TStepKey>> GetStepExecutionResult<TStepKey>(TStepKey key) => Optional<StepExecutionResult<TStepKey>>.None;
+    public bool Remove<TKey, TValue>(TKey key) => false;
+    public bool ContainsKey<TKey, TValue>(TKey key) => false;
+    public void Clear() { }
+    public IEnumerable<StepExecutionResult<TStepKey>> GetAllStepExecutionResults<TStepKey>() => Array.Empty<StepExecutionResult<TStepKey>>();
+
+    public void SetTag(string tag)
+    {
+        Tag = tag;
     }
 }

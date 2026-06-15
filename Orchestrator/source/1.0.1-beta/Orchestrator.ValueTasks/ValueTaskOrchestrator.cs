@@ -17,61 +17,35 @@ namespace Orchestrator.ValueTasks
 
         private ValueTaskOrchestrator() { }
 
-        /// <summary>执行编排</summary>
+        /// <summary>串行执行编排</summary>
         /// <param name="context">上下文</param>
         /// <param name="token">取消令牌</param>
         /// <returns>编排执行结果</returns>
-        public async ValueTask<ExecutionResult<TKey>> ExecuteAsync(ITypedPipelineContext context, CancellationToken token = default)
+        public async ValueTask<ExecutionResult> ExecuteAsyncSequentially(ITypedPipelineContext context, CancellationToken token = default)
         {
             var stepCount = plan.Steps.Length;
-            var tasks = ArrayPool.Rent<ValueTask<StepResult>>(stepCount);
-            var stepResults = ArrayPool.Rent<StepExecutionResult<TKey>>(stepCount);
-            var executionContext = new ExecutionContext(tasks, stepResults);
+            var executionContext = new ExecutionContext(null);
             var sw = Stopwatch.StartNew();
 
             try
             {
                 for (int i = 0; i < stepCount; i++)
-                    tasks[i] = RunStepAsync(i, executionContext, context, token);
+                {
+                    var result = await RunStepAsyncSequentially(i, executionContext, context, token);
+                    if (executionContext.IsGlobalBroken) break;
+                }
 
-#if NET5_0_OR_GREATER || NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                await ValueTask.WhenAll(tasks);
-#else
-                for (int i = 0; i < tasks.Length; i++)
-                    await tasks[i];
-#endif
                 sw.Stop();
-
-                var validCount = 0;
-                for (int i = 0; i < stepCount; i++)
-                {
-                    if (stepResults[i].StepKey.HasValue)
-                        validCount++;
-                }
-
-                var executedResults = new StepExecutionResult<TKey>[validCount];
-                int idx = 0;
-                for (int i = 0; i < stepCount; i++)
-                {
-                    if (stepResults[i].StepKey.HasValue)
-                        executedResults[idx++] = stepResults[i];
-                }
-
-                return new ExecutionResult<TKey>(!executionContext.IsGlobalBroken, executedResults, sw.Elapsed);
+                return new ExecutionResult(!executionContext.IsGlobalBroken, sw.Elapsed);
             }
             catch
             {
                 if (sw.IsRunning) sw.Stop();
                 throw;
             }
-            finally 
-            {
-                ArrayPool.Return(tasks, clearArray: true);
-                ArrayPool.Return(stepResults, clearArray: true);
-            }
         }
 
-        private async ValueTask<StepResult> RunStepAsync(int index, ExecutionContext ctx, ITypedPipelineContext context, CancellationToken token)
+        private async ValueTask<StepResult> RunStepAsyncSequentially(int index, ExecutionContext ctx, ITypedPipelineContext context, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -80,32 +54,29 @@ namespace Orchestrator.ValueTasks
 
             if (depIndices.Length > 0)
             {
-                var depTasks = ArrayPool.Rent<ValueTask<StepResult>>(depIndices.Length);
-                try
+                int count = depIndices.Length;
+                if (policy == InterruptionPolicy.DependencyBased)
                 {
-                    for (int j = 0; j < depIndices.Length; j++)
-                        depTasks[j] = ctx.tasks[depIndices[j]];
-
-#if NET5_0_OR_GREATER || NETCOREAPP3_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-                    var depResults = await ValueTask.WhenAll(depTasks);
-#else
-                    var depResults = new StepResult[depTasks.Length];
-                    for (int j = 0; j < depTasks.Length; j++)
-                        depResults[j] = await depTasks[j];
-#endif
-
-                    if (policy == InterruptionPolicy.DependencyBased)
+                    for (int j = 0; j < count; j++)
                     {
-                        for (int j = 0; j < depResults.Length; j++)
-                        {
-                            if (depResults[j].Flow != StepFlow.Continue)
-                                return StepResult.Break();
-                        }
+                        var depKey = plan.Steps[depIndices[j]].Step.Key;
+                        var depResult = context.GetStepExecutionResult(depKey);
+                        if (depResult.HasValue && depResult.Value.Flow != StepFlow.Continue)
+                            return StepResult.Break();
                     }
                 }
-                finally 
+                else if (policy == InterruptionPolicy.Strict)
                 {
-                    ArrayPool.Return(depTasks, clearArray: true);
+                    for (int j = 0; j < count; j++)
+                    {
+                        var depKey = plan.Steps[depIndices[j]].Step.Key;
+                        var depResult = context.GetStepExecutionResult(depKey);
+                        if (depResult.HasValue && depResult.Value.Flow != StepFlow.Continue)
+                        {
+                            ctx.IsGlobalBroken = true;
+                            return StepResult.Break();
+                        }
+                    }
                 }
             }
 
@@ -132,15 +103,17 @@ namespace Orchestrator.ValueTasks
                 stepSw.Stop();
             }
 
-            if (result.Flow != StepFlow.Continue)
+            if (policy == InterruptionPolicy.Strict && result.Flow != StepFlow.Continue)
                 ctx.IsGlobalBroken = true;
 
-            ctx.stepResults[index] = new StepExecutionResult<TKey>(
+            var stepExecutionResult = new StepExecutionResult<TKey>(
                 stepEntry.Step.Key,
                 result.Flow == StepFlow.Continue,
                 result.Flow,
                 result.Exception,
                 stepSw.Elapsed);
+
+            context.AddStepExecutionResult(stepExecutionResult);
 
             return result;
         }
@@ -148,13 +121,11 @@ namespace Orchestrator.ValueTasks
         private class ExecutionContext
         {
             public readonly ValueTask<StepResult>[] tasks;
-            public readonly StepExecutionResult<TKey>[] stepResults;
             public bool IsGlobalBroken;
 
-            public ExecutionContext(ValueTask<StepResult>[] tasks, StepExecutionResult<TKey>[] stepResults)
+            public ExecutionContext(ValueTask<StepResult>[] tasks)
             {
                 this.tasks = tasks;
-                this.stepResults = stepResults;
             }
         }
 

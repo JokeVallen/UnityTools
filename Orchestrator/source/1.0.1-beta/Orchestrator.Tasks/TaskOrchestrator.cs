@@ -17,42 +17,53 @@ namespace Orchestrator.Tasks
 
         private TaskOrchestrator(){}
 
-        /// <summary>执行编排</summary>
+        /// <summary>串行执行编排</summary>
         /// <param name="context">上下文</param>
         /// <param name="token">取消令牌</param>
         /// <returns>编排执行结果</returns>
-        public async Task<ExecutionResult<TKey>> ExecuteAsync(ITypedPipelineContext context, CancellationToken token = default)
+        public async Task<ExecutionResult> ExecuteAsyncSequentially(ITypedPipelineContext context, CancellationToken token = default)
         {
             var stepCount = plan.Steps.Length;
-            var tasks = ArrayPool.Rent<Task<StepResult>>(stepCount);
-            var stepResults = ArrayPool.Rent<StepExecutionResult<TKey>>(stepCount);
-            var executionContext = new ExecutionContext(tasks, stepResults);
+            var executionContext = new ExecutionContext(null);
             var sw = Stopwatch.StartNew();
 
             try
             {
                 for (int i = 0; i < stepCount; i++)
-                    tasks[i] = RunStepAsync(i, executionContext, context, token);
+                {
+                    var result = await RunStepAsyncSequentially(i, executionContext, context, token);
+                    if (executionContext.IsGlobalBroken) break;
+                }
 
-                await Task.WhenAll(tasks);
                 sw.Stop();
+                return new ExecutionResult(!executionContext.IsGlobalBroken, sw.Elapsed);
+            }
+            catch
+            {
+                if (sw.IsRunning) sw.Stop();
+                throw;
+            }
+        }
 
-                var validCount = 0;
+        /// <summary>并行执行编排</summary>
+        /// <param name="context">上下文</param>
+        /// <param name="token">取消令牌</param>
+        /// <returns>编排执行结果</returns>
+        public async Task<ExecutionResult> ExecuteAsyncInParallel(ITypedPipelineContext context, CancellationToken token = default)
+        {
+            var stepCount = plan.Steps.Length;
+            var tasks = ArrayPool.Rent<Task<StepResult>>(stepCount);
+            var executionContext = new ExecutionContext(tasks);
+            var sw = Stopwatch.StartNew();
+
+            try
+            {
                 for (int i = 0; i < stepCount; i++)
-                {
-                    if (stepResults[i].StepKey.HasValue)
-                        validCount++;
-                }
+                    tasks[i] = RunStepAsyncInParallel(i, executionContext, context, token);
 
-                var executedResults = new StepExecutionResult<TKey>[validCount];
-                int idx = 0;
-                for (int i = 0; i < stepCount; i++)
-                {
-                    if (stepResults[i].StepKey.HasValue)
-                        executedResults[idx++] = stepResults[i];
-                }
-
-                return new ExecutionResult<TKey>(!executionContext.IsGlobalBroken, executedResults, sw.Elapsed);
+                await Task.WhenAll(tasks.Take(stepCount));
+                sw.Stop();
+                return new ExecutionResult(!executionContext.IsGlobalBroken, sw.Elapsed);
             }
             catch
             {
@@ -62,11 +73,10 @@ namespace Orchestrator.Tasks
             finally 
             {
                 ArrayPool.Return(tasks, clearArray: true);
-                ArrayPool.Return(stepResults, clearArray: true);
             }
         }
 
-        private async Task<StepResult> RunStepAsync(int index, ExecutionContext ctx, ITypedPipelineContext context, CancellationToken token)
+        private async Task<StepResult> RunStepAsyncSequentially(int index, ExecutionContext ctx, ITypedPipelineContext context, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -75,20 +85,96 @@ namespace Orchestrator.Tasks
 
             if (depIndices.Length > 0)
             {
-                var depTasks = ArrayPool.Rent<Task<StepResult>>(depIndices.Length);
+                int count = depIndices.Length;
+                if (policy == InterruptionPolicy.DependencyBased)
+                {
+                    for (int j = 0; j < count; j++)
+                    {
+                        var depKey = plan.Steps[depIndices[j]].Step.Key;
+                        var depResult = context.GetStepExecutionResult(depKey);
+                        if (depResult.HasValue && depResult.Value.Flow != StepFlow.Continue)
+                            return StepResult.Break();
+                    }
+                }
+                else if (policy == InterruptionPolicy.Strict)
+                {
+                    for (int j = 0; j < count; j++)
+                    {
+                        var depKey = plan.Steps[depIndices[j]].Step.Key;
+                        var depResult = context.GetStepExecutionResult(depKey);
+                        if (depResult.HasValue && depResult.Value.Flow != StepFlow.Continue)
+                        {
+                            ctx.IsGlobalBroken = true;
+                            return StepResult.Break();
+                        }
+                    }
+                }
+            }
+
+            token.ThrowIfCancellationRequested();
+
+            if (policy == InterruptionPolicy.Strict && ctx.IsGlobalBroken)
+                return StepResult.Break();
+
+            if (concurrencySemaphore != null)
+                await concurrencySemaphore.WaitAsync(token);
+
+            var stepSw = Stopwatch.StartNew();
+            StepResult result;
+            try
+            {
+                var stepper = new TaskBehaviorStepper<TKey>(stepEntry.Behaviors, 0, stepEntry.Step, context);
+                result = await stepper.NextAsync(token);
+            }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception ex) { result = StepResult.Fail(ex); }
+            finally
+            {
+                if (concurrencySemaphore != null) concurrencySemaphore.Release();
+                stepSw.Stop();
+            }
+
+            if (policy == InterruptionPolicy.Strict && result.Flow != StepFlow.Continue)
+                ctx.IsGlobalBroken = true;
+
+            var stepExecutionResult = new StepExecutionResult<TKey>(
+                stepEntry.Step.Key,
+                result.Flow == StepFlow.Continue,
+                result.Flow,
+                result.Exception,
+                stepSw.Elapsed);
+
+            context.AddStepExecutionResult(stepExecutionResult);
+
+            return result;
+        }
+
+        private async Task<StepResult> RunStepAsyncInParallel(int index, ExecutionContext ctx, ITypedPipelineContext context, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            var stepEntry = plan.Steps[index];
+            var depIndices = stepEntry.DependencyIndices;
+
+            if (depIndices.Length > 0)
+            {
+                int count = depIndices.Length;
+                var depTasks = ArrayPool.Rent<Task<StepResult>>(count);
                 try
                 {
-                    for (int j = 0; j < depIndices.Length; j++)
+                    for (int j = 0; j < count; j++)
                         depTasks[j] = ctx.tasks[depIndices[j]];
 
-                    var depResults = await Task.WhenAll(depTasks);
-
-                    if (policy == InterruptionPolicy.DependencyBased) 
+                    var depResults = await Task.WhenAll(depTasks.Take(count));
+                    if (policy != InterruptionPolicy.Ignore) 
                     {
                         for (int j = 0; j < depResults.Length; j++)
                         {
                             if (depResults[j].Flow != StepFlow.Continue)
+                            {
+                                if (policy == InterruptionPolicy.Strict) ctx.IsGlobalBroken = true;
                                 return StepResult.Break();
+                            }
                         }
                     }
                 }
@@ -121,15 +207,17 @@ namespace Orchestrator.Tasks
                 stepSw.Stop();
             }
 
-            if (result.Flow != StepFlow.Continue)
+            if (policy == InterruptionPolicy.Strict && result.Flow != StepFlow.Continue)
                 ctx.IsGlobalBroken = true;
 
-            ctx.stepResults[index] = new StepExecutionResult<TKey>(
+            var stepExecutionResult = new StepExecutionResult<TKey>(
                 stepEntry.Step.Key,
                 result.Flow == StepFlow.Continue,
                 result.Flow,
                 result.Exception,
                 stepSw.Elapsed);
+
+            context.AddStepExecutionResult(stepExecutionResult);
 
             return result;
         }
@@ -137,13 +225,11 @@ namespace Orchestrator.Tasks
         private class ExecutionContext
         {
             public readonly Task<StepResult>[] tasks;
-            public readonly StepExecutionResult<TKey>[] stepResults;
             public bool IsGlobalBroken;
 
-            public ExecutionContext(Task<StepResult>[] tasks, StepExecutionResult<TKey>[] stepResults)
+            public ExecutionContext(Task<StepResult>[] tasks)
             {
                 this.tasks = tasks;
-                this.stepResults = stepResults;
             }
         }
 
