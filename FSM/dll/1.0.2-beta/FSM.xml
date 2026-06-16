@@ -1,0 +1,295 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FSM</name>
+    </assembly>
+    <members>
+        <member name="T:FSM.IContextState`2">
+            <summary>
+            附带上下文的状态接口
+            </summary>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="P:FSM.IContextState`2.Key">
+            <summary>
+            状态标识
+            </summary>
+        </member>
+        <member name="M:FSM.IContextState`2.Enter(`1)">
+            <summary>
+            进入状态回调
+            </summary>
+            <param name="context">共享上下文</param>
+        </member>
+        <member name="M:FSM.IContextState`2.Update(`1,System.TimeSpan)">
+            <summary>
+            状态更新回调
+            </summary>
+            <param name="context">共享上下文</param>
+            <param name="deltaTime">距上次更新的时间间隔</param>
+        </member>
+        <member name="M:FSM.IContextState`2.Exit(`1)">
+            <summary>
+            退出状态回调
+            </summary>
+            <param name="context">共享上下文</param>
+        </member>
+        <member name="T:FSM.IContextStateMachine`3">
+            <summary>
+            附带上下文的状态机接口
+            </summary>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="P:FSM.IContextStateMachine`3.Context">
+            <summary>
+            共享上下文
+            </summary>
+        </member>
+        <member name="P:FSM.IContextStateMachine`3.CurrentState">
+            <summary>
+            当前状态
+            </summary>
+        </member>
+        <member name="P:FSM.IContextStateMachine`3.IsRunning">
+            <summary>
+            运行状态
+            </summary>
+        </member>
+        <member name="P:FSM.IContextStateMachine`3.States">
+            <summary>
+            已注册的状态列表
+            </summary>
+        </member>
+        <member name="P:FSM.IContextStateMachine`3.Transitions">
+            <summary>
+            已注册的转换列表
+            </summary>
+        </member>
+        <member name="E:FSM.IContextStateMachine`3.OnStateChanged">
+            <summary>
+            状态变更事件
+            </summary>
+        </member>
+        <member name="E:FSM.IContextStateMachine`3.OnStarted">
+            <summary>
+            启动事件
+            </summary>
+        </member>
+        <member name="E:FSM.IContextStateMachine`3.OnStopped">
+            <summary>
+            停止事件
+            </summary>
+        </member>
+        <member name="M:FSM.IContextStateMachine`3.Start">
+            <summary>
+            启动状态机
+            </summary>
+        </member>
+        <member name="M:FSM.IContextStateMachine`3.Update(System.TimeSpan)">
+            <summary>
+            更新状态机
+            </summary>
+            <param name="deltaTime">更新时间间隔</param>
+        </member>
+        <member name="M:FSM.IContextStateMachine`3.Stop">
+            <summary>
+            停止状态机
+            </summary>
+        </member>
+        <member name="M:FSM.IContextStateMachine`3.SendEvent(`1)">
+            <summary>
+            发送事件
+            </summary>
+            <param name="eventKey">事件标识</param>
+        </member>
+        <member name="M:FSM.IContextStateMachine`3.ForceTransition(`0)">
+            <summary>
+            强制切换状态
+            </summary>
+            <param name="stateKey">目标状态标识</param>
+        </member>
+        <member name="T:FSM.IContextTransition`3">
+            <summary>
+            附带上下文的状态转换接口
+            </summary>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="P:FSM.IContextTransition`3.FromState">
+            <summary>
+            源状态标识
+            </summary>
+        </member>
+        <member name="P:FSM.IContextTransition`3.ToState">
+            <summary>
+            目标状态标识
+            </summary>
+        </member>
+        <member name="P:FSM.IContextTransition`3.Priority">
+            <summary>
+            优先级
+            </summary>
+        </member>
+        <member name="P:FSM.IContextTransition`3.EventKey">
+            <summary>
+            事件名称
+            </summary>
+        </member>
+        <member name="M:FSM.IContextTransition`3.CanTransit(`2)">
+            <summary>
+            转换条件判断
+            </summary>
+            <param name="context">共享上下文</param>
+            <returns>是否允许转换</returns>
+        </member>
+        <member name="T:FSM.IState">
+            <summary>
+            状态统一接口
+            </summary>
+        </member>
+        <member name="T:FSM.IState`1">
+            <summary>
+            状态接口
+            </summary>
+            <typeparam name="TKey">状态标识类型</typeparam>
+        </member>
+        <member name="P:FSM.IState`1.Key">
+            <summary>
+            状态标识
+            </summary>
+        </member>
+        <member name="M:FSM.IState`1.Enter">
+            <summary>
+            进入状态回调
+            </summary>
+        </member>
+        <member name="M:FSM.IState`1.Update(System.TimeSpan)">
+            <summary>
+            状态更新回调
+            </summary>
+            <param name="deltaTime">更新时间间隔</param>
+        </member>
+        <member name="M:FSM.IState`1.Exit">
+            <summary>
+            退出状态回调
+            </summary>
+        </member>
+        <member name="T:FSM.IStateMachine">
+            <summary>
+            状态机统一接口
+            </summary>
+        </member>
+        <member name="T:FSM.IStateMachine`2">
+            <summary>
+            状态机接口
+            </summary>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+        </member>
+        <member name="P:FSM.IStateMachine`2.CurrentState">
+            <summary>
+            当前状态
+            </summary>
+        </member>
+        <member name="P:FSM.IStateMachine`2.IsRunning">
+            <summary>
+            运行状态
+            </summary>
+        </member>
+        <member name="P:FSM.IStateMachine`2.States">
+            <summary>
+            已注册的状态列表
+            </summary>
+        </member>
+        <member name="P:FSM.IStateMachine`2.Transitions">
+            <summary>
+            已注册的转换列表
+            </summary>
+        </member>
+        <member name="E:FSM.IStateMachine`2.OnStateChanged">
+            <summary>
+            状态变更事件
+            </summary>
+        </member>
+        <member name="E:FSM.IStateMachine`2.OnStarted">
+            <summary>
+            启动事件
+            </summary>
+        </member>
+        <member name="E:FSM.IStateMachine`2.OnStopped">
+            <summary>
+            停止事件
+            </summary>
+        </member>
+        <member name="M:FSM.IStateMachine`2.Start">
+            <summary>
+            启动状态机
+            </summary>
+        </member>
+        <member name="M:FSM.IStateMachine`2.Update(System.TimeSpan)">
+            <summary>
+            更新状态机
+            </summary>
+            <param name="deltaTime">更新时间间隔</param>
+        </member>
+        <member name="M:FSM.IStateMachine`2.Stop">
+            <summary>
+            停止状态机
+            </summary>
+        </member>
+        <member name="M:FSM.IStateMachine`2.SendEvent(`1)">
+            <summary>
+            发送事件
+            </summary>
+            <param name="eventKey">事件标识</param>
+        </member>
+        <member name="M:FSM.IStateMachine`2.ForceTransition(`0)">
+            <summary>
+            强制切换状态
+            </summary>
+            <param name="stateKey">目标状态标识</param>
+        </member>
+        <member name="T:FSM.ITransition">
+            <summary>
+            状态转换统一接口
+            </summary>
+        </member>
+        <member name="T:FSM.ITransition`2">
+            <summary>
+            状态转换接口
+            </summary>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+        </member>
+        <member name="P:FSM.ITransition`2.FromState">
+            <summary>
+            源状态标识
+            </summary>
+        </member>
+        <member name="P:FSM.ITransition`2.ToState">
+            <summary>
+            目标状态标识
+            </summary>
+        </member>
+        <member name="P:FSM.ITransition`2.Priority">
+            <summary>
+            优先级
+            </summary>
+        </member>
+        <member name="P:FSM.ITransition`2.EventKey">
+            <summary>
+            事件标识
+            </summary>
+        </member>
+        <member name="M:FSM.ITransition`2.CanTransit">
+            <summary>
+            转换条件判断
+            </summary>
+            <returns>是否允许转换</returns>
+        </member>
+    </members>
+</doc>

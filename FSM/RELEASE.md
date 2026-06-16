@@ -74,3 +74,13 @@
 - 原本的状态机系列默认附带上下文，本次版本划分为附带上下文和无上下文两种状态机系列。
 - 命名重新规范。
 
+## 1.0.2-beta
+
+### 修改
+
+- `IRestable` 接口纠正名称为 `IResettable`。
+- `IRestableWithContext` 接口纠正名称为 `IResettableWithContext`。
+
+### 添加
+
+- `ContextStateMachine<TKey, TEvent, TContext>.Builder` 添加重用检测机制，避免构建后通过构建器相关方法污染已创建实例。

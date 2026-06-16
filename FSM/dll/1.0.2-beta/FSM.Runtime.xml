@@ -1,0 +1,1086 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FSM.Runtime</name>
+    </assembly>
+    <members>
+        <member name="T:FSM.Runtime.ContextStateBase`2">
+            <summary>
+            附带上下文的状态基类
+            </summary>
+            <remarks>
+            <para>提供 <see cref="T:FSM.IContextState`2"/> 的默认实现，三个生命周期方法均为虚方法，子类按需重写。</para>
+            <para>适合大多数状态实现场景，对更新逻辑有强制要求时可改用 <see cref="T:FSM.Runtime.ContextStateBehaviour`2"/>。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.ContextStateBase`2.Key">
+            <summary>
+            状态标识
+            </summary>
+            <remarks>
+            <para>子类必须实现此属性以提供唯一的状态标识。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateBase`2.Enter(`1)">
+            <summary>
+            进入状态回调
+            </summary>
+            <remarks>
+            <para>默认实现为空，子类按需重写。</para>
+            </remarks>
+            <param name="context">共享上下文</param>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateBase`2.Update(`1,System.TimeSpan)">
+            <summary>
+            状态更新回调
+            </summary>
+            <remarks>
+            <para>默认实现为空，子类按需重写。</para>
+            </remarks>
+            <param name="context">共享上下文</param>
+            <param name="deltaTime">距上次更新的时间间隔</param>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateBase`2.Exit(`1)">
+            <summary>
+            退出状态回调
+            </summary>
+            <remarks>
+            <para>默认实现为空，子类按需重写。</para>
+            </remarks>
+            <param name="context">共享上下文</param>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateBase`2.Reset">
+            <summary>
+            重置状态类的内部状态
+            </summary>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateBase`2.Reset(`1)">
+            <summary>
+            重置状态类的内部状态
+            </summary>
+            <param name="context">共享上下文</param>
+        </member>
+        <member name="T:FSM.Runtime.ContextStateBehaviour`2">
+            <summary>
+            附带上下文的状态行为基类
+            </summary>
+            <remarks>
+            <para>在 <see cref="T:FSM.Runtime.ContextStateBase`2"/> 基础上强制要求子类实现 <see cref="M:FSM.Runtime.ContextStateBase`2.Update(`1,System.TimeSpan)"/>，适合对更新逻辑有强制约束的场景。</para>
+            <para>若状态不需要更新逻辑，应使用 <see cref="T:FSM.Runtime.ContextStateBase`2"/> 而非此类。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateBehaviour`2.Update(`1,System.TimeSpan)">
+            <summary>
+            状态更新回调
+            </summary>
+            <remarks>
+            <para>子类必须实现此方法以提供状态的持续更新逻辑。</para>
+            </remarks>
+            <param name="context">共享上下文</param>
+            <param name="deltaTime">距上次更新的时间间隔</param>
+        </member>
+        <member name="T:FSM.Runtime.ContextStateMachine`3">
+            <summary>
+            附带上下文的状态机
+            </summary>
+            <remarks>
+            <para>实现 <see cref="T:FSM.IContextStateMachine`3"/>，管理状态集合与转换规则，驱动状态的切换与生命周期。</para>
+            <para>实例只能通过内部 <see cref="T:FSM.Runtime.ContextStateMachine`3.Builder"/> 构建，外部无法直接实例化。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.ContextStateMachine`3.Context">
+            <summary>
+            共享上下文
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextStateMachine`3.Builder.WithContext(`2)"/> 设置，构建后不可修改。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextStateMachine`3.CurrentState">
+            <summary>
+            当前状态
+            </summary>
+            <remarks>
+            <para>在 <see cref="M:FSM.Runtime.ContextStateMachine`3.Start"/> 之前或 <see cref="M:FSM.Runtime.ContextStateMachine`3.Reset"/> 之后为 <c>null</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextStateMachine`3.IsRunning">
+            <summary>
+            运行状态
+            </summary>
+            <remarks>
+            <para><see cref="M:FSM.Runtime.ContextStateMachine`3.Start"/> 调用后为 <c>true</c>，<see cref="M:FSM.Runtime.ContextStateMachine`3.Stop"/> 或 <see cref="M:FSM.Runtime.ContextStateMachine`3.Reset"/> 调用后为 <c>false</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextStateMachine`3.States">
+            <summary>
+            已注册的状态列表
+            </summary>
+            <remarks>
+            <para>按注册顺序排列，仅供读取，不可修改。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextStateMachine`3.Transitions">
+            <summary>
+            已注册的转换列表
+            </summary>
+            <remarks>
+            <para>按优先级升序排列，仅供读取，不可修改。</para>
+            </remarks>
+        </member>
+        <member name="E:FSM.Runtime.ContextStateMachine`3.OnStateChanged">
+            <summary>
+            状态变更事件
+            </summary>
+            <remarks>
+            <para>每次状态切换完成后触发，第一个参数为切换前的状态，第二个参数为切换后的状态。</para>
+            <para>在此回调中调用 <see cref="M:FSM.Runtime.ContextStateMachine`3.SendEvent(`1)"/> 将被静默忽略。</para>
+            </remarks>
+        </member>
+        <member name="E:FSM.Runtime.ContextStateMachine`3.OnStarted">
+            <summary>
+            启动事件
+            </summary>
+            <remarks>
+            <para>状态机成功启动并进入初始状态后触发。</para>
+            </remarks>
+        </member>
+        <member name="E:FSM.Runtime.ContextStateMachine`3.OnStopped">
+            <summary>
+            停止事件
+            </summary>
+            <remarks>
+            <para>状态机停止后触发，包括主动调用 <see cref="M:FSM.Runtime.ContextStateMachine`3.Stop"/> 和通过 <see cref="M:FSM.Runtime.ContextStateMachine`3.Reset"/> 触发的停止。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Start">
+            <summary>
+            启动状态机
+            </summary>
+            <remarks>
+            <para>进入初始状态并触发其 <c>OnEnter</c>，随后触发 <see cref="E:FSM.Runtime.ContextStateMachine`3.OnStarted"/>。</para>
+            <para>重复调用将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Update(System.TimeSpan)">
+            <summary>
+            更新状态机
+            </summary>
+            <remarks>
+            <para>驱动当前状态执行 <c>OnUpdate</c>，并在之后评估所有自动转换条件。</para>
+            <para>状态机未运行时调用无效果。</para>
+            </remarks>
+            <param name="deltaTime">距上次更新的时间间隔</param>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Stop">
+            <summary>
+            停止状态机
+            </summary>
+            <remarks>
+            <para>触发当前状态的 <c>OnExit</c>，随后触发 <see cref="E:FSM.Runtime.ContextStateMachine`3.OnStopped"/>。</para>
+            <para>状态机未运行时调用无效果。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Reset">
+            <summary>
+            重置状态机
+            </summary>
+            <remarks>
+            <para>停止状态机并清空当前状态，重置所有转换的运行时数据。</para>
+            <para>重置后可重新调用 <see cref="M:FSM.Runtime.ContextStateMachine`3.Start"/> 从初始状态启动。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.SendEvent(`1)">
+            <summary>
+            发送事件
+            </summary>
+            <remarks>
+            <para>触发所有匹配该事件标识的事件驱动转换的条件评估。</para>
+            <para>状态机未运行时或转换执行期间调用将被静默忽略。</para>
+            </remarks>
+            <param name="eventKey">事件标识</param>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.ForceTransition(`0)">
+            <summary>
+            强制切换状态
+            </summary>
+            <remarks>
+            <para>忽略所有转换条件，直接切换到目标状态。</para>
+            <para>在转换执行期间调用将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            <para>目标状态未注册时将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+            <param name="stateKey">目标状态标识</param>
+        </member>
+        <member name="T:FSM.Runtime.ContextStateMachine`3.Builder">
+            <summary>
+            状态机构建器
+            </summary>
+            <remarks>
+            <para>用于构建 <see cref="T:FSM.Runtime.ContextStateMachine`3"/> 实例，通过链式调用注册状态、转换和初始状态。</para>
+            <para>必须调用 <see cref="M:FSM.Runtime.ContextStateMachine`3.Builder.Create"/> 创建构建器实例，最后调用 <see cref="M:FSM.Runtime.ContextStateMachine`3.Builder.Build"/> 生成状态机。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Builder.Create">
+            <summary>
+            创建构建器实例
+            </summary>
+            <remarks>
+            <para>构建器的唯一入口。</para>
+            </remarks>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Builder.WithContext(`2)">
+            <summary>
+            设置共享上下文
+            </summary>
+            <remarks>
+            <para>必须在 <see cref="M:FSM.Runtime.ContextStateMachine`3.Builder.Build"/> 之前调用，上下文不可为 <c>null</c>。</para>
+            </remarks>
+            <param name="context">共享上下文实例</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Builder.AddState(FSM.Runtime.ContextStateBase{`0,`2})">
+            <summary>
+            注册状态
+            </summary>
+            <remarks>
+            <para>同名状态只能注册一次，重复注册将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            <para>状态名称不可与框架保留名称冲突，否则将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+            <param name="state">状态实例</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Builder.AddTransition(FSM.Runtime.ContextTransition{`0,`1,`2})">
+            <summary>
+            注册转换
+            </summary>
+            <remarks>
+            <para>同一转换实例只能注册一次，重复注册将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+            <param name="transition">转换实例</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Builder.SetInitialState(`0)">
+            <summary>
+            设置初始状态
+            </summary>
+            <remarks>
+            <para>指定状态机启动时进入的状态名称，必须已通过 <see cref="M:FSM.Runtime.ContextStateMachine`3.Builder.AddState(FSM.Runtime.ContextStateBase{`0,`2})"/> 注册。</para>
+            </remarks>
+            <param name="stateName">初始状态名称</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextStateMachine`3.Builder.Build">
+            <summary>
+            构建状态机实例
+            </summary>
+            <remarks>
+            <para>根据当前配置生成 <see cref="T:FSM.IContextStateMachine`3"/> 实例。</para>
+            <para>以下情况将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>：上下文为 <c>null</c>、未设置初始状态、初始状态未注册、转换的源状态或目标状态未注册。</para>
+            </remarks>
+            <returns>状态机实例</returns>
+        </member>
+        <member name="T:FSM.Runtime.ContextTransition`3">
+            <summary>
+            附带上下文的状态转换基类
+            </summary>
+            <remarks>
+            <para>实现 <see cref="T:FSM.Runtime.IExtendContextTransition`3"/>，提供完整的转换路径配置与条件判断。</para>
+            <para>实例只能通过内部 <see cref="T:FSM.Runtime.ContextTransition`3.Builder"/> 构建，外部无法直接实例化。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.FromState">
+            <summary>
+            源状态标识
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.Create(`0,`0)"/> 设置，构建后不可修改。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.ToState">
+            <summary>
+            目标状态标识
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.Create(`0,`0)"/> 设置，构建后不可修改。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.Priority">
+            <summary>
+            优先级
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.WithPriority(System.Int32)"/> 设置，默认值为 0。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.EventKey">
+            <summary>
+            事件标识
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.OnEvent(`1)"/> 设置。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.ExitTime">
+            <summary>
+            退出时间
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.WithExitTime(System.TimeSpan)"/> 设置，默认为 <c>null</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.Delay">
+            <summary>
+            转换延迟
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.WithDelay(System.TimeSpan)"/> 设置，默认为 <c>null</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.IsOneShot">
+            <summary>
+            单次触发
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.OneShot"/> 设置，默认为 <c>false</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.ContextTransition`3.Auto">
+            <summary>
+            是否为自动转换
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.Auto"/> 设置，默认为 true。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.CanTransit(`2)">
+            <summary>
+            转换条件判断
+            </summary>
+            <remarks>
+            <para>条件未设置时默认返回 <c>true</c>，即无条件转换。</para>
+            </remarks>
+            <param name="context">共享上下文</param>
+            <returns>是否允许转换</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Reset">
+            <summary>
+            重置状态转换类的内部状态
+            </summary>
+        </member>
+        <member name="T:FSM.Runtime.ContextTransition`3.Builder">
+            <summary>
+            转换构建器
+            </summary>
+            <remarks>
+            <para>用于构建 <see cref="T:FSM.Runtime.ContextTransition`3"/> 实例，通过链式调用配置转换属性。</para>
+            <para>必须调用 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.Create(`0,`0)"/> 创建构建器实例，最后调用 <see cref="M:FSM.Runtime.ContextTransition`3.Builder.Build"/> 生成转换。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.Create(`0,`0)">
+            <summary>
+            创建构建器实例
+            </summary>
+            <remarks>
+            <para>构建器的唯一入口，同时设置转换的源状态和目标状态。</para>
+            </remarks>
+            <param name="fromState">源状态标识</param>
+            <param name="toState">目标状态标识</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.When(System.Func{`2,System.Boolean})">
+            <summary>
+            设置转换条件
+            </summary>
+            <remarks>
+            <para>未调用此方法时默认为无条件转换。</para>
+            </remarks>
+            <param name="condition">条件委托</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.WithPriority(System.Int32)">
+            <summary>
+            设置优先级
+            </summary>
+            <remarks>
+            <para>未调用此方法时默认优先级为 0。</para>
+            </remarks>
+            <param name="priority">优先级数值</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.WithExitTime(System.TimeSpan)">
+            <summary>
+            设置退出时间
+            </summary>
+            <remarks>
+            <para>状态至少运行该时长后此转换才参与评估。</para>
+            </remarks>
+            <param name="exitTime">退出时间</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.WithDelay(System.TimeSpan)">
+            <summary>
+            设置转换延迟
+            </summary>
+            <remarks>
+            <para>条件满足后等待该时长再执行切换。</para>
+            </remarks>
+            <param name="delay">延迟时长</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.OneShot">
+            <summary>
+            设置单次触发
+            </summary>
+            <remarks>
+            <para>调用后该转换在状态机生命周期内只能触发一次。</para>
+            </remarks>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.Auto">
+            <summary>
+            设置为自动转换
+            </summary>
+            <remarks>
+            <para>将事件名称重置为 <c>null</c>，每次 <c>Update</c> 自动评估条件。</para>
+            </remarks>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.OnEvent(`1)">
+            <summary>
+            设置为事件驱动转换
+            </summary>
+            <remarks>
+            <para>仅在通过 <c>SendEvent</c> 发送匹配事件时才评估条件。</para>
+            </remarks>
+            <param name="eventKey">事件标识</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.ContextTransition`3.Builder.Build">
+            <summary>
+            构建转换实例
+            </summary>
+            <remarks>
+            <para>根据当前配置生成 <see cref="T:FSM.Runtime.ContextTransition`3"/> 实例。</para>
+            </remarks>
+            <returns>转换实例</returns>
+        </member>
+        <member name="T:FSM.Runtime.IExtendContextTransition`3">
+            <summary>
+            附带上下文的状态转换的扩展接口
+            </summary>
+            <remarks>
+            <para>在 <see cref="T:FSM.IContextTransition`3"/> 基础上扩展了转换行为配置，提供退出时间、延迟和单次触发三项增强特性。</para>
+            <para>通过 <see cref="T:FSM.Runtime.ContextTransition`3"/> 的内部 Builder 构建的转换均实现此接口。</para>
+            <para>当外部持有 <see cref="P:FSM.IContextStateMachine`3.Transitions"/> 列表时，可将元素转换为此接口以访问扩展配置。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.IExtendContextTransition`3.ExitTime">
+            <summary>
+            退出时间
+            </summary>
+            <remarks>
+            <para>状态至少运行该时长后，此转换才开始参与评估。</para>
+            <para>为 <c>null</c> 时不限制，进入状态后立即参与评估。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.IExtendContextTransition`3.Delay">
+            <summary>
+            转换延迟
+            </summary>
+            <remarks>
+            <para>条件满足后等待该时长再执行切换，等待期间条件必须持续满足，否则重新计时。</para>
+            <para>为 <c>null</c> 时不延迟，条件满足后立即执行切换。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.IExtendContextTransition`3.IsOneShot">
+            <summary>
+            单次触发
+            </summary>
+            <remarks>
+            <para>为 <c>true</c> 时该转换在整个状态机生命周期内只能触发一次，触发后永久失效直到状态机 <c>Reset</c>。</para>
+            <para>为 <c>false</c> 时每次进入源状态后均可触发。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.IExtendContextTransition`3.Auto">
+            <summary>
+            是否为自动转换
+            </summary>
+        </member>
+        <member name="T:FSM.Runtime.IExtendTransition`2">
+            <summary>
+            状态转换的扩展接口
+            </summary>
+            <remarks>
+            <para>在 <see cref="T:FSM.ITransition`2"/> 基础上扩展了转换行为配置，提供退出时间、延迟和单次触发三项增强特性。</para>
+            <para>通过 <see cref="T:FSM.Runtime.Transition`2"/> 的内部 Builder 构建的转换均实现此接口。</para>
+            <para>当外部持有 <see cref="P:FSM.IStateMachine`2.Transitions"/> 列表时，可将元素转换为此接口以访问扩展配置。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.IExtendTransition`2.ExitTime">
+            <summary>
+            退出时间
+            </summary>
+            <remarks>
+            <para>状态至少运行该时长后，此转换才开始参与评估。</para>
+            <para>为 <c>null</c> 时不限制，进入状态后立即参与评估。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.IExtendTransition`2.Delay">
+            <summary>
+            转换延迟
+            </summary>
+            <remarks>
+            <para>条件满足后等待该时长再执行切换，等待期间条件必须持续满足，否则重新计时。</para>
+            <para>为 <c>null</c> 时不延迟，条件满足后立即执行切换。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.IExtendTransition`2.IsOneShot">
+            <summary>
+            单次触发
+            </summary>
+            <remarks>
+            <para>为 <c>true</c> 时该转换在整个状态机生命周期内只能触发一次，触发后永久失效直到状态机 <c>Reset</c>。</para>
+            <para>为 <c>false</c> 时每次进入源状态后均可触发。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.IExtendTransition`2.Auto">
+            <summary>
+            是否为自动转换
+            </summary>
+        </member>
+        <member name="T:FSM.Runtime.InnerStates`1">
+            <summary>
+            内置状态标识
+            </summary>
+            <remarks>
+            <para>定义内部使用的保留状态标识，这些标识不得用于用户自定义状态。</para>
+            <para>可通过 <see cref="M:FSM.Runtime.InnerStates`1.IsInnerState(`0)"/> 在注册状态前校验标识合法性。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.InnerStates`1.AnyState">
+            <summary>
+            代表任意状态的标识
+            </summary>
+            <remarks>
+            <para>用于定义从任意当前状态均可触发的转换，常用于全局事件处理，例如死亡、暂停等。</para>
+            <para>以此为 <c>FromState</c> 注册的转换，无论状态机当前处于何种状态都会参与评估，且优先于当前状态的转换。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.InnerStates`1.IsInnerState(`0)">
+            <summary>
+            判断是否为内置保留状态标识
+            </summary>
+            <remarks>
+            <para>用于在注册状态前校验标识合法性，防止用户自定义状态与内置保留状态标识冲突。</para>
+            <para>建议在自定义 <see cref="T:FSM.IContextState`2"/> 实现或 Builder 注册时调用。</para>
+            </remarks>
+            <param name="state">待校验的状态标识</param>
+            <returns>是否为内置保留状态标识</returns>
+        </member>
+        <member name="T:FSM.Runtime.IResettableWithContext`1">
+            <summary>
+            附带上下文的可重置接口
+            </summary>
+            <typeparam name="TContext">上下文类型</typeparam>
+        </member>
+        <member name="M:FSM.Runtime.IResettableWithContext`1.Reset(`0)">
+            <summary>
+            重置
+            </summary>
+            <param name="context">上下文</param>
+        </member>
+        <member name="T:FSM.Runtime.StateBase`1">
+            <summary>
+            附带上下文的状态基类
+            </summary>
+            <remarks>
+            <para>提供 <see cref="T:FSM.IState`1"/> 的默认实现，三个生命周期方法均为虚方法，子类按需重写。</para>
+            <para>适合大多数状态实现场景，对更新逻辑有强制要求时可改用 <see cref="T:FSM.Runtime.StateBehaviour`1"/>。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.StateBase`1.Key">
+            <summary>
+            状态标识
+            </summary>
+            <remarks>
+            <para>子类必须实现此属性以提供唯一的状态标识。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateBase`1.Enter">
+            <summary>
+            进入状态回调
+            </summary>
+            <remarks>
+            <para>默认实现为空，子类按需重写。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateBase`1.Update(System.TimeSpan)">
+            <summary>
+            状态更新回调
+            </summary>
+            <remarks>
+            <para>默认实现为空，子类按需重写。</para>
+            </remarks>
+            <param name="deltaTime">距上次更新的时间间隔</param>
+        </member>
+        <member name="M:FSM.Runtime.StateBase`1.Exit">
+            <summary>
+            退出状态回调
+            </summary>
+            <remarks>
+            <para>默认实现为空，子类按需重写。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateBase`1.Reset">
+            <summary>
+            重置状态类的内部状态
+            </summary>
+        </member>
+        <member name="T:FSM.Runtime.StateBehaviour`1">
+            <summary>
+            附带上下文的状态行为基类
+            </summary>
+            <remarks>
+            <para>在 <see cref="T:FSM.Runtime.StateBase`1"/> 基础上强制要求子类实现 <see cref="M:FSM.Runtime.StateBase`1.Update(System.TimeSpan)"/>，适合对更新逻辑有强制约束的场景。</para>
+            <para>若状态不需要更新逻辑，应使用 <see cref="T:FSM.Runtime.StateBase`1"/> 而非此类。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识类型</typeparam>
+        </member>
+        <member name="M:FSM.Runtime.StateBehaviour`1.Update(System.TimeSpan)">
+            <summary>
+            状态更新回调
+            </summary>
+            <remarks>
+            <para>子类必须实现此方法以提供状态的持续更新逻辑。</para>
+            </remarks>
+            <param name="deltaTime">距上次更新的时间间隔</param>
+        </member>
+        <member name="T:FSM.Runtime.StateMachine`2">
+            <summary>
+            状态机
+            </summary>
+            <remarks>
+            <para>实现 <see cref="T:FSM.IStateMachine`2"/>，管理状态集合与转换规则，驱动状态的切换与生命周期。</para>
+            <para>实例只能通过内部 <see cref="T:FSM.Runtime.StateMachine`2.Builder"/> 构建，外部无法直接实例化。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.StateMachine`2.CurrentState">
+            <summary>
+            当前状态
+            </summary>
+            <remarks>
+            <para>在 <see cref="M:FSM.Runtime.StateMachine`2.Start"/> 之前或 <see cref="M:FSM.Runtime.StateMachine`2.Reset"/> 之后为 <c>null</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.StateMachine`2.IsRunning">
+            <summary>
+            运行状态
+            </summary>
+            <remarks>
+            <para><see cref="M:FSM.Runtime.StateMachine`2.Start"/> 调用后为 <c>true</c>，<see cref="M:FSM.Runtime.StateMachine`2.Stop"/> 或 <see cref="M:FSM.Runtime.StateMachine`2.Reset"/> 调用后为 <c>false</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.StateMachine`2.States">
+            <summary>
+            已注册的状态列表
+            </summary>
+            <remarks>
+            <para>按注册顺序排列，仅供读取，不可修改。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.StateMachine`2.Transitions">
+            <summary>
+            已注册的转换列表
+            </summary>
+            <remarks>
+            <para>按优先级升序排列，仅供读取，不可修改。</para>
+            </remarks>
+        </member>
+        <member name="E:FSM.Runtime.StateMachine`2.OnStateChanged">
+            <summary>
+            状态变更事件
+            </summary>
+            <remarks>
+            <para>每次状态切换完成后触发，第一个参数为切换前的状态，第二个参数为切换后的状态。</para>
+            <para>在此回调中调用 <see cref="M:FSM.Runtime.StateMachine`2.SendEvent(`1)"/> 将被静默忽略。</para>
+            </remarks>
+        </member>
+        <member name="E:FSM.Runtime.StateMachine`2.OnStarted">
+            <summary>
+            启动事件
+            </summary>
+            <remarks>
+            <para>状态机成功启动并进入初始状态后触发。</para>
+            </remarks>
+        </member>
+        <member name="E:FSM.Runtime.StateMachine`2.OnStopped">
+            <summary>
+            停止事件
+            </summary>
+            <remarks>
+            <para>状态机停止后触发，包括主动调用 <see cref="M:FSM.Runtime.StateMachine`2.Stop"/> 和通过 <see cref="M:FSM.Runtime.StateMachine`2.Reset"/> 触发的停止。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Start">
+            <summary>
+            启动状态机
+            </summary>
+            <remarks>
+            <para>进入初始状态并触发其 <c>OnEnter</c>，随后触发 <see cref="E:FSM.Runtime.StateMachine`2.OnStarted"/>。</para>
+            <para>重复调用将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Update(System.TimeSpan)">
+            <summary>
+            更新状态机
+            </summary>
+            <remarks>
+            <para>驱动当前状态执行 <c>OnUpdate</c>，并在之后评估所有自动转换条件。</para>
+            <para>状态机未运行时调用无效果。</para>
+            </remarks>
+            <param name="deltaTime">距上次更新的时间间隔</param>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Stop">
+            <summary>
+            停止状态机
+            </summary>
+            <remarks>
+            <para>触发当前状态的 <c>OnExit</c>，随后触发 <see cref="E:FSM.Runtime.StateMachine`2.OnStopped"/>。</para>
+            <para>状态机未运行时调用无效果。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Reset">
+            <summary>
+            重置状态机
+            </summary>
+            <remarks>
+            <para>停止状态机并清空当前状态，重置所有转换的运行时数据。</para>
+            <para>重置后可重新调用 <see cref="M:FSM.Runtime.StateMachine`2.Start"/> 从初始状态启动。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.SendEvent(`1)">
+            <summary>
+            发送事件
+            </summary>
+            <remarks>
+            <para>触发所有匹配该事件名称的事件驱动转换的条件评估。</para>
+            <para>状态机未运行时或转换执行期间调用将被静默忽略。</para>
+            </remarks>
+            <param name="eventKey">事件标识</param>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.ForceTransition(`0)">
+            <summary>
+            强制切换状态
+            </summary>
+            <remarks>
+            <para>忽略所有转换条件，直接切换到目标状态。</para>
+            <para>在转换执行期间调用将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            <para>目标状态未注册时将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+            <param name="stateKey">目标状态标识</param>
+        </member>
+        <member name="T:FSM.Runtime.StateMachine`2.Builder">
+            <summary>
+            状态机构建器
+            </summary>
+            <remarks>
+            <para>用于构建 <see cref="T:FSM.Runtime.StateMachine`2"/> 实例，通过链式调用注册状态、转换和初始状态。</para>
+            <para>必须调用 <see cref="M:FSM.Runtime.StateMachine`2.Builder.Create"/> 创建构建器实例，最后调用 <see cref="M:FSM.Runtime.StateMachine`2.Builder.Build"/> 生成状态机。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Builder.Create">
+            <summary>
+            创建构建器实例
+            </summary>
+            <remarks>
+            <para>构建器的唯一入口。</para>
+            </remarks>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Builder.AddState(FSM.Runtime.StateBase{`0})">
+            <summary>
+            注册状态
+            </summary>
+            <remarks>
+            <para>同名状态只能注册一次，重复注册将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            <para>状态名称不可与框架保留名称冲突，否则将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+            <param name="state">状态实例</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Builder.AddTransition(FSM.Runtime.Transition{`0,`1})">
+            <summary>
+            注册转换
+            </summary>
+            <remarks>
+            <para>同一转换实例只能注册一次，重复注册将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>。</para>
+            </remarks>
+            <param name="transition">转换实例</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Builder.SetInitialState(`0)">
+            <summary>
+            设置初始状态
+            </summary>
+            <remarks>
+            <para>指定状态机启动时进入的状态名称，必须已通过 <see cref="M:FSM.Runtime.StateMachine`2.Builder.AddState(FSM.Runtime.StateBase{`0})"/> 注册。</para>
+            </remarks>
+            <param name="stateName">初始状态名称</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.StateMachine`2.Builder.Build">
+            <summary>
+            构建状态机实例
+            </summary>
+            <remarks>
+            <para>根据当前配置生成 <see cref="T:FSM.IContextStateMachine`3"/> 实例。</para>
+            <para>以下情况将抛出 <see cref="T:FSM.Runtime.StateMachineException"/>：上下文为 <c>null</c>、未设置初始状态、初始状态未注册、转换的源状态或目标状态未注册。</para>
+            </remarks>
+            <returns>状态机实例</returns>
+        </member>
+        <member name="T:FSM.Runtime.StateMachineException">
+            <summary>
+            状态机异常
+            </summary>
+            <remarks>
+            <para>框架运行时抛出的统一异常类型，调用方可通过捕获此类型精确处理框架内部错误。</para>
+            <para>常见触发场景包括：重复启动、转换中强制切换、注册保留名称、构建配置不完整等。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.StateMachineException.#ctor(System.String)">
+            <summary>
+            状态机异常
+            </summary>
+            <remarks>
+            <para>使用指定错误消息构造异常实例。</para>
+            </remarks>
+            <param name="message">错误消息</param>
+        </member>
+        <member name="M:FSM.Runtime.StateMachineException.#ctor(System.String,System.Exception)">
+            <summary>
+            状态机异常
+            </summary>
+            <remarks>
+            <para>使用指定错误消息和内部异常构造异常实例，适用于包装底层异常的场景。</para>
+            </remarks>
+            <param name="message">错误消息</param>
+            <param name="inner">内部异常</param>
+        </member>
+        <member name="T:FSM.Runtime.Transition`2">
+            <summary>
+            状态转换基类
+            </summary>
+            <remarks>
+            <para>实现 <see cref="T:FSM.Runtime.IExtendTransition`2"/>，提供完整的转换路径配置与条件判断。</para>
+            <para>实例只能通过内部 <see cref="T:FSM.Runtime.Transition`2.Builder"/> 构建，外部无法直接实例化。</para>
+            </remarks>
+            <typeparam name="TKey">状态标识类型</typeparam>
+            <typeparam name="TEvent">事件标识类型</typeparam>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.FromState">
+            <summary>
+            源状态标识
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.Create(`0,`0)"/> 设置，构建后不可修改。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.ToState">
+            <summary>
+            目标状态标识
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.Create(`0,`0)"/> 设置，构建后不可修改。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.Priority">
+            <summary>
+            优先级
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.WithPriority(System.Int32)"/> 设置，默认值为 0。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.EventKey">
+            <summary>
+            事件标识
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.OnEvent(`1)"/> 设置。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.ExitTime">
+            <summary>
+            退出时间
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.WithExitTime(System.TimeSpan)"/> 设置，默认为 <c>null</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.Delay">
+            <summary>
+            转换延迟
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.WithDelay(System.TimeSpan)"/> 设置，默认为 <c>null</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.IsOneShot">
+            <summary>
+            单次触发
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.OneShot"/> 设置，默认为 <c>false</c>。</para>
+            </remarks>
+        </member>
+        <member name="P:FSM.Runtime.Transition`2.Auto">
+            <summary>
+            是否为自动转换
+            </summary>
+            <remarks>
+            <para>通过 <see cref="M:FSM.Runtime.Transition`2.Builder.Auto"/> 设置，默认为 true。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.CanTransit">
+            <summary>
+            转换条件判断
+            </summary>
+            <remarks>
+            <para>条件未设置时默认返回 <c>true</c>，即无条件转换。</para>
+            </remarks>
+            <returns>是否允许转换</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Reset">
+            <summary>
+            重置状态转换类的内部状态
+            </summary>
+        </member>
+        <member name="T:FSM.Runtime.Transition`2.Builder">
+            <summary>
+            转换构建器
+            </summary>
+            <remarks>
+            <para>用于构建 <see cref="T:FSM.Runtime.Transition`2"/> 实例，通过链式调用配置转换属性。</para>
+            <para>必须调用 <see cref="M:FSM.Runtime.Transition`2.Builder.Create(`0,`0)"/> 创建构建器实例，最后调用 <see cref="M:FSM.Runtime.Transition`2.Builder.Build"/> 生成转换。</para>
+            </remarks>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.Create(`0,`0)">
+            <summary>
+            创建构建器实例
+            </summary>
+            <remarks>
+            <para>构建器的唯一入口，同时设置转换的源状态和目标状态。</para>
+            </remarks>
+            <param name="fromState">源状态标识</param>
+            <param name="toState">目标状态标识</param>
+            <returns>构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.When(System.Func{System.Boolean})">
+            <summary>
+            设置转换条件
+            </summary>
+            <remarks>
+            <para>未调用此方法时默认为无条件转换。</para>
+            </remarks>
+            <param name="condition">条件委托</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.WithPriority(System.Int32)">
+            <summary>
+            设置优先级
+            </summary>
+            <remarks>
+            <para>未调用此方法时默认优先级为 0。</para>
+            </remarks>
+            <param name="priority">优先级数值</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.WithExitTime(System.TimeSpan)">
+            <summary>
+            设置退出时间
+            </summary>
+            <remarks>
+            <para>状态至少运行该时长后此转换才参与评估。</para>
+            </remarks>
+            <param name="exitTime">退出时间</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.WithDelay(System.TimeSpan)">
+            <summary>
+            设置转换延迟
+            </summary>
+            <remarks>
+            <para>条件满足后等待该时长再执行切换。</para>
+            </remarks>
+            <param name="delay">延迟时长</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.OneShot">
+            <summary>
+            设置单次触发
+            </summary>
+            <remarks>
+            <para>调用后该转换在状态机生命周期内只能触发一次。</para>
+            </remarks>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.Auto">
+            <summary>
+            设置为自动转换
+            </summary>
+            <remarks>
+            <para>将事件名称重置为 <c>null</c>，每次 <c>Update</c> 自动评估条件。</para>
+            </remarks>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.OnEvent(`1)">
+            <summary>
+            设置为事件驱动转换
+            </summary>
+            <remarks>
+            <para>仅在通过 <c>SendEvent</c> 发送匹配事件时才评估条件。</para>
+            </remarks>
+            <param name="eventKey">事件标识</param>
+            <returns>当前构建器实例</returns>
+        </member>
+        <member name="M:FSM.Runtime.Transition`2.Builder.Build">
+            <summary>
+            构建转换实例
+            </summary>
+            <remarks>
+            <para>根据当前配置生成 <see cref="T:FSM.Runtime.Transition`2"/> 实例。</para>
+            </remarks>
+            <returns>转换实例</returns>
+        </member>
+        <member name="T:FSM.IResettable">
+            <summary>
+            可重置接口
+            </summary>
+        </member>
+        <member name="M:FSM.IResettable.Reset">
+            <summary>
+            重置
+            </summary>
+        </member>
+    </members>
+</doc>
