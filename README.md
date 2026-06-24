@@ -42,3 +42,7 @@
 
 - [ViewPipeline.Unity](/ViewPipeline.Unity/)  
     一个为 Unity 游戏引擎设计的高性能、可扩展的视图生命周期管理框架。它采用 **管道-中间件（Pipeline-Middleware）** 架构模式，将视图的打开（Open）和关闭（Close）操作抽象为可编排的执行管道，开发者可以通过中间件机制灵活地插入横切关注点（如权限校验、数据缓存、加载动画、埋点上报等），而无需修改核心视图逻辑。
+
+### 许可证
+
+[MIT](./LICENSE)（*本仓库所有代码均遵循根目录下 LICENSE 文件的 MIT 协议*）
