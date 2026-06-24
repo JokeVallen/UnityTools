@@ -1,12 +1,6 @@
-// 回调执行阶段与状态推进阶段分离：
-// - 回调中 Cancel 当前 handle：安全，本帧不再触发其他副作用
-// - 回调中 Register 新 Timer：安全，新 Timer 最早下帧触发
-// - 回调中 Cancel 其他 handle：安全
-// - 回调中 Reset 当前 handle：安全，但会丢失本次的累计误差补偿
-// - 回调中 CancelGroup：安全，影响下帧遍历范围
-
 using System;
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Timer
@@ -18,57 +12,40 @@ namespace Timer
             get
             {
                 if (Application.isEditor && !Application.isPlaying)
-                    throw new InvalidOperationException($"The '{nameof(InnerTimer)}' cannot support in editor mode.");
+                    throw new InvalidOperationException($"[GlobalTimer] The '{nameof(InnerTimer)}' cannot support in editor mode.");
                 return Handler.instance;
             }
         }
 
         private struct TimerJob
         {
-            public bool IsActive;
-            public bool IsPaused;
-            public bool SkipCurrentFrame;
-            public TimeSource TimeSource;
-            public bool IsLoop;
-            public float TimeRemaining;
-            public float Interval;
-            public int Generation;
-            public int NextFreeIndex;
-            public int GroupId;
-            public bool HasGroup;
-            public Action Callback;
+            public bool isActive;
+            public bool isPaused;
+            public bool skipCurrentFrame;
+            public TimeSource timeSource;
+            public bool isLoop;
+            public float timeRemaining;
+            public float interval;
+            public int generation;
+            public int nextFreeIndex;
+            public Optional<int> groupId;
+            public Action callback;
         }
 
         private static bool instantiated;
         private readonly TimerJob[] slots;
         private readonly Action[] pendingCallbacks;
-        private int nextFreeSlotIndex;
-        private bool disposed;
+        private readonly Stopwatch stopwatch = Stopwatch.StartNew();
+        
         private bool ticking;
+        private int nextFreeSlotIndex;
         private int activeCount;
         private int highWaterMark;
         private int pendingCount;
-
-        public void CancelAll()
-        {
-            for (int i = 0; i < slots.Length; i++)
-            {
-                ref var job = ref slots[i];
-                if (job.IsActive)
-                {
-                    job.Callback = null;
-                    job.IsActive = false;
-                    unchecked { job.Generation++; }
-                }
-                job.NextFreeIndex = i + 1;
-            }
-            if (slots.Length > 0)
-                slots[slots.Length - 1].NextFreeIndex = -1;
-            nextFreeSlotIndex = 0;
-            activeCount = 0;
-            highWaterMark = 0;
-            pendingCount = 0;
-        }
+        private double lastWallClockSeconds;
+        private float wallClockDelta;
+        private float manualDelta;
+        private bool disposed;
 
         private InnerTimer(int capacity = 2048)
         {
@@ -76,12 +53,13 @@ namespace Timer
             pendingCallbacks = new Action[capacity];
             for (int i = 0; i < slots.Length; i++)
             {
-                slots[i].Generation = 1;
-                slots[i].IsActive = false;
-                slots[i].NextFreeIndex = i + 1;
+                slots[i].generation = 1;
+                slots[i].isActive = false;
+                slots[i].nextFreeIndex = i + 1;
             }
-            slots[slots.Length - 1].NextFreeIndex = -1;
+            slots[slots.Length - 1].nextFreeIndex = -1;
             nextFreeSlotIndex = 0;
+            lastWallClockSeconds = stopwatch.Elapsed.TotalSeconds;
 
             var go = new GameObject(nameof(InnerTimer));
             GameObject.DontDestroyOnLoad(go);
@@ -91,7 +69,7 @@ namespace Timer
             Application.quitting += OnApplicationQuitting;
         }
 
-        public TimerHandle Register(float interval, Action callback, TimeSource source, bool loop, int groupId, bool hasGroup)
+        public TimerHandle Register(float interval, Action callback, TimeSource source, bool loop, Optional<int> groupId)
         {
             ThrowErrorIfDisposed();
             if (interval < 0f) interval = 0f;
@@ -99,29 +77,28 @@ namespace Timer
 
             if (nextFreeSlotIndex == -1)
             {
-                Debug.LogWarning("The slots reached the limit of capacity.");
+                UnityEngine.Debug.LogWarning("[GlobalTimer] The slots reached the limit of capacity.");
                 return TimerHandle.Null;
             }
 
             int index = nextFreeSlotIndex;
             ref var slot = ref slots[index];
 
-            nextFreeSlotIndex = slot.NextFreeIndex;
+            nextFreeSlotIndex = slot.nextFreeIndex;
             activeCount++;
             if (index + 1 > highWaterMark) highWaterMark = index + 1;
 
-            slot.TimeSource = source;
-            slot.Interval = interval;
-            slot.TimeRemaining = interval;
-            slot.Callback = callback;
-            slot.IsLoop = loop;
-            slot.IsPaused = false;
-            slot.IsActive = true;
-            slot.GroupId = groupId;
-            slot.HasGroup = hasGroup;
-            if (ticking) slot.SkipCurrentFrame = true;
+            slot.timeSource = source;
+            slot.interval = interval;
+            slot.timeRemaining = interval;
+            slot.callback = callback;
+            slot.isLoop = loop;
+            slot.isPaused = false;
+            slot.isActive = true;
+            slot.groupId = groupId;
+            if(ticking) slot.skipCurrentFrame = true;
 
-            return new TimerHandle(index, slot.Generation);
+            return new TimerHandle(index, slot.generation);
         }
 
         public void Cancel(in TimerHandle handle)
@@ -131,11 +108,46 @@ namespace Timer
                 InternalReleaseSlot(index);
         }
 
+        public void CancelAll()
+        {
+            ThrowErrorIfDisposed();
+
+            for (int i = 0; i < pendingCount; i++)
+                pendingCallbacks[i] = null;
+            pendingCount = 0;
+
+            int lastIndex = slots.Length - 1;
+            for (int i = 0; i < lastIndex; i++)
+            {
+                ref var job = ref slots[i];
+                if (job.isActive)
+                {
+                    job.callback = null;
+                    job.isActive = false;
+                    unchecked { job.generation++; }
+                }
+                job.nextFreeIndex = i + 1;
+            }
+
+            ref var lastJob = ref slots[lastIndex];
+            if (lastJob.isActive)
+            {
+                lastJob.callback = null;
+                lastJob.isActive = false;
+                unchecked { lastJob.generation++; }
+            }
+            lastJob.nextFreeIndex = -1;
+
+            nextFreeSlotIndex = 0;
+            activeCount = 0;
+            highWaterMark = 0;
+        }
+
         public void SetPaused(in TimerHandle handle, bool paused)
         {
             ThrowErrorIfDisposed();
             if (ValidateHandle(handle, out int index))
-                slots[index].IsPaused = paused;
+                slots[index].isPaused = paused;
         }
 
         public bool IsActive(in TimerHandle handle)
@@ -149,7 +161,7 @@ namespace Timer
             ThrowErrorIfDisposed();
             result = default;
             if (!ValidateHandle(handle, out int index)) return false;
-            result = slots[index].TimeRemaining;
+            result = slots[index].timeRemaining;
             return true;
         }
 
@@ -159,13 +171,13 @@ namespace Timer
             result = default;
             if (!ValidateHandle(handle, out int index)) return false;
             ref var slot = ref slots[index];
-            if (slot.Interval <= 0f)
+            if (slot.interval <= 0f)
             {
                 result = 1f;
                 return true;
             }
 
-            result = 1f - (slot.TimeRemaining / slot.Interval);
+            result = 1f - (slot.timeRemaining / slot.interval);
             return true;
         }
 
@@ -173,7 +185,7 @@ namespace Timer
         {
             ThrowErrorIfDisposed();
             if (!ValidateHandle(handle, out int index)) return false;
-            slots[index].TimeRemaining = slots[index].Interval;
+            slots[index].timeRemaining = slots[index].interval;
             return true;
         }
 
@@ -183,79 +195,90 @@ namespace Timer
             if (!ValidateHandle(handle, out int index)) return false;
             if (interval < 0f) interval = 0f;
             ref var slot = ref slots[index];
-            slot.Interval = interval;
-            if (slot.TimeRemaining > interval) slot.TimeRemaining = interval;
+            slot.interval = interval;
+            if (slot.timeRemaining > interval) slot.timeRemaining = interval;
+            return true;
+        }
+
+        public bool SetLoop(in TimerHandle handle, bool loop)
+        {
+            ThrowErrorIfDisposed();
+            if (!ValidateHandle(handle, out int index)) return false;
+            slots[index].isLoop = loop;
             return true;
         }
 
         public void CancelGroup(int groupId)
         {
+            ThrowErrorIfDisposed();
             if (groupId == 0) return;
             int limit = highWaterMark;
             for (int i = 0; i < limit; i++)
             {
                 ref var slot = ref slots[i];
-                if (slot.HasGroup && slot.IsActive && slot.GroupId == groupId)
+                if (slot.groupId.HasValue && slot.isActive && slot.groupId == groupId)
                     InternalReleaseSlot(i);
             }
         }
 
         public void SetGroupPaused(int groupId, bool isPaused)
         {
+            ThrowErrorIfDisposed();
             if (groupId == 0) return;
             int limit = highWaterMark;
             for (int i = 0; i < limit; i++)
             {
                 ref var slot = ref slots[i];
-                if (slot.HasGroup && slot.IsActive && slot.GroupId == groupId)
-                    slot.IsPaused = isPaused;
+                if (slot.groupId.HasValue && slot.isActive && slot.groupId == groupId)
+                    slot.isPaused = isPaused;
             }
         }
 
         public bool TryGetGroupId(in TimerHandle handle, out int groupId)
         {
+            ThrowErrorIfDisposed();
             groupId = 0;
             if (!ValidateHandle(handle, out int index)) return false;
-            groupId = slots[index].GroupId;
+            ref var slot = ref slots[index];
+            groupId = slot.groupId.HasValue ? slot.groupId.Value : 0;
             return true;
         }
 
         public bool TryGetInterval(in TimerHandle handle, out float interval)
         {
+            ThrowErrorIfDisposed();
             interval = 0f;
             if (!ValidateHandle(handle, out int index)) return false;
-            interval = slots[index].Interval;
+            interval = slots[index].interval;
             return true;
         }
 
         public bool TryGetIsLoop(in TimerHandle handle, out bool isLoop)
         {
+            ThrowErrorIfDisposed();
             isLoop = false;
             if (!ValidateHandle(handle, out int index)) return false;
-            isLoop = slots[index].IsLoop;
-            return true;
-        }
-
-        public bool SetLoop(in TimerHandle handle, bool loop)
-        {
-            if (!ValidateHandle(handle, out int index)) return false;
-            slots[index].IsLoop = loop;
+            isLoop = slots[index].isLoop;
             return true;
         }
 
         public bool TryGetFramesRemaining(in TimerHandle handle, out float framesRemaining)
         {
+            ThrowErrorIfDisposed();
             framesRemaining = 0f;
             if (!ValidateHandle(handle, out int index)) return false;
             ref var job = ref slots[index];
-            bool isFrameDriven = job.TimeSource == TimeSource.MonoUpdate ||
-                                 job.TimeSource == TimeSource.MonoLateUpdate ||
-                                 job.TimeSource == TimeSource.MonoFixedUpdate ||
-                                 job.TimeSource == TimeSource.CoroutineUpdate ||
-                                 job.TimeSource == TimeSource.CoroutineEndOfFrame;
-            if (!isFrameDriven) return false;
-            framesRemaining = job.TimeRemaining;
+            if (job.timeSource.Delta != TimeDelta.Frame) return false;
+            framesRemaining = job.timeRemaining;
             return true;
+        }
+
+        public void ManualUpdate(float deltaTime)
+        {
+            ThrowErrorIfDisposed();
+            if (deltaTime < 0f) deltaTime = 0f;
+            manualDelta = deltaTime;
+            TickTimerSlots(TimeSource.ManualSource);
         }
 
         public void Dispose()
@@ -276,8 +299,8 @@ namespace Timer
 
             for (int i = 0; i < slots.Length; i++)
             {
-                slots[i].IsActive = false;
-                slots[i].Callback = null;
+                slots[i].isActive = false;
+                slots[i].callback = null;
             }
 
             if (instantiated && Proxy.Instance != null)
@@ -289,60 +312,67 @@ namespace Timer
 
         private void OnApplicationQuitting()
         {
-            Application.quitting -= OnApplicationQuitting;
             DisposeInternal();
         }
 
-        private void TickTimerSlots(float scaledDeltaTime, float unscaledDeltaTime, TimeSource currentPhase)
+        private void TickTimerSlots(TimeSource currentSource)
         {
             if (activeCount == 0) return;
+
+            double currentWallSec = stopwatch.Elapsed.TotalSeconds;
+            wallClockDelta = (float)(currentWallSec - lastWallClockSeconds);
+            lastWallClockSeconds = currentWallSec;
+            if (wallClockDelta < 0) wallClockDelta = 0;
+
+            float scaledDelta = Time.deltaTime;
+            float unscaledDelta = Time.unscaledDeltaTime;
 
             int limit = highWaterMark;
             ticking = limit > 0;
             for (int i = 0; i < limit; i++)
             {
                 ref var job = ref slots[i];
-
-                if (!job.IsActive || job.IsPaused) continue;
-                if (job.SkipCurrentFrame)
+                if (!job.isActive || job.isPaused) continue;
+                if (job.skipCurrentFrame)
                 {
-                    job.SkipCurrentFrame = false;
+                    job.skipCurrentFrame = false;
                     continue;
                 }
+                if (job.timeSource.Schedule != currentSource.Schedule) continue;
 
-                if (currentPhase == TimeSource.MonoUpdate)
+                float delta = 0f;
+                switch (job.timeSource.Delta)
                 {
-                    if (job.TimeSource == TimeSource.MonoLateUpdate ||
-                        job.TimeSource == TimeSource.MonoFixedUpdate ||
-                        job.TimeSource == TimeSource.CoroutineUpdate ||
-                        job.TimeSource == TimeSource.CoroutineEndOfFrame) continue;
-                }
-                else
-                {
-                    if (job.TimeSource != currentPhase)
-                        continue;
-                }
-
-                switch (job.TimeSource)
-                {
-                    case TimeSource.ScaledTime:
-                    case TimeSource.MonoFixedUpdate:
-                        job.TimeRemaining -= scaledDeltaTime;
+                    case TimeDelta.Scaled: 
+                        delta = scaledDelta; 
                         break;
-                    case TimeSource.UnscaledTime: job.TimeRemaining -= unscaledDeltaTime; break;
-                    default: job.TimeRemaining -= 1f; break;
+                    case TimeDelta.Unscaled: 
+                        delta = unscaledDelta * job.timeSource.Scale; 
+                        break;
+                    case TimeDelta.WallClock: 
+                        delta = wallClockDelta * job.timeSource.Scale; 
+                        break;
+                    case TimeDelta.Frame: 
+                        delta = 1f * job.timeSource.Scale; 
+                        break;
+                    case TimeDelta.Manual: 
+                        delta = manualDelta * job.timeSource.Scale; 
+                        break;
                 }
 
-                if (job.TimeRemaining <= 0f)
-                {
-                    pendingCallbacks[pendingCount++] = job.Callback;
+                job.timeRemaining -= delta;
 
-                    if (job.IsLoop)
+                if (job.timeRemaining <= 0f)
+                {
+                    if (pendingCount < pendingCallbacks.Length)
+                        pendingCallbacks[pendingCount++] = job.callback;
+
+                    if (job.isLoop)
                     {
-                        if (job.TimeSource == TimeSource.ScaledTime || job.TimeSource == TimeSource.UnscaledTime)
-                            job.TimeRemaining = job.Interval + job.TimeRemaining;
+                        if (job.timeSource.Delta == TimeDelta.Frame)
+                            job.timeRemaining = job.interval;
                         else
-                            job.TimeRemaining = job.Interval;
+                            job.timeRemaining = job.interval + job.timeRemaining;
                     }
                     else
                     {
@@ -357,8 +387,8 @@ namespace Timer
             {
                 for (int i = 0; i < pendingCount; i++)
                 {
-                    try { pendingCallbacks[i]?.Invoke(); }
-                    catch (Exception ex) { Debug.LogError(ex); }
+                    try { if (pendingCallbacks[i] != null) pendingCallbacks[i].Invoke(); }
+                    catch (Exception ex) { UnityEngine.Debug.LogError(ex); }
                     pendingCallbacks[i] = null;
                 }
             }
@@ -371,13 +401,13 @@ namespace Timer
         private void InternalReleaseSlot(int index)
         {
             ref var slot = ref slots[index];
-            if (!slot.IsActive) return;
+            if (!slot.isActive) return;
 
-            slot.IsActive = false;
-            slot.Callback = null;
-            unchecked { slot.Generation++; }
+            slot.isActive = false;
+            slot.callback = null;
+            unchecked { slot.generation++; }
 
-            slot.NextFreeIndex = nextFreeSlotIndex;
+            slot.nextFreeIndex = nextFreeSlotIndex;
             nextFreeSlotIndex = index;
             activeCount--;
             if (activeCount == 0) highWaterMark = 0;
@@ -387,7 +417,7 @@ namespace Timer
         {
             index = handle.SlotIndex;
             if (index < 0 || index >= slots.Length) return false;
-            return slots[index].IsActive && slots[index].Generation == handle.Generation;
+            return slots[index].isActive && slots[index].generation == handle.Generation;
         }
 
         private class Handler { public static readonly InnerTimer instance = new InnerTimer(); }
@@ -404,7 +434,7 @@ namespace Timer
             {
                 if (ReferenceEquals(instance, null)) instance = this;
                 else Destroy(gameObject);
-                if (ReferenceEquals(this, Instance))
+                if (ReferenceEquals(this, instance))
                 {
                     DontDestroyOnLoad(gameObject);
                     StartCoroutine(PermanentCoroutineLoop());
@@ -419,28 +449,39 @@ namespace Timer
 
             private void Update()
             {
-                owner?.TickTimerSlots(Time.deltaTime, Time.unscaledDeltaTime, TimeSource.MonoUpdate);
+                if(owner != null)
+                    owner.TickTimerSlots(new TimeSource(TimeDelta.Scaled, TimeSchedule.Update));
             }
 
             private void FixedUpdate()
             {
-                owner?.TickTimerSlots(Time.fixedDeltaTime, Time.fixedUnscaledDeltaTime, TimeSource.MonoFixedUpdate);
+                if (owner != null)
+                    owner.TickTimerSlots(new TimeSource(TimeDelta.Scaled, TimeSchedule.FixedUpdate));
             }
 
             private void LateUpdate()
             {
-                owner?.TickTimerSlots(0f, 0f, TimeSource.MonoLateUpdate);
+                if (owner != null)
+                    owner.TickTimerSlots(new TimeSource(TimeDelta.Scaled, TimeSchedule.LateUpdate));
             }
 
             private IEnumerator PermanentCoroutineLoop()
             {
                 var waitForEndOfFrame = new WaitForEndOfFrame();
+                var waitForFixedUpdate = new WaitForFixedUpdate();
                 while (true)
                 {
                     yield return null;
-                    owner?.TickTimerSlots(0f, 0f, TimeSource.CoroutineUpdate);
+                    if (owner != null)
+                        owner.TickTimerSlots(new TimeSource(TimeDelta.Frame, TimeSchedule.Coroutine));
+
+                    yield return waitForFixedUpdate;
+                    if (owner != null) 
+                        owner.TickTimerSlots(new TimeSource(TimeDelta.Frame, TimeSchedule.WaitForFixedUpdate));
+
                     yield return waitForEndOfFrame;
-                    owner?.TickTimerSlots(0f, 0f, TimeSource.CoroutineEndOfFrame);
+                    if (owner != null)
+                        owner.TickTimerSlots(new TimeSource(TimeDelta.Frame, TimeSchedule.EndOfFrame));
                 }
             }
         }

@@ -26,7 +26,7 @@ namespace Timer
         /// <summary>
         /// 缺省值单例
         /// </summary>
-        public static TimerHandle Null => new TimerHandle(-1, 0);
+        public static readonly TimerHandle Null = new TimerHandle(-1, 0);
 
         /// <summary>
         /// 是否为缺省值

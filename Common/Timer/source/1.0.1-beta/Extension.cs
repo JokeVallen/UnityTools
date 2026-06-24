@@ -169,7 +169,7 @@ namespace Timer
         /// <remarks>
         /// <para>仅对帧驱动类型有效。</para>
         /// </remarks>
-        public static bool TryGetFramesRemaining(this in TimerHandle handle, out int frames)
+        public static bool TryGetFramesRemainingInt(this in TimerHandle handle, out int frames)
         {
             frames = 0;
             if (handle.IsNull) return false;
