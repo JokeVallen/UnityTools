@@ -149,4 +149,4 @@ A：可以。`UnityDebugHandler` 会自动替换 `Debug.unityLogger.logHandler`�
 
 ## 许可证
 
-本项目基于 [MIT 许可证](LICENSE) 发布。
+本项目采用 [MIT](../LICENSE) 许可证。

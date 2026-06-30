@@ -86,4 +86,4 @@ A：所有代码均被 `#if UNITY_EDITOR` 限制，仅用于编辑器。播放�
 
 ## 📄 许可证
 
-本项目采用 [MIT 许可证](https://opensource.org/licenses/MIT)。你可以自由使用、修改和分发。
+本项目采用 [MIT](../LICENSE) 许可证。

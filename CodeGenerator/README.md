@@ -70,4 +70,4 @@
 
 ## 许可证
 
-本项目基于 [MIT 许可证](https://opensource.org/licenses/MIT) 开源，您可以自由使用、修改和分发。
+本项目采用 [MIT](../LICENSE) 许可证。

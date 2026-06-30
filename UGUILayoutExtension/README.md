@@ -148,3 +148,7 @@ Inspector 中参数分为**通用属性**和 **X Axis / Y Axis 两个独立折�
 ## ~~WaveLayout~~（已弃用）
 
 > 已弃用。请改用 `AutoLayout` 的 **Interpolated** 模式，启用 **Constrain By Group** 并将 `Post Wrap Mode` 设为 `Loop`，可实现相同效果且灵活性更强。
+
+## 许可证
+
+本项目采用 [MIT](../LICENSE) 许可证。

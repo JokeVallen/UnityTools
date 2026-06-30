@@ -109,4 +109,4 @@ long deserialized = IDMap.Unpack(data);
 
 ## 许可证
 
-本项目基于 [MIT License](LICENSE) 开源，可自由用于个人和商业项目。
+本项目采用 [MIT](../LICENSE) 许可证。

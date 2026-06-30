@@ -96,10 +96,4 @@ public class NumberSuffixHandler : NameModifierHandler
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证。详情请参见 [LICENSE](LICENSE) 文件。
-
----
-
-## 🤝 贡献
-
-欢迎提交 Issue 或 Pull Request！如果你有好的建议或发现了 bug，请随时反馈。
+本项目采用 [MIT](../LICENSE) 许可证。

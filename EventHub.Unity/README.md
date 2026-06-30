@@ -106,4 +106,4 @@ EventHub 是一个面向 Unity 的通用事件系统，基于 UniTask 构建，�
 
 ## 许可证
 
-本项目采用 MIT 许可证发布。
+本项目采用 [MIT](../LICENSE) 许可证。
