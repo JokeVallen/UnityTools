@@ -1,0 +1,600 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PoolKit</name>
+    </assembly>
+    <members>
+        <member name="T:PoolKit.BasePool`1">
+            <summary>
+            对象池基类
+            </summary>
+            <typeparam name="T">对象类型</typeparam>
+        </member>
+        <member name="P:PoolKit.BasePool`1.TotalCount">
+            <summary>
+            对象池所生产对象的总数量
+            </summary>
+        </member>
+        <member name="P:PoolKit.BasePool`1.FreeCount">
+            <summary>
+            对象池当前空闲对象的数量
+            </summary>
+        </member>
+        <member name="P:PoolKit.BasePool`1.IsFixed">
+            <summary>
+            是否为固定容量的对象池
+            <para>默认值: false</para>
+            </summary>
+        </member>
+        <member name="P:PoolKit.BasePool`1.Capacity">
+            <summary>
+            对象池容量
+            <para>默认值: 100</para>
+            </summary>
+        </member>
+        <member name="F:PoolKit.BasePool`1.OverrideCreate">
+            <summary>
+            对象创建逻辑
+            <para>提示：用来自定义对象的创建逻辑</para>
+            </summary>
+        </member>
+        <member name="F:PoolKit.BasePool`1.OverrideReset">
+            <summary>
+            对象重置逻辑
+            <para>提示：用来自定义对象的重置逻辑</para>
+            </summary>
+        </member>
+        <member name="F:PoolKit.BasePool`1.OverrideDestroy">
+            <summary>
+            对象销毁逻辑
+            <para>提示：用来自定义对象的销毁逻辑</para>
+            </summary>
+        </member>
+        <member name="P:PoolKit.BasePool`1.Pool">
+            <summary>
+            池对象访问器
+            </summary>
+        </member>
+        <member name="P:PoolKit.BasePool`1.ItemTypeName">
+            <summary>
+            对象类型名称
+            </summary>
+        </member>
+        <member name="M:PoolKit.BasePool`1.#ctor">
+            <summary></summary>
+        </member>
+        <member name="M:PoolKit.BasePool`1.#ctor(System.Int32)">
+            <summary></summary>
+            <param name="capacity">容量</param>
+        </member>
+        <member name="M:PoolKit.BasePool`1.#ctor(System.Int32,System.Boolean)">
+            <summary></summary>
+            <param name="capacity">容量</param>
+            <param name="isFixed">是否固定容量</param>
+        </member>
+        <member name="M:PoolKit.BasePool`1.Reset(`0)">
+            <summary>
+            重置对象
+            </summary>
+        </member>
+        <member name="M:PoolKit.BasePool`1.Create">
+            <summary>
+            创建对象
+            </summary>
+        </member>
+        <member name="M:PoolKit.BasePool`1.Get">
+            <summary>
+            获取对象
+            </summary>
+        </member>
+        <member name="M:PoolKit.BasePool`1.Release(`0)">
+            <summary>
+            释放对象
+            </summary>
+        </member>
+        <member name="M:PoolKit.BasePool`1.Clear">
+            <summary>
+            清空对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.ClassPool`1">
+            <summary>
+            Class 类型对象池
+            </summary>
+            <typeparam name="T">具体的 Class 类型</typeparam>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.#ctor(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.#ctor(System.Int32,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.Clear">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.Get">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.Release(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.Reset(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.ClassPool`1.Create">
+            <inheritdoc/>
+        </member>
+        <member name="T:PoolKit.CollectionPool`2">
+            <summary>
+            集合对象池
+            </summary>
+            <typeparam name="T1">集合元素类型</typeparam>
+            <typeparam name="T2">集合类型</typeparam>
+        </member>
+        <member name="M:PoolKit.CollectionPool`2.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.CollectionPool`2.#ctor(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.CollectionPool`2.#ctor(System.Int32,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="T:PoolKit.Collections.ArrayPool">
+            <summary>
+            数组对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.ArrayPool.PoolScope`1">
+            <summary>
+            数组对象池的作用域
+            </summary>
+            <typeparam name="T">集合元素的类型</typeparam>
+        </member>
+        <member name="P:PoolKit.Collections.ArrayPool.PoolScope`1.Array">
+            <summary>
+            数组
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.PoolScope`1.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.Configure(System.Int32,System.Int32)">
+            <summary>
+            配置全局参数（必须在首次使用前调用）
+            </summary>
+            <param name="maxArraySizeMB">最大缓存数组大小（MB），默认 4MB</param>
+            <param name="maxArraysPerBucket">每个 Bucket 最大缓存数量，默认 32</param>
+            <exception cref="T:System.InvalidOperationException">配置已被使用</exception>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.WarmUp``1(System.Int32,System.Int32)">
+            <summary>
+            预热指定大小的数组池
+            </summary>
+            <typeparam name="T">数组元素类型</typeparam>
+            <param name="minimumLength">数组最小长度</param>
+            <param name="count">预热数量</param>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.RentWithScope``1(System.Int32)">
+            <summary>
+            租借集合附带作用域实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <param name="minimumLength">集合最小长度</param>
+            <returns>作用域实例</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minimumLength"/> 不能小于 0。</exception>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.Rent``1(System.Int32)">
+            <summary>
+            租借集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <param name="minimumLength">集合最小长度</param>
+            <returns>集合实例</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="minimumLength"/> 不能小于 0。</exception>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.Return``1(``0[],System.Boolean)">
+            <summary>
+            归还集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <param name="array">集合实例</param>
+            <param name="clearArray">是否清空集合</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="array"/> 不能为 null。</exception>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.Clear">
+            <summary>
+            清空对象池
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.ArrayPool.Dispose">
+            <summary>
+            释放对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.DictionaryPool">
+            <summary>
+            字典对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.DictionaryPool.PoolScope`2">
+            <summary>
+            字典对象池的作用域
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+        </member>
+        <member name="P:PoolKit.Collections.DictionaryPool.PoolScope`2.Dictionary">
+            <summary>
+            字典
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.DictionaryPool.PoolScope`2.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Collections.DictionaryPool.RentWithScope``2">
+            <summary>
+            租借集合附带作用域实例
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+            <returns>作用域实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.DictionaryPool.Rent``2">
+            <summary>
+            租借集合实例
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+            <returns>集合实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.DictionaryPool.Return``2(System.Collections.Generic.Dictionary{``0,``1})">
+            <summary>
+            归还集合实例
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+            <param name="collection">集合实例</param>
+        </member>
+        <member name="M:PoolKit.Collections.DictionaryPool.Clear">
+            <summary>
+            清空对象池
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.DictionaryPool.Dispose">
+            <summary>
+            释放对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.HashSetPool">
+            <summary>
+            哈希集合对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.HashSetPool.PoolScope`1">
+            <summary>
+            哈希集合对象池的作用域
+            </summary>
+            <typeparam name="T">集合元素的类型</typeparam>
+        </member>
+        <member name="P:PoolKit.Collections.HashSetPool.PoolScope`1.HashSet">
+            <summary>
+            哈希集合
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.HashSetPool.PoolScope`1.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Collections.HashSetPool.RentWithScope``1">
+            <summary>
+            租借集合附带作用域实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>作用域实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.HashSetPool.Rent``1">
+            <summary>
+            租借集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>集合实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.HashSetPool.Return``1(System.Collections.Generic.HashSet{``0})">
+            <summary>
+            归还集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <param name="collection">集合实例</param>
+        </member>
+        <member name="M:PoolKit.Collections.HashSetPool.Clear">
+            <summary>
+            清空对象池
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.HashSetPool.Dispose">
+            <summary>
+            释放对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.ListPool">
+            <summary>
+            列表对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.ListPool.PoolScope`1">
+            <summary>
+            列表对象池的作用域
+            </summary>
+            <typeparam name="T">集合元素的类型</typeparam>
+        </member>
+        <member name="P:PoolKit.Collections.ListPool.PoolScope`1.List">
+            <summary>
+            列表
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.ListPool.PoolScope`1.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Collections.ListPool.RentWithScope``1">
+            <summary>
+            租借集合附带作用域实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>作用域实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.ListPool.Rent``1">
+            <summary>
+            租借集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>集合实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.ListPool.Return``1(System.Collections.Generic.List{``0})">
+            <summary>
+            归还集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <param name="collection">集合实例</param>
+        </member>
+        <member name="M:PoolKit.Collections.ListPool.Clear">
+            <summary>
+            清空对象池
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.ListPool.Dispose">
+            <summary>
+            释放对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.QueuePool">
+            <summary>
+            队列对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.QueuePool.PoolScope`1">
+            <summary>
+            队列对象池的作用域
+            </summary>
+            <typeparam name="T">集合元素的类型</typeparam>
+        </member>
+        <member name="P:PoolKit.Collections.QueuePool.PoolScope`1.Queue">
+            <summary>
+            队列
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.QueuePool.PoolScope`1.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Collections.QueuePool.RentWithScope``1">
+            <summary>
+            租借集合附带作用域实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>作用域实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.QueuePool.Rent``1">
+            <summary>
+            租借集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>集合实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.QueuePool.Return``1(System.Collections.Generic.Queue{``0})">
+            <summary>
+            归还集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <param name="collection">集合实例</param>
+        </member>
+        <member name="M:PoolKit.Collections.QueuePool.Clear">
+            <summary>
+            清空对象池
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.QueuePool.Dispose">
+            <summary>
+            释放对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.StackPool">
+            <summary>
+            栈对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Collections.StackPool.PoolScope`1">
+            <summary>
+            栈对象池的作用域
+            </summary>
+            <typeparam name="T">集合元素的类型</typeparam>
+        </member>
+        <member name="P:PoolKit.Collections.StackPool.PoolScope`1.Stack">
+            <summary>
+            栈
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.StackPool.PoolScope`1.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Collections.StackPool.RentWithScope``1">
+            <summary>
+            租借集合附带作用域实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>作用域实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.StackPool.Rent``1">
+            <summary>
+            租借集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <returns>集合实例</returns>
+        </member>
+        <member name="M:PoolKit.Collections.StackPool.Return``1(System.Collections.Generic.Stack{``0})">
+            <summary>
+            归还集合实例
+            </summary>
+            <typeparam name="T">集合元素类型</typeparam>
+            <param name="collection">集合实例</param>
+        </member>
+        <member name="M:PoolKit.Collections.StackPool.Clear">
+            <summary>
+            清空对象池
+            </summary>
+        </member>
+        <member name="M:PoolKit.Collections.StackPool.Dispose">
+            <summary>
+            释放对象池
+            </summary>
+        </member>
+        <member name="T:PoolKit.Unity.ComponentPool`1">
+            <summary>
+            Component 类型对象池
+            </summary>
+            <typeparam name="T">具体的 Component 类型</typeparam>
+        </member>
+        <member name="M:PoolKit.Unity.ComponentPool`1.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.ComponentPool`1.#ctor(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.ComponentPool`1.#ctor(System.Int32,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.ComponentPool`1.#ctor(PoolKit.Unity.UnityObjectPoolSettings{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.ComponentPool`1.Get">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.ComponentPool`1.Reset(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.ComponentPool`1.Create">
+            <inheritdoc/>
+        </member>
+        <member name="T:PoolKit.Unity.GameObjectPool">
+            <summary>
+            <see cref="T:UnityEngine.GameObject"/> 对象池
+            </summary>
+        </member>
+        <member name="M:PoolKit.Unity.GameObjectPool.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.GameObjectPool.#ctor(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.GameObjectPool.#ctor(System.Int32,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.GameObjectPool.#ctor(PoolKit.Unity.UnityObjectPoolSettings{UnityEngine.GameObject})">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.GameObjectPool.Get">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.GameObjectPool.Reset(UnityEngine.GameObject)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.GameObjectPool.Create">
+            <inheritdoc/>
+        </member>
+        <member name="T:PoolKit.Unity.UnityObjectPool`1">
+            <summary>
+            Unity 对象池
+            </summary>
+            <typeparam name="T">Unity 对象类型</typeparam>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPool`1.container">
+            <summary>容器对象</summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPool`1.original">
+            <summary>对象原型</summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPool`1.defaultName">
+            <summary>对象默认名称</summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPool`1.activeWhenGet">
+            <summary>获取时是否激活</summary>
+        </member>
+        <member name="M:PoolKit.Unity.UnityObjectPool`1.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.UnityObjectPool`1.#ctor(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.UnityObjectPool`1.#ctor(System.Int32,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:PoolKit.Unity.UnityObjectPool`1.#ctor(PoolKit.Unity.UnityObjectPoolSettings{`0})">
+            <summary></summary>
+            <param name="settings">对象池设置</param>
+        </member>
+        <member name="M:PoolKit.Unity.UnityObjectPool`1.Clear">
+            <inheritdoc/>
+        </member>
+        <member name="T:PoolKit.Unity.UnityObjectPoolSettings`1">
+            <summary>
+            Unity对象池设置
+            </summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPoolSettings`1.capacity">
+            <summary>
+            对象池初始容量
+            </summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPoolSettings`1.isPersistant">
+            <summary>
+            对象池是否持久化
+            </summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPoolSettings`1.isFixed">
+            <summary>
+            对象池是否固定容量
+            </summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPoolSettings`1.container">
+            <summary>
+            对象池容器
+            </summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPoolSettings`1.original">
+            <summary>
+            对象原型
+            </summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPoolSettings`1.defaultName">
+            <summary>
+            对象默认名称
+            </summary>
+        </member>
+        <member name="F:PoolKit.Unity.UnityObjectPoolSettings`1.activeWhenGet">
+            <summary>
+            获取时激活对象
+            </summary>
+        </member>
+    </members>
+</doc>
