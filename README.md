@@ -21,7 +21,7 @@
     一个灵活、可扩展的 Unity 编辑器批量命名工具，支持撤销/恢复、分组管理、自定义命名策略，适用于场景对象和资产对象的批量重命名。
 
 - [UGUILayoutExtension](/UGUILayoutExtension/)  
-    基于 UGUI 布局系统扩展的布局组件库，通过动画曲线和参数配置实现复杂的非线性 UI 布局，无需编写代码。完整融入 UGUI 布局系统，与 `LayoutElement`、`ContentSizeFitter`、`LayoutGroup` 等官方组件兼容搭配。
+    一个基于 UGUI 布局系统扩展的布局组件库，通过动画曲线和参数配置实现复杂的非线性 UI 布局，无需编写代码。完整融入 UGUI 布局系统，与 `LayoutElement`、`ContentSizeFitter`、`LayoutGroup` 等官方组件兼容搭配。
 
 - [Unity Project Templates](/Unity%20Project%20Templates/)（Unity项目模板）
 
@@ -42,6 +42,9 @@
 
 - [ViewPipeline.Unity](/ViewPipeline.Unity/)  
     一个为 Unity 游戏引擎设计的高性能、可扩展的视图生命周期管理框架。它采用 **管道-中间件（Pipeline-Middleware）** 架构模式，将视图的打开（Open）和关闭（Close）操作抽象为可编排的执行管道，开发者可以通过中间件机制灵活地插入横切关注点（如权限校验、数据缓存、加载动画、埋点上报等），而无需修改核心视图逻辑。
+
+- [PoolKit](/PoolKit/)  
+    一个轻量级、高性能的 C# 对象池工具库，专为 .NET 和 Unity 环境设计。它提供了丰富的集合类型池化（List、Dictionary、Queue、Stack、HashSet、Array）以及 Unity 对象池化（GameObject、Component）支持，旨在显著减少内存分配和 GC 压力，提升应用程序性能。
 
 ### 许可证
 
