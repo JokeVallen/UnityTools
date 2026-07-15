@@ -60,8 +60,6 @@
 * 标记不触发全局事件、防消息风暴的优化契约 (`INoGlobalBroadcastBuff`)。
 * 标记不需要额外上下文、省去高频分配的极速契约 (`INoExtraContextBuff`)。
 
-
-
 #### 5. 高度解耦与数据驱动的技能执行管线 (`ISkillExecutor`)
 
 * 拆分了“技能校验与管线总管” (`ISkillExecutor`)、“作用目标筛选” (`ISelector`)、“瞬时战斗效果触发” (`IEffect`) 和“持续性状态残留机” (`IBuff`)。
@@ -71,6 +69,10 @@
 
 * 核心逻辑纯粹基于标准 C#，没有任何一行代码依赖 Unity 表现层，天然具备在服务器端无感运行的能力。
 * 在客户端中，可通过 `ITypedContext` 将 Unity 的 `GameObject` 或表现组件擦除塞入上下文；而在服务器中，上下文仅传递纯数据。双端可以直接复用完全一致的物理战斗计算源码。
+
+### 其它文档
+
+[介绍文档](./INTRODUCTION.md)
 
 ---
 
