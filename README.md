@@ -1,9 +1,15 @@
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 ## 工具列表
 
 - [CodeGenerator](/CodeGenerator/)  
     一个基于 **中介者模式** 与 **特性标记** 的轻量级代码生成框架。通过清晰的职责划分（模板提供、生成、写入），你可以快速搭建可扩展、可维护的代码生成管线。支持同步与异步操作，适用于工具链开发、定制化代码生成等场景。
 
-- [Common](/Common/)（常用工具类）
+- [Common](/Common/)（常用工具类）  
+    一些游戏开发中常用的工具。
+
+- [Game](/Game/)（游戏开发库）  
+    一些游戏业务开发中的常用模块的设计。
 
 - [EasyLogger.Unity](/EasyLogger.Unity/)  
     一个即拿即用、轻量低耗的 Unity 日志工具库。它统一了控制台输出与文件持久化，提供灵活的级别过滤与格式化扩展，同时几乎不产生运行时开销。
@@ -19,6 +25,9 @@
 
 - [NameModifier](/NameModifier/)  
     一个灵活、可扩展的 Unity 编辑器批量命名工具，支持撤销/恢复、分组管理、自定义命名策略，适用于场景对象和资产对象的批量重命名。
+
+- [UGUIExtension](/UGUIExtension/)（UGUI 扩展组件合集）  
+    基于 UGUI 原生组件扩展或开发的 UI 组件。
 
 - [UGUILayoutExtension](/UGUILayoutExtension/)  
     一个基于 UGUI 布局系统扩展的布局组件库，通过动画曲线和参数配置实现复杂的非线性 UI 布局，无需编写代码。完整融入 UGUI 布局系统，与 `LayoutElement`、`ContentSizeFitter`、`LayoutGroup` 等官方组件兼容搭配。
@@ -48,4 +57,4 @@
 
 ### 许可证
 
-[MIT](./LICENSE)（*本仓库所有代码均遵循根目录下 LICENSE 文件的 MIT 协议*）
+本仓库及其附属仓库所有内容均遵循根目录下 [LICENSE](./LICENSE) 文件的 MIT 协议。
