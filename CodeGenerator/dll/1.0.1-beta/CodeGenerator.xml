@@ -1,0 +1,482 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CodeGenerator</name>
+    </assembly>
+    <members>
+        <member name="T:CodeGenerator.BaseMediator`1">
+            <summary>
+            代码生成器中介者基类
+            </summary>
+            <typeparam name="TGenerator">代码生成器类型</typeparam>
+        </member>
+        <member name="T:CodeGenerator.BaseMediator`1.MetaData">
+            <summary>
+            元数据
+            </summary>
+        </member>
+        <member name="P:CodeGenerator.BaseMediator`1.MetaData.TemplatePath">
+            <summary>
+            模板路径
+            </summary>
+        </member>
+        <member name="P:CodeGenerator.BaseMediator`1.MetaData.OutputPath">
+            <summary>
+            输出路径
+            </summary>
+        </member>
+        <member name="P:CodeGenerator.BaseMediator`1.MetaData.Generator">
+            <summary>
+            生成器
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.MetaData.#ctor(System.String,System.String,`0)">
+            <param name="templatePath">模板路径</param>
+            <param name="outputPath">输出路径</param>
+            <param name="generator">生成器</param>
+        </member>
+        <member name="P:CodeGenerator.BaseMediator`1.Item(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="P:CodeGenerator.BaseMediator`1.Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:CodeGenerator.BaseMediator`1.Values">
+            <inheritdoc/>
+        </member>
+        <member name="P:CodeGenerator.BaseMediator`1.Count">
+            <inheritdoc/>
+        </member>
+        <member name="F:CodeGenerator.BaseMediator`1.generators">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.ContainsKey(System.Type)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.TryGetValue(System.Type,CodeGenerator.BaseMediator{`0}.MetaData@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.Clear">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.Rescan">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.Run``1">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.RunAll">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.BaseMediator`1.DisposeInstance(System.Object)">
+            <summary>
+            释放 <see cref="T:System.IDisposable"/> 对象
+            </summary>
+            <param name="instance"><see cref="T:System.IDisposable"/> 对象</param>
+        </member>
+        <member name="T:CodeGenerator.GeneratorAttribute">
+            <summary>
+            代码生成器 Attribute
+            </summary>
+            <remarks>
+            <para>实现类标注该 Attribute，提供自动扫描和实例化支持。</para>
+            </remarks>
+        </member>
+        <member name="T:CodeGenerator.GeneratorConfigAttribute">
+            <summary>
+            代码生成器配置 Attribute
+            </summary>
+            <remarks>
+            <para>将实现类标注为代码生成器，并声明其模板路径与输出路径。</para>
+            </remarks>
+        </member>
+        <member name="P:CodeGenerator.GeneratorConfigAttribute.TemplatePath">
+            <summary>
+            模板路径
+            </summary>
+        </member>
+        <member name="P:CodeGenerator.GeneratorConfigAttribute.OutputPath">
+            <summary>
+            输出路径
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.GeneratorConfigAttribute.#ctor(System.String,System.String)">
+            <param name="templatePath">模板路径</param>
+            <param name="outputPath">输出路径</param>
+        </member>
+        <member name="T:CodeGenerator.IAsyncGenerator`2">
+            <summary>
+            异步代码生成器接口
+            </summary>
+            <typeparam name="TTemplate">模板内容类型</typeparam>
+            <typeparam name="TContent">输出内容类型</typeparam>
+        </member>
+        <member name="M:CodeGenerator.IAsyncGenerator`2.GenerateAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            异步生成代码
+            </summary>
+            <param name="template">模板内容</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns>附带输出内容的异步任务实例</returns>
+        </member>
+        <member name="T:CodeGenerator.IAsyncGeneratorWithContext`2">
+            <summary>
+            带上下文的异步代码生成器接口
+            </summary>
+            <typeparam name="TTemplate">模板内容类型</typeparam>
+            <typeparam name="TContent">输出内容类型</typeparam>
+        </member>
+        <member name="M:CodeGenerator.IAsyncGeneratorWithContext`2.GenerateAsync(`0,CodeGenerator.ITypedContext,System.Threading.CancellationToken)">
+            <summary>
+            异步生成代码
+            </summary>
+            <param name="template">模板内容</param>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns>附带输出内容的异步任务实例</returns>
+        </member>
+        <member name="T:CodeGenerator.IAsyncMediator`1">
+            <summary>
+            异步代码生成器中介者接口
+            </summary>
+            <typeparam name="TGenerator">代码生成器类型</typeparam>
+            <remarks>
+            <para>负责扫描和托管代码生成器并执行它们。</para>
+            </remarks>
+        </member>
+        <member name="M:CodeGenerator.IAsyncMediator`1.RescanAsync(System.Threading.CancellationToken)">
+            <summary>
+            异步扫描代码生成器
+            </summary>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenerator.IAsyncMediator`1.ClearAsync(System.Threading.CancellationToken)">
+            <summary>
+            异步清理代码生成器
+            </summary>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenerator.IAsyncMediator`1.RunAllAsync(System.Threading.CancellationToken)">
+            <summary>
+            异步运行所有代码生成器
+            </summary>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenerator.IAsyncMediator`1.RunAsync``1(System.Threading.CancellationToken)">
+            <summary>
+            异步运行指定代码生成器
+            </summary>
+            <typeparam name="T">代码生成器类型</typeparam>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="T:CodeGenerator.IAsyncMediatorWithContext`1">
+            <summary>
+            异步代码生成器中介者的带上下文能力接口
+            </summary>
+            <typeparam name="TGenerator">代码生成器类型</typeparam>
+        </member>
+        <member name="M:CodeGenerator.IAsyncMediatorWithContext`1.RunAllAsync(CodeGenerator.ITypedContext,System.Threading.CancellationToken)">
+            <summary>
+            异步运行所有代码生成器
+            </summary>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenerator.IAsyncMediatorWithContext`1.RunAsync``1(CodeGenerator.ITypedContext,System.Threading.CancellationToken)">
+            <summary>
+            异步运行指定代码生成器
+            </summary>
+            <typeparam name="T">代码生成器类型</typeparam>
+            <param name="context">上下文</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="T:CodeGenerator.IAsyncTemplateProvider`1">
+            <summary>
+            异步模板提供者接口
+            </summary>
+            <typeparam name="TTemplate">模板内容的类型</typeparam>
+            <remarks>
+            <para>负责从模板路径读取模板内容。</para>
+            </remarks>
+        </member>
+        <member name="M:CodeGenerator.IAsyncTemplateProvider`1.GetTemplateAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            异步获取模板内容
+            </summary>
+            <param name="templatePath">模板路径</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns>模板内容</returns>
+        </member>
+        <member name="T:CodeGenerator.IAsyncWriter`1">
+            <summary>
+            异步写入器接口
+            </summary>
+            <typeparam name="TContent">内容类型</typeparam>
+            <remarks>
+            <para>负责将内容写入输出路径。</para>
+            </remarks>
+        </member>
+        <member name="M:CodeGenerator.IAsyncWriter`1.WriteAsync(System.String,`0,System.Threading.CancellationToken)">
+            <summary>
+            异步写入内容
+            </summary>
+            <param name="outputPath">输出路径</param>
+            <param name="content">内容</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="T:CodeGenerator.IGenerator">
+            <summary>
+            代码生成器接口
+            </summary>
+            <remarks>
+            <para>任何自定义的代码生成器应该实现该接口。</para>
+            </remarks>
+        </member>
+        <member name="T:CodeGenerator.IMediator`1">
+            <summary>
+            代码生成器中介者
+            </summary>
+            <typeparam name="TGenerator">代码生成器类型</typeparam>
+            <remarks>
+            <para>负责扫描和托管代码生成器并执行它们。</para>
+            </remarks>
+        </member>
+        <member name="M:CodeGenerator.IMediator`1.Rescan">
+            <summary>
+            扫描代码生成器
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.IMediator`1.Clear">
+            <summary>
+            清理代码生成器
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.IMediator`1.RunAll">
+            <summary>
+            运行所有代码生成器
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.IMediator`1.Run``1">
+            <summary>
+            运行指定代码生成器
+            </summary>
+            <typeparam name="T">代码生成器类型</typeparam>
+        </member>
+        <member name="T:CodeGenerator.IMediatorWithContext`1">
+            <summary>
+            同步代码生成器中介者的带上下文能力接口
+            </summary>
+            <typeparam name="TGenerator">代码生成器类型</typeparam>
+        </member>
+        <member name="M:CodeGenerator.IMediatorWithContext`1.RunAll(CodeGenerator.ITypedContext)">
+            <summary>
+            运行所有代码生成器
+            </summary>
+            <param name="context">上下文</param>
+        </member>
+        <member name="M:CodeGenerator.IMediatorWithContext`1.Run``1(CodeGenerator.ITypedContext)">
+            <summary>
+            运行指定代码生成器
+            </summary>
+            <typeparam name="T">代码生成器类型</typeparam>
+            <param name="context">上下文</param>
+        </member>
+        <member name="T:CodeGenerator.IResettable">
+            <summary>
+            可重置能力扩展接口
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.IResettable.Reset">
+            <summary>
+            重置
+            </summary>
+        </member>
+        <member name="T:CodeGenerator.ISyncGenerator`2">
+            <summary>
+            同步代码生成器接口
+            </summary>
+            <typeparam name="TTemplate">模板内容类型</typeparam>
+            <typeparam name="TContent">输出内容类型</typeparam>
+        </member>
+        <member name="M:CodeGenerator.ISyncGenerator`2.Generate(`0)">
+            <summary>
+            生成代码
+            </summary>
+            <param name="template">模板内容</param>
+            <returns>输出内容</returns>
+        </member>
+        <member name="T:CodeGenerator.ISyncGeneratorWithContext`2">
+            <summary>
+            带上下文的同步代码生成器接口
+            </summary>
+            <typeparam name="TTemplate">模板内容类型</typeparam>
+            <typeparam name="TContent">输出内容类型</typeparam>
+        </member>
+        <member name="M:CodeGenerator.ISyncGeneratorWithContext`2.Generate(`0,CodeGenerator.ITypedContext)">
+            <summary>
+            生成代码
+            </summary>
+            <param name="template">模板内容</param>
+            <param name="context">上下文</param>
+            <returns>输出内容</returns>
+        </member>
+        <member name="T:CodeGenerator.ITemplateProvider`1">
+            <summary>
+            模板提供者
+            </summary>
+            <typeparam name="TTemplate">模板内容的类型</typeparam>
+            <remarks>
+            <para>负责从模板路径读取模板内容。</para>
+            </remarks>
+        </member>
+        <member name="M:CodeGenerator.ITemplateProvider`1.GetTemplate(System.String)">
+            <summary>
+            获取模板内容
+            </summary>
+            <param name="templatePath">模板路径</param>
+            <returns>模板内容</returns>
+        </member>
+        <member name="T:CodeGenerator.ITypedContext">
+            <summary>
+            强类型上下文接口
+            </summary>
+            <remarks>
+            <para>提供类型安全的键值存储能力</para>
+            </remarks>
+        </member>
+        <member name="M:CodeGenerator.ITypedContext.Set``2(``0,``1)">
+            <summary>
+            设置值
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:CodeGenerator.ITypedContext.Get``2(``0)">
+            <summary>
+            获取值
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+            <param name="key">键</param>
+            <returns>包含值的 <see cref="T:CodeGenerator.Optional`1"/> 包装器，如果不存在则返回 <see cref="F:CodeGenerator.Optional`1.None"/> </returns>
+        </member>
+        <member name="M:CodeGenerator.ITypedContext.Remove``2(``0)">
+            <summary>
+            移除指定类型的值
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+            <param name="key">键</param>
+            <returns>若移除成功则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:CodeGenerator.ITypedContext.ContainsKey``2(``0)">
+            <summary>
+            是否包含指定的键
+            </summary>
+            <typeparam name="TKey">键的类型</typeparam>
+            <typeparam name="TValue">值的类型</typeparam>
+            <param name="key">键</param>
+            <returns>若包含则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:CodeGenerator.ITypedContext.Clear">
+            <summary>
+            清空所有值
+            </summary>
+        </member>
+        <member name="T:CodeGenerator.IWriter`1">
+            <summary>
+            写入器
+            </summary>
+            <typeparam name="TContent">待写入内容的类型</typeparam>
+            <remarks>
+            <para>负责将内容写入输出路径。</para>
+            </remarks>
+        </member>
+        <member name="M:CodeGenerator.IWriter`1.Write(System.String,`0)">
+            <summary>
+            写入内容
+            </summary>
+            <param name="outputPath">输出路径</param>
+            <param name="content">待写入内容</param>
+        </member>
+        <member name="T:CodeGenerator.Optional`1">
+            <summary>
+            可选值包装器
+            </summary>
+        </member>
+        <member name="P:CodeGenerator.Optional`1.HasValue">
+            <summary>
+            是否已赋值
+            </summary>
+        </member>
+        <member name="P:CodeGenerator.Optional`1.Value">
+            <summary>
+            值
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.Equals(CodeGenerator.Optional{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="F:CodeGenerator.Optional`1.None">
+            <summary>
+            获取一个无值实例
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.op_Implicit(`0)~CodeGenerator.Optional{`0}">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.op_Explicit(CodeGenerator.Optional{`0})~`0">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.op_Equality(CodeGenerator.Optional{`0},CodeGenerator.Optional{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.Optional`1.op_Inequality(CodeGenerator.Optional{`0},CodeGenerator.Optional{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="T:CodeGenerator.TypedContext">
+            <summary>
+            强类型上下文
+            </summary>
+        </member>
+        <member name="M:CodeGenerator.TypedContext.Set``2(``0,``1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.TypedContext.Get``2(``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.TypedContext.Remove``2(``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.TypedContext.ContainsKey``2(``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.TypedContext.Clear">
+            <inheritdoc/>
+        </member>
+        <member name="M:CodeGenerator.TypedContext.CodeGenerator#IResettable#Reset">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

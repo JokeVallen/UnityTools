@@ -61,11 +61,11 @@
 
 ## 其它文档导航
 
-- [API 详细说明](./DOCUMENT.md)  
+- [API 详细说明](./source/1.0.0-beta/DOCUMENT.md)  
   包含所有公共接口、类、成员的签名与作用。
-- [使用示例](./DOCUMENT.md#使用示例)  
+- [使用示例](./source/1.0.0-beta/DOCUMENT.md#使用示例)  
   一个从模板生成 C# 类文件的完整演示。
-- [测试报告](./TEST_REPORT.md)   
+- [测试报告](./tests/1.0.0-beta/TEST_REPORT.md)   
   单元测试和基准测试。
 
 ## 许可证
