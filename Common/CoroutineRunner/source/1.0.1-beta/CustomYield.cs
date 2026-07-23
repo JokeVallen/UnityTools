@@ -19,8 +19,8 @@ namespace CoroutineRunner
             private Func<CustomYieldInstructionBase> factory;
             private readonly int capacity;
 
-            public Pooler(Type type, int capacity, Func<CustomYieldInstructionBase> factory)
-            {
+            public Pooler(Type type, int capacity, Func<CustomYieldInstructionBase> factory) 
+            { 
                 this.type = type;
                 this.capacity = capacity;
                 this.factory = factory;
@@ -28,13 +28,13 @@ namespace CoroutineRunner
                 Application.quitting += OnApplicationQuit;
             }
 
-            public CustomYieldInstructionBase Get()
+            public CustomYieldInstructionBase Get() 
             {
                 if (pool.Count > 0) return pool.Dequeue();
                 return factory();
             }
 
-            public void Release(CustomYieldInstructionBase item)
+            public void Release(CustomYieldInstructionBase item) 
             {
                 if (item == null) return;
                 if (pool.Count >= capacity) return;
@@ -61,12 +61,12 @@ namespace CoroutineRunner
         /// <para>指令类型需要提供公开的无参构造函数，内部将通过反射创建实例。</para>
         /// <para>适用于无参数依赖的指令。</para>
         /// </remarks>
-        public static CustomYieldInstructionBase Yield(Type instructionType)
+        public static CustomYieldInstructionBase Yield(Type instructionType) 
         {
-            if (instructionType == null)
+            if (instructionType == null) 
                 throw new ArgumentNullException(nameof(instructionType));
-            if (!typeof(IPoolable).IsAssignableFrom(instructionType))
-                throw new ArgumentException($"The paramter '{nameof(instructionType)}' is not poolable.");
+            if(!typeof(IPoolable).IsAssignableFrom(instructionType)) 
+                throw new ArgumentException($"[CoroutineRunner] The paramter '{nameof(instructionType)}' is not poolable.");
             return YieldInternal(instructionType, null, false);
         }
 
@@ -81,12 +81,12 @@ namespace CoroutineRunner
         /// <para>指令类型需要实现 <see cref="IPoolableYieldInstruction"/> 接口以支持非泛型参数重置。</para>
         /// <para>适用于有参数依赖的指令。</para>
         /// </remarks>
-        public static CustomYieldInstructionBase Yield(Type instructionType, object arg)
+        public static CustomYieldInstructionBase Yield(Type instructionType, object arg) 
         {
             if (instructionType == null)
                 throw new ArgumentNullException(nameof(instructionType));
             if (!typeof(IPoolable).IsAssignableFrom(instructionType))
-                throw new ArgumentException($"The paramter '{nameof(instructionType)}' is not poolable.");
+                throw new ArgumentException($"[CoroutineRunner] The paramter '{nameof(instructionType)}' is not poolable.");
             return YieldInternal(instructionType, arg, true);
         }
 
@@ -102,13 +102,13 @@ namespace CoroutineRunner
         /// <para>指令类型需要实现 <see cref="IPoolableYieldInstruction{T}"/> 接口以支持泛型参数重置。</para>
         /// <para>适用于有参数依赖的指令。</para>
         /// </remarks>
-        public static CustomYieldInstructionBase Yield<T>(Type instructionType, T arg)
+        public static CustomYieldInstructionBase Yield<T>(Type instructionType, T arg) 
         {
             if (instructionType == null)
                 throw new ArgumentNullException(nameof(instructionType));
             if (!typeof(IPoolable).IsAssignableFrom(instructionType))
-                throw new ArgumentException($"The paramter '{nameof(instructionType)}' is not poolable.");
-            return YieldInternal(instructionType, arg);
+                throw new ArgumentException($"[CoroutineRunner] The paramter '{nameof(instructionType)}' is not poolable.");
+            return YieldInternal(instructionType,arg);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace CoroutineRunner
         /// <para>指令类型需要提供公开的无参构造函数，内部将通过 <c>new()</c> 创建实例。</para>
         /// <para>适用于无参数依赖的指令。</para>
         /// </remarks>
-        public static T Yield<T>() where T : CustomYieldInstructionBase, IPoolable, new()
+        public static T Yield<T>() where T : CustomYieldInstructionBase, IPoolable, new () 
         {
             return (T)YieldInternal<T>(null, false);
         }
@@ -136,7 +136,7 @@ namespace CoroutineRunner
         /// <para>指令类型需要实现 <see cref="IPoolableYieldInstruction"/> 接口以支持非泛型参数重置。</para>
         /// <para>适用于有参数依赖的指令。</para>
         /// </remarks>
-        public static T Yield<T>(object arg) where T : CustomYieldInstructionBase, IPoolable, new()
+        public static T Yield<T>(object arg) where T : CustomYieldInstructionBase, IPoolable, new() 
         {
             return (T)YieldInternal<T>(arg, true);
         }
@@ -155,7 +155,7 @@ namespace CoroutineRunner
         /// <para>两种参数实现接口需要至少实现一种，推荐优先实现泛型接口，可以避免值类型装箱和引用类型多余的类型转换。</para>
         /// <para>适用于有参数依赖的指令。</para>
         /// </remarks>
-        public static T1 Yield<T1, T2>(T2 arg) where T1 : CustomYieldInstructionBase, IPoolable, new()
+        public static T1 Yield<T1, T2>(T2 arg) where T1 : CustomYieldInstructionBase, IPoolable, new() 
         {
             return (T1)YieldInternal<T1, T2>(arg, true);
         }
@@ -168,12 +168,12 @@ namespace CoroutineRunner
         /// <para>如果池中容量未满且类型匹配，则回收以供复用；否则丢弃。</para>
         /// <para>框架内部自动回收通过 <c>yield return</c> 使用的指令，一般情况下无需手动调用。</para>
         /// </remarks>
-        public static void Release(CustomYieldInstructionBase instruction)
+        public static void Release(CustomYieldInstructionBase instruction) 
         {
             ReleaseInternal(instruction);
         }
 
-        private static CustomYieldInstructionBase YieldInternal(Type instructionType, object arg, bool hasArg)
+        private static CustomYieldInstructionBase YieldInternal(Type instructionType, object arg, bool hasArg) 
         {
             var pooler = GetOrCreatePooler(instructionType);
             var item = pooler.Get();
@@ -195,7 +195,7 @@ namespace CoroutineRunner
         {
             var pooler = GetOrCreatePooler<T>();
             var item = pooler.Get();
-            if (hasArg && item is IPoolableYieldInstruction poolable)
+            if(hasArg && item is IPoolableYieldInstruction poolable)
                 poolable.Reset(arg);
             return item;
         }
@@ -206,24 +206,24 @@ namespace CoroutineRunner
             var item = pooler.Get();
             if (hasArg)
             {
-                if (item is IPoolableYieldInstruction<T2> poolable)
+                if(item is IPoolableYieldInstruction<T2> poolable)
                     poolable.Reset(arg);
-                else if (item is IPoolableYieldInstruction poolable2)
+                else if(item is IPoolableYieldInstruction poolable2)
                     poolable2.Reset(arg);
             }
             return item;
         }
 
-        private static void ReleaseInternal(CustomYieldInstructionBase instruction)
+        private static void ReleaseInternal(CustomYieldInstructionBase instruction) 
         {
             if (instruction == null) return;
             if (poolDict.TryGetValue(instruction.GetType(), out var pooler))
                 pooler.Release(instruction);
         }
 
-        private static Pooler GetOrCreatePooler(Type instructionType)
+        private static Pooler GetOrCreatePooler(Type instructionType) 
         {
-            if (!poolDict.TryGetValue(instructionType, out var pooler))
+            if (!poolDict.TryGetValue(instructionType, out var pooler)) 
             {
                 pooler = new Pooler(instructionType, DEFAULT_CAPACITY, () => (CustomYieldInstructionBase)Activator.CreateInstance(instructionType));
                 poolDict[instructionType] = pooler;

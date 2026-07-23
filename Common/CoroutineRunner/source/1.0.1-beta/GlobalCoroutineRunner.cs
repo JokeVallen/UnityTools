@@ -29,13 +29,13 @@ namespace CoroutineRunner
         public static void StopAllCoroutines() => Instance.StopAllCoroutines();
 
         /// <summary>配置命名通道的最大并发数</summary>
-        public static void ConfigureChannel(string channelName, int maxConcurrent) => Instance.ConfigureChannel(channelName, maxConcurrent);
+        public static void ConfigureChannel<T>(T channelKey, int maxConcurrent) => Instance.ConfigureChannel(channelKey, maxConcurrent);
 
         /// <summary>启动一个可控协程（不排队，立即运行）</summary>
         public static CoroutineHandleToken Run(IEnumerator routine) => Instance.Run(routine);
 
         /// <summary>将可控协程送入指定通道排队执行</summary>
-        public static CoroutineHandleToken RunQueued(IEnumerator routine, string channelName) => Instance.RunQueued(routine, channelName);
+        public static CoroutineHandleToken RunQueued<T>(IEnumerator routine, T channelKey) => Instance.RunQueued(routine, channelKey);
 
         /// <summary>释放运行器资源</summary>
         public static void Dispose() => Instance.Dispose();

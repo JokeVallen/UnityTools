@@ -18,7 +18,7 @@ namespace CoroutineRunner
         /// <summary>
         /// 默认缺省值单例
         /// </summary>
-        public static readonly CoroutineHandleToken NullToken = new CoroutineHandleToken();
+        public static readonly CoroutineHandleToken None = new CoroutineHandleToken();
 
         internal CoroutineHandleToken(int id, long version)
         {

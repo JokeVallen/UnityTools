@@ -12,7 +12,7 @@ namespace CoroutineRunner
         /// 暂停协程
         /// </summary>
         /// <param name="token"></param>
-        public static void Pause(this CoroutineHandleToken token)
+        public static void Pause(this in CoroutineHandleToken token)
         {
             if (!token.IsValid) return;
             ((InternalCoroutineRunner)InternalCoroutineRunner.Instance).Pause(token);
@@ -22,7 +22,7 @@ namespace CoroutineRunner
         /// 恢复协程
         /// </summary>
         /// <param name="token"></param>
-        public static void Resume(this CoroutineHandleToken token)
+        public static void Resume(this in CoroutineHandleToken token)
         {
             if (!token.IsValid) return;
             ((InternalCoroutineRunner)InternalCoroutineRunner.Instance).Resume(token);
@@ -32,7 +32,7 @@ namespace CoroutineRunner
         /// 取消协程
         /// </summary>
         /// <param name="token"></param>
-        public static void Cancel(this CoroutineHandleToken token)
+        public static void Cancel(this in CoroutineHandleToken token)
         {
             if (!token.IsValid) return;
             ((InternalCoroutineRunner)InternalCoroutineRunner.Instance).Cancel(token);
@@ -43,7 +43,7 @@ namespace CoroutineRunner
         /// </summary>
         /// <param name="token"></param>
         /// <returns>协程状态</returns>
-        public static CoroutineState GetState(this CoroutineHandleToken token)
+        public static CoroutineState GetState(this in CoroutineHandleToken token)
         {
             if (token.TryGetState(out var state))
                 return state;
@@ -56,7 +56,7 @@ namespace CoroutineRunner
         /// <param name="token"></param>
         /// <param name="state">接收变量</param>
         /// <returns>协程已失效则返回 false，否则返回 true。</returns>
-        public static bool TryGetState(this CoroutineHandleToken token, out CoroutineState state)
+        public static bool TryGetState(this in CoroutineHandleToken token, out CoroutineState state)
         {
             if (!token.IsValid)
             {
@@ -71,7 +71,7 @@ namespace CoroutineRunner
         /// </summary>
         /// <param name="token"></param>
         /// <returns>协程失效则返回 true，否则返回 false。</returns>
-        public static bool IsDone(this CoroutineHandleToken token)
+        public static bool IsDone(this in CoroutineHandleToken token)
         {
             return !token.TryGetState(out var state) || state == CoroutineState.Completed || state == CoroutineState.Canceled;
         }

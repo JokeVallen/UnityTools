@@ -1,0 +1,467 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CoroutineRunner</name>
+    </assembly>
+    <members>
+        <member name="T:CoroutineRunner.CoroutineHandleToken">
+            <summary>
+            协程句柄 Token
+            </summary>
+        </member>
+        <member name="P:CoroutineRunner.CoroutineHandleToken.IsValid">
+            <summary>
+            是否有效
+            </summary>
+        </member>
+        <member name="F:CoroutineRunner.CoroutineHandleToken.None">
+            <summary>
+            默认缺省值单例
+            </summary>
+        </member>
+        <member name="M:CoroutineRunner.CoroutineHandleToken.Equals(CoroutineRunner.CoroutineHandleToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.CoroutineHandleToken.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.CoroutineHandleToken.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.CoroutineHandleToken.op_Equality(CoroutineRunner.CoroutineHandleToken,CoroutineRunner.CoroutineHandleToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.CoroutineHandleToken.op_Inequality(CoroutineRunner.CoroutineHandleToken,CoroutineRunner.CoroutineHandleToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:CoroutineRunner.CoroutineState">
+            <summary>
+            协程控制状态枚举
+            </summary>
+        </member>
+        <member name="F:CoroutineRunner.CoroutineState.Running">
+            <summary> 正在运行 </summary>
+        </member>
+        <member name="F:CoroutineRunner.CoroutineState.Paused">
+            <summary> 已暂停 </summary>
+        </member>
+        <member name="F:CoroutineRunner.CoroutineState.Completed">
+            <summary> 正常执行完成 </summary>
+        </member>
+        <member name="F:CoroutineRunner.CoroutineState.Canceled">
+            <summary> 已被外部或异常取消 </summary>
+        </member>
+        <member name="T:CoroutineRunner.CustomYield">
+            <summary>
+            自定义可控指令静态池化工厂
+            </summary>
+            <remarks>
+            <para>若扩展的自定义指令需要接入池化工厂：请实现具体的池化扩展接口 <see cref="T:CoroutineRunner.IPoolableYieldInstruction"/> 或 <see cref="T:CoroutineRunner.IPoolableYieldInstruction`1"/>。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.CustomYield.Yield(System.Type)">
+            <summary>
+            获取指定类型的池化指令实例
+            </summary>
+            <param name="instructionType">指令类型</param>
+            <returns>池化的指令实例</returns>
+            <remarks>
+            <para>指令类型需要提供公开的无参构造函数，内部将通过反射创建实例。</para>
+            <para>适用于无参数依赖的指令。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.CustomYield.Yield(System.Type,System.Object)">
+            <summary>
+            获取指定类型的附带重置参数的池化指令实例
+            </summary>
+            <param name="instructionType">指令类型</param>
+            <param name="arg">重置参数</param>
+            <returns>池化的指令实例</returns>
+            <remarks>
+            <para>指令类型需要提供公开的无参构造函数，内部将通过反射创建实例。</para>
+            <para>指令类型需要实现 <see cref="T:CoroutineRunner.IPoolableYieldInstruction"/> 接口以支持非泛型参数重置。</para>
+            <para>适用于有参数依赖的指令。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.CustomYield.Yield``1(System.Type,``0)">
+            <summary>
+            获取指定类型的附带重置参数的池化指令实例
+            </summary>
+            <param name="instructionType">指令类型</param>
+            <param name="arg">重置参数</param>
+            <typeparam name="T">参数类型</typeparam>
+            <returns>池化的指令实例</returns>
+            <remarks>
+            <para>指令类型需要提供公开的无参构造函数，内部将通过反射创建实例。</para>
+            <para>指令类型需要实现 <see cref="T:CoroutineRunner.IPoolableYieldInstruction`1"/> 接口以支持泛型参数重置。</para>
+            <para>适用于有参数依赖的指令。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.CustomYield.Yield``1">
+            <summary>
+            获取指定类型的池化指令实例
+            </summary>
+            <typeparam name="T">指令类型</typeparam>
+            <returns>池化的指令实例</returns>
+            <remarks>
+            <para>指令类型需要提供公开的无参构造函数，内部将通过 <c>new()</c> 创建实例。</para>
+            <para>适用于无参数依赖的指令。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.CustomYield.Yield``1(System.Object)">
+            <summary>
+            获取指定类型的附带重置参数的池化指令实例
+            </summary>
+            <param name="arg">重置参数</param>
+            <typeparam name="T">指令类型</typeparam>
+            <returns>池化的指令实例</returns>
+            <remarks>
+            <para>指令类型需要提供公开的无参构造函数，内部将通过 <c>new()</c> 创建实例。</para>
+            <para>指令类型需要实现 <see cref="T:CoroutineRunner.IPoolableYieldInstruction"/> 接口以支持非泛型参数重置。</para>
+            <para>适用于有参数依赖的指令。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.CustomYield.Yield``2(``1)">
+            <summary>
+            获取指定类型的附带重置参数的池化指令实例
+            </summary>
+            <param name="arg">重置参数</param>
+            <typeparam name="T1">指令类型</typeparam>
+            <typeparam name="T2">参数类型</typeparam>
+            <returns>池化的指令实例</returns>
+            <remarks>
+            <para>指令类型需要提供公开的无参构造函数，内部将通过 <c>new()</c> 创建实例。</para>
+            <para>指令类型可以实现 <see cref="T:CoroutineRunner.IPoolableYieldInstruction`1"/> 接口以支持泛型参数重置。</para>
+            <para>指令类型可以实现 <see cref="T:CoroutineRunner.IPoolableYieldInstruction"/> 接口以支持非泛型参数重置。</para>
+            <para>两种参数实现接口需要至少实现一种，推荐优先实现泛型接口，可以避免值类型装箱和引用类型多余的类型转换。</para>
+            <para>适用于有参数依赖的指令。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.CustomYield.Release(CoroutineRunner.CustomYieldInstructionBase)">
+            <summary>
+            将指令实例回收到池中
+            </summary>
+            <param name="instruction">待回收的指令实例</param>
+            <remarks>
+            <para>如果池中容量未满且类型匹配，则回收以供复用；否则丢弃。</para>
+            <para>框架内部自动回收通过 <c>yield return</c> 使用的指令，一般情况下无需手动调用。</para>
+            </remarks>
+        </member>
+        <member name="T:CoroutineRunner.CustomYieldInstructionBase">
+            <summary>
+            自定义 Yield 指令抽象基类
+            </summary>
+            <remarks>
+            <para>支持即时状态感知、实时暂停与取消。</para>
+            <para>你可以通过继承该类扩展任何自定义的指令。</para>
+            </remarks>
+        </member>
+        <member name="P:CoroutineRunner.CustomYieldInstructionBase.Current">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.CustomYieldInstructionBase.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.CustomYieldInstructionBase.Reset">
+            <summary> 兼容早期版本 </summary>
+        </member>
+        <member name="M:CoroutineRunner.CustomYieldInstructionBase.KeepWaiting">
+            <summary>
+            是否继续等待
+            </summary>
+            <returns>如果返回 true，代表继续挂起等待；返回 false，代表等待周期结束。</returns>
+        </member>
+        <member name="T:CoroutineRunner.Extensions">
+            <summary>
+            扩展方法
+            </summary>
+        </member>
+        <member name="M:CoroutineRunner.Extensions.Pause(CoroutineRunner.CoroutineHandleToken@)">
+            <summary>
+            暂停协程
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:CoroutineRunner.Extensions.Resume(CoroutineRunner.CoroutineHandleToken@)">
+            <summary>
+            恢复协程
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:CoroutineRunner.Extensions.Cancel(CoroutineRunner.CoroutineHandleToken@)">
+            <summary>
+            取消协程
+            </summary>
+            <param name="token"></param>
+        </member>
+        <member name="M:CoroutineRunner.Extensions.GetState(CoroutineRunner.CoroutineHandleToken@)">
+            <summary>
+            获取协程状态
+            </summary>
+            <param name="token"></param>
+            <returns>协程状态</returns>
+        </member>
+        <member name="M:CoroutineRunner.Extensions.TryGetState(CoroutineRunner.CoroutineHandleToken@,CoroutineRunner.CoroutineState@)">
+            <summary>
+            尝试获取协程状态
+            </summary>
+            <param name="token"></param>
+            <param name="state">接收变量</param>
+            <returns>协程已失效则返回 false，否则返回 true。</returns>
+        </member>
+        <member name="M:CoroutineRunner.Extensions.IsDone(CoroutineRunner.CoroutineHandleToken@)">
+            <summary>
+            协程是否已失效
+            </summary>
+            <param name="token"></param>
+            <returns>协程失效则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="M:CoroutineRunner.Extensions.GetAwaiter(CoroutineRunner.CoroutineHandleToken)">
+            <summary>
+            扩展获取原生 C# 异步等待器，使 <see cref="T:CoroutineRunner.ICoroutineHandle"/> 能够直接支持现代 C# 的 async/await 强类型强同步等待
+            </summary>
+            <param name="token">协程句柄令牌</param>
+            <returns>异步任务等待结构</returns>
+        </member>
+        <member name="T:CoroutineRunner.GlobalCoroutineRunner">
+            <summary>
+            全局协程运行器
+            </summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.StartCoroutine(System.Collections.IEnumerator)">
+            <summary>启动协程</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.StartCoroutine(System.String,System.Object)">
+            <summary>通过方法名启动协程（运行时开销较大）</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.StopCoroutine(UnityEngine.Coroutine)">
+            <summary>停止指定协程对象</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.StopCoroutine(System.Collections.IEnumerator)">
+            <summary>停止指定迭代器的协程</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.StopCoroutine(System.String)">
+            <summary>通过方法名停止协程</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.StopAllCoroutines">
+            <summary>停止所有协程</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.ConfigureChannel``1(``0,System.Int32)">
+            <summary>配置命名通道的最大并发数</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.Run(System.Collections.IEnumerator)">
+            <summary>启动一个可控协程（不排队，立即运行）</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.RunQueued``1(System.Collections.IEnumerator,``0)">
+            <summary>将可控协程送入指定通道排队执行</summary>
+        </member>
+        <member name="M:CoroutineRunner.GlobalCoroutineRunner.Dispose">
+            <summary>释放运行器资源</summary>
+        </member>
+        <member name="T:CoroutineRunner.IGlobalCoroutineRunner">
+            <summary>
+            全局协程运行器接口
+            </summary>
+            <remarks>
+            <para>为全局协程调用提供切片入口或者代理，或者希望在不实现自定义 <see cref="T:UnityEngine.MonoBehaviour"/> 的前提下使用协程，通过该类可以便捷和快速地启动任何位于主线程的协程代码。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.StartCoroutine(System.Collections.IEnumerator)">
+            <summary>
+            启动协程
+            </summary>
+            <param name="routine">协程枚举器</param>
+            <returns>协程对象</returns>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.StartCoroutine(System.String,System.Object)">
+            <summary>
+            启动协程
+            </summary>
+            <param name="methodName">提供协程枚举器的方法名</param>
+            <param name="value">协程参数值</param>
+            <returns>协程对象</returns>
+            <remarks>
+            <para>该版本运行时开销更大</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.StopCoroutine(UnityEngine.Coroutine)">
+            <summary>
+            停止协程
+            </summary>
+            <param name="coroutine">协程对象</param>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.StopCoroutine(System.Collections.IEnumerator)">
+            <summary>
+            停止协程
+            </summary>
+            <param name="routine">协程枚举器</param>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.StopCoroutine(System.String)">
+            <summary>
+            停止托管协程
+            </summary>
+            <param name="methodName">提供协程枚举器的方法名</param>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.StopAllCoroutines">
+            <summary>
+            停止所有协程
+            </summary>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.Run(System.Collections.IEnumerator)">
+            <summary>
+            启动一个受自定义句柄控制的高级协程
+            </summary>
+            <param name="routine">协程枚举器</param>
+            <returns>可控的生命周期句柄</returns>
+            <remarks>
+            <para>不排队，即时运行，受对象池优化管理。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.RunQueued``1(System.Collections.IEnumerator,``0)">
+            <summary>
+            将高级协程送入指定的并发通道排队执行
+            </summary>
+            <param name="routine">协程枚举器</param>
+            <param name="channelKey">通道标识（若通道未通过 <see cref="M:CoroutineRunner.IGlobalCoroutineRunner.ConfigureChannel``1(``0,System.Int32)"/> 配置，则默认作为单列强制排队通道）</param>
+            <returns>可控的生命周期句柄</returns>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.ConfigureChannel``1(``0,System.Int32)">
+            <summary>
+            配置指定并发通道的最大并发任务数
+            </summary>
+            <param name="channelKey">通道标识</param>
+            <param name="maxConcurrent">最大允许同时运行的高级协程数量（若小于或等于 0 则代表该通道不限制并发）</param>
+        </member>
+        <member name="M:CoroutineRunner.IGlobalCoroutineRunner.Dispose">
+            <summary>
+            释放资源
+            </summary>
+        </member>
+        <member name="T:CoroutineRunner.InternalCoroutineRunner">
+            <summary>
+            全局协程运行器
+            </summary>
+            <remarks>
+            <para>为全局协程调用提供切片入口或者代理，或者希望在不实现自定义 MonoBehaviour 的前提下使用协程，通过该类可以便捷和快速地启动任何位于主线程的协程代码。</para>
+            </remarks>
+        </member>
+        <member name="T:CoroutineRunner.IPoolable">
+            <summary>
+            可池化接口
+            </summary>
+            <remarks>
+            <para>请实现具体的池化扩展接口 <see cref="T:CoroutineRunner.IPoolableYieldInstruction"/> 或 <see cref="T:CoroutineRunner.IPoolableYieldInstruction`1"/>。</para>
+            </remarks>
+        </member>
+        <member name="T:CoroutineRunner.IPoolableYieldInstruction">
+            <summary>
+            可池化指令的非泛型扩展接口
+            </summary>
+        </member>
+        <member name="M:CoroutineRunner.IPoolableYieldInstruction.Reset(System.Object)">
+            <summary>
+            重置指令
+            </summary>
+            <param name="value">用于重置的数据</param>
+        </member>
+        <member name="T:CoroutineRunner.IPoolableYieldInstruction`1">
+            <summary>
+            可池化指令的扩展接口
+            </summary>
+            <typeparam name="T">用于重置的数据类型</typeparam>
+            <remarks>
+            <para>如果你的自定义指令需要池化支持可实现该接口。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.IPoolableYieldInstruction`1.Reset(`0)">
+            <summary>
+            重置指令
+            </summary>
+            <param name="value">用于重置的数据</param>
+        </member>
+        <member name="T:CoroutineRunner.WaitForAsyncOperationControlled">
+            <summary>
+            受控等待 <see cref="T:UnityEngine.AsyncOperation"/> 完成
+            </summary>
+        </member>
+        <member name="M:CoroutineRunner.WaitForAsyncOperationControlled.Reset(UnityEngine.AsyncOperation)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitForAsyncOperationControlled.KeepWaiting">
+            <inheritdoc/>
+        </member>
+        <member name="T:CoroutineRunner.WaitForFramesControlled">
+            <summary>
+            受控等待指定帧数
+            </summary>
+        </member>
+        <member name="M:CoroutineRunner.WaitForFramesControlled.Reset(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitForFramesControlled.KeepWaiting">
+            <inheritdoc/>
+        </member>
+        <member name="T:CoroutineRunner.WaitForRealtimeSecondsControlled">
+            <summary>
+            受控等待真实秒数
+            </summary>
+            <remarks>
+            <para>忽略 <see cref="P:UnityEngine.Time.timeScale"/>。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.WaitForRealtimeSecondsControlled.Reset(System.Single)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitForRealtimeSecondsControlled.Reset(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitForRealtimeSecondsControlled.KeepWaiting">
+            <inheritdoc/>
+        </member>
+        <member name="T:CoroutineRunner.WaitForSecondsControlled">
+            <summary>
+            受控等待秒数
+            </summary>
+            <remarks>
+            <para>受 <see cref="P:UnityEngine.Time.timeScale"/> 影响。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.WaitForSecondsControlled.Reset(System.Single)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitForSecondsControlled.Reset(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitForSecondsControlled.KeepWaiting">
+            <inheritdoc/>
+        </member>
+        <member name="T:CoroutineRunner.WaitUntilControlled">
+            <summary>
+            受控等待条件指令
+            </summary>
+            <remarks>
+            <para>直到条件为 true 为止。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.WaitUntilControlled.Reset(System.Func{System.Boolean})">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitUntilControlled.KeepWaiting">
+            <inheritdoc/>
+        </member>
+        <member name="T:CoroutineRunner.WaitWhileControlled">
+            <summary>
+            受控等待条件指令
+            </summary>
+            <remarks>
+            <para>直到条件为 false 为止。</para>
+            </remarks>
+        </member>
+        <member name="M:CoroutineRunner.WaitWhileControlled.Reset(System.Func{System.Boolean})">
+            <inheritdoc/>
+        </member>
+        <member name="M:CoroutineRunner.WaitWhileControlled.KeepWaiting">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>

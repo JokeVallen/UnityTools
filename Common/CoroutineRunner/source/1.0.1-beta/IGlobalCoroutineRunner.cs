@@ -66,16 +66,16 @@ namespace CoroutineRunner
         /// 将高级协程送入指定的并发通道排队执行
         /// </summary>
         /// <param name="routine">协程枚举器</param>
-        /// <param name="channelName">通道标识名称（若通道未通过 <see cref="ConfigureChannel"/> 配置，则默认作为单列强制排队通道）</param>
+        /// <param name="channelKey">通道标识（若通道未通过 <see cref="ConfigureChannel"/> 配置，则默认作为单列强制排队通道）</param>
         /// <returns>可控的生命周期句柄</returns>
-        CoroutineHandleToken RunQueued(IEnumerator routine, string channelName);
+        CoroutineHandleToken RunQueued<T>(IEnumerator routine, T channelKey);
 
         /// <summary>
         /// 配置指定并发通道的最大并发任务数
         /// </summary>
-        /// <param name="channelName">通道标识名称</param>
+        /// <param name="channelKey">通道标识</param>
         /// <param name="maxConcurrent">最大允许同时运行的高级协程数量（若小于或等于 0 则代表该通道不限制并发）</param>
-        void ConfigureChannel(string channelName, int maxConcurrent);
+        void ConfigureChannel<T>(T channelKey, int maxConcurrent);
 
         /// <summary>
         /// 释放资源

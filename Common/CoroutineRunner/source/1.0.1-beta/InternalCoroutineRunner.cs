@@ -18,7 +18,7 @@ namespace CoroutineRunner
             get
             {
                 if (Application.isEditor && !Application.isPlaying)
-                    throw new InvalidOperationException($"The '{nameof(InternalCoroutineRunner)}' cannot support in editor mode.");
+                    throw new InvalidOperationException($"[CoroutineRunner] The '{nameof(InternalCoroutineRunner)}' cannot support in editor mode.");
                 return Handler.instance;
             }
         }
@@ -27,7 +27,7 @@ namespace CoroutineRunner
         private static bool instantiated;
         private static int nextId = 0;
         private readonly Dictionary<int, CoroutineHandle> activeHandles = new Dictionary<int, CoroutineHandle>();
-        private readonly Dictionary<string, CoroutineChannel> channels = new Dictionary<string, CoroutineChannel>();
+        private readonly Dictionary<Type, IStorage> channels = new Dictionary<Type, IStorage>();
         private readonly CoroutineChannel defaultChannel = new CoroutineChannel(0);
 
         static InternalCoroutineRunner()
@@ -80,12 +80,21 @@ namespace CoroutineRunner
             Proxy.Instance.StopAllCoroutines();
         }
 
-        public void ConfigureChannel(string channelName, int maxConcurrent)
+        public void ConfigureChannel<T>(T channelKey, int maxConcurrent)
         {
             ThrowErrorIfDisposed();
-            if (channels.ContainsKey(channelName))
-                throw new InvalidOperationException($"Channel '{channelName}' is already configured.");
-            channels[channelName] = new CoroutineChannel(maxConcurrent);
+
+            var typeKey = typeof(Storage<T>);
+            if (!channels.TryGetValue(typeKey, out var rawStorage)) 
+            { 
+                rawStorage = new Storage<T>();
+                channels[typeKey] = rawStorage;
+            }
+
+            var storage = (Storage<T>)rawStorage;
+            if (storage.channels.TryGetValue(channelKey, out _))
+                throw new InvalidOperationException($"[CoroutineRunner] Channel '{channelKey}' is already configured.");
+            storage.channels[channelKey] = new CoroutineChannel(maxConcurrent);
         }
 
         public CoroutineHandleToken Run(IEnumerator routine)
@@ -93,25 +102,31 @@ namespace CoroutineRunner
             ThrowErrorIfDisposed();
             int id = ++nextId;
             var handle = defaultChannel.Enqueue(id, routine, this);
-            if (handle == null) return CoroutineHandleToken.NullToken;
+            if (handle == null) return CoroutineHandleToken.None;
             activeHandles[id] = handle;
 
             handle.OnFinished += h => activeHandles.Remove(h.Id);
             return new CoroutineHandleToken(handle.Id, handle.Version);
         }
 
-        public CoroutineHandleToken RunQueued(IEnumerator routine, string channelName)
+        public CoroutineHandleToken RunQueued<T>(IEnumerator routine, T channelKey)
         {
             ThrowErrorIfDisposed();
-            if (!channels.TryGetValue(channelName, out var channel))
+
+            var typeKey = typeof(Storage<T>);
+            if (!channels.TryGetValue(typeKey, out var rawStorage)) 
+                return CoroutineHandleToken.None;
+
+            var storage = (Storage<T>)rawStorage;
+            if (!storage.channels.TryGetValue(channelKey, out var channel)) 
             {
                 channel = new CoroutineChannel(1);
-                channels[channelName] = channel;
+                storage.channels[channelKey] = channel;
             }
-
+            
             int id = ++nextId;
             var handle = channel.Enqueue(id, routine, this);
-            if (handle == null) return CoroutineHandleToken.NullToken;
+            if (handle == null) return CoroutineHandleToken.None;
             activeHandles[id] = handle;
 
             handle.OnFinished += h => activeHandles.Remove(h.Id);
@@ -161,7 +176,7 @@ namespace CoroutineRunner
         internal bool TryGetHandle(int id, out ICoroutineHandle handle)
         {
             handle = null;
-            if (activeHandles.TryGetValue(id, out var inner))
+            if (activeHandles.TryGetValue(id, out var inner)) 
             {
                 handle = inner;
                 return true;
@@ -186,6 +201,10 @@ namespace CoroutineRunner
                 else GameObject.DestroyImmediate(((Proxy)Proxy.Instance).gameObject);
             }
 
+            foreach (var storage in channels.Values)
+            {
+                storage.Clear();
+            }
             channels.Clear();
             activeHandles.Clear();
         }
@@ -216,7 +235,7 @@ namespace CoroutineRunner
                     instance = this;
                     DontDestroyOnLoad(gameObject);
                 }
-                else
+                else 
                 {
                     Destroy(gameObject);
                 }
@@ -346,6 +365,21 @@ namespace CoroutineRunner
             }
         }
 
+        private interface IStorage 
+        {
+            void Clear();
+        }
+
+        private class Storage<T> : IStorage
+        {
+            public readonly Dictionary<T, CoroutineChannel> channels = new Dictionary<T, CoroutineChannel>();
+
+            public void Clear()
+            {
+                channels.Clear();
+            }
+        }
+
         private class CoroutineChannel
         {
             private readonly Queue<CoroutineHandle> waitingQueue = new Queue<CoroutineHandle>();
@@ -353,7 +387,7 @@ namespace CoroutineRunner
             private readonly int maxConcurrent;
             private readonly int maxQueueCapacity;
 
-            public CoroutineChannel(int maxConcurrent, int maxQueueCapacity = 2048)
+            public CoroutineChannel(int maxConcurrent, int maxQueueCapacity = 2048) 
             {
                 this.maxConcurrent = maxConcurrent;
                 this.maxQueueCapacity = maxQueueCapacity;
@@ -363,7 +397,7 @@ namespace CoroutineRunner
             {
                 if (waitingQueue.Count >= maxQueueCapacity)
                 {
-                    Debug.LogError($"The coroutine channel reached the limit of capacity ({maxQueueCapacity}), the new managed coroutine cannot enqueue！");
+                    Debug.LogError($"[CoroutineRunner] The coroutine channel reached the limit of capacity ({maxQueueCapacity}), the new managed coroutine cannot enqueue！");
                     return null;
                 }
 
