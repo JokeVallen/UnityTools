@@ -11,7 +11,7 @@
 ## 安装环境要求
 
 - .NET Framework 4.x / .NET Standard 2.0 或兼容版本
-- C# 7.3 或更高版本
+- C# 7.0 或更高版本
 
 ## 安装方式
 
@@ -40,13 +40,13 @@
 `ITemplateProvider<TTemplate>` 及其异步版本负责从模板路径加载原始模板。您可以实现为文件读取、内嵌资源读取，或从网络获取。
 
 ### 2. 代码生成器
-`IGenerator<TTemplate, TContent>` 是核心转换接口，接收模板并生成最终内容。异步版本 `IGeneratorAsync<TTemplate, TContent>` 支持取消令牌，适合耗时操作。所有生成器只需要实现泛型接口并在类上添加 `[GeneratorConfig]` 特性，框架即可自动发现。
+`IGenerator<TTemplate, TContent>` 是核心转换接口，接收模板并生成最终内容。异步版本 `IAsyncGenerator<TTemplate, TContent>` 支持取消令牌，适合耗时操作。所有生成器只需要实现泛型接口并在类上添加 `[GeneratorConfig]` 特性，框架即可自动发现。
 
 ### 3. 内容写入器
-`IWriter<TContent>` 定义写入行为，负责将生成结果保存到 `OutputPath`。异步版本 `IWriterAsync<TContent>` 可避免主线程阻塞。
+`IWriter<TContent>` 定义写入行为，负责将生成结果保存到 `OutputPath`。异步版本 `IAsyncWriter<TContent>` 可避免主线程阻塞。
 
 ### 4. 中介者管理
-`IGeneratorMediator<TGenerator>` 提供扫描（`Rescan`）、清理（`Clear`）、运行全部（`RunAll`）和运行指定生成器（`Run<T>`）的能力。异步中介者接口 `IGeneratorMediatorAsync<TGenerator>` 功能类似，所有方法均返回 `Task` 并支持取消令牌。基类 `BaseGeneratorMediator<TGenerator>` 已实现字典式访问（通过 `Type` 获取元数据）及资源释放逻辑，您只需继承并实现扫描策略即可快速构建具体的管理器。
+`IGeneratorMediator<TGenerator>` 提供扫描（`Rescan`）、清理（`Clear`）、运行全部（`RunAll`）和运行指定生成器（`Run<T>`）的能力。异步中介者接口 `IAsyncGeneratorMediator<TGenerator>` 功能类似，所有方法均返回 `Task` 并支持取消令牌。基类 `BaseGeneratorMediator<TGenerator>` 已实现字典式访问（通过 `Type` 获取元数据）及资源释放逻辑，您只需继承并实现扫描策略即可快速构建具体的管理器。
 
 ### 5. 声明式配置
 `GeneratorConfigAttribute` 允许直接在生成器类上指定模板路径和输出路径，免去额外配置文件，遵循“约定优于配置”原则。
@@ -61,11 +61,9 @@
 
 ## 其它文档导航
 
-- [API 详细说明](./source/1.0.0-beta/DOCUMENT.md)  
+- [API 详细说明](./source/1.0.1-beta/DOCUMENT.md)  
   包含所有公共接口、类、成员的签名与作用。
-- [使用示例](./source/1.0.0-beta/DOCUMENT.md#使用示例)  
-  一个从模板生成 C# 类文件的完整演示。
-- [测试报告](./tests/1.0.0-beta/TEST_REPORT.md)   
+- [测试报告](./tests/1.0.1-beta/TEST_REPORT.md)   
   单元测试和基准测试。
 
 ## 许可证
